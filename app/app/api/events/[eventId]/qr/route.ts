@@ -4,20 +4,15 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { getSupabaseAdmin } from '@/lib/supabase';
 import QRCode from 'qrcode';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  { auth: { persistSession: false } }
-);
 
 export async function POST(
   req: NextRequest,
   { params }: { params: { eventId: string } }
 ) {
   try {
+    const supabase = getSupabaseAdmin();
     const { eventId } = params;
     const body = await req.json();
     const size = body.size || 512;
@@ -79,6 +74,7 @@ export async function GET(
   { params }: { params: { eventId: string } }
 ) {
   try {
+    const supabase = getSupabaseAdmin();
     const { eventId } = params;
 
     // Get event
@@ -106,8 +102,8 @@ export async function GET(
       margin: 2,
     });
 
-    // Return image
-    return new NextResponse(qrCodeBuffer, {
+    // Return image (convert Buffer to Uint8Array for NextResponse)
+    return new NextResponse(new Uint8Array(qrCodeBuffer), {
       headers: {
         'Content-Type': 'image/png',
         'Cache-Control': 'public, max-age=31536000, immutable',

@@ -4,19 +4,14 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  { auth: { persistSession: false } }
-);
+import { getSupabaseAdmin } from '@/lib/supabase';
 
 export async function GET(
   req: NextRequest,
   { params }: { params: { eventId: string } }
 ) {
   try {
+    const supabase = getSupabaseAdmin();
     const { eventId } = params;
 
     // Get event summary from view
