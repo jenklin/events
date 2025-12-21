@@ -1,33 +1,28 @@
 {
   "name": "cloudpeers-events",
-  "version": "1.0.0",
-  "description": "CloudPeers Custom Events - MCP Service for event management",
-  "scripts": {
-    "dev": "cd app && npm run dev",
-    "build": "cd app && npm run build",
-    "start": "cd app && npm run start",
-    "deploy:staging": "./deploy.sh staging",
-    "deploy:prod": "./deploy.sh prod",
-    "deploy:ga": "./deploy.sh prod",
-    "verify-db": "node verify-database.js",
-    "install:app": "cd app && npm install"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/jenklin/events"
-  },
-  "keywords": [
-    "events",
-    "rsvp",
-    "cloudpeers",
-    "mcp",
-    "potluck",
-    "music"
+  "version": "2.0.0",
+  "description": "CloudPeers Events Platform - Multi-tenant event management with creator portal, event pages, and photo galleries",
+  "private": true,
+  "workspaces": [
+    "creator-portal",
+    "gallery"
   ],
-  "author": "CloudPeers",
-  "license": "MIT",
-  "dependencies": {
-    "@supabase/supabase-js": "^2.47.10",
-    "dotenv": "^16.4.7"
+  "scripts": {
+    "dev:portal": "cd creator-portal && npm run dev",
+    "dev:gallery": "cd gallery && npm run dev",
+    "build:portal": "cd creator-portal && npm run build",
+    "build:gallery": "cd gallery && npm run build",
+    "generate:event": "cd event-pages/generator && tsx generate.ts",
+    "generate:example": "cd event-pages/generator && tsx generate.ts ../example-config.json",
+    "install:all": "npm install && cd creator-portal && npm install",
+    "clean": "rm -rf creator-portal/.next gallery/.next event-pages/output/*",
+    "typecheck": "cd creator-portal && tsc --noEmit"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

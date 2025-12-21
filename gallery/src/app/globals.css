@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* CloudPeers Brand Colors */
+:root {
+  --brand-color: #7B1E1E;        /* CloudPeers Maroon */
+  --brand-accent: #D4A574;       /* CloudPeers Tan */
+  --brand-dark: #5A1616;         /* Maroon Dark */
+  --brand-light: #E4C5A4;        /* Tan Light */
+}

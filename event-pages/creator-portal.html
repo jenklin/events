@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CloudPeers Event Creator Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* CloudPeers Brand Colors */
+        .gradient-cloudpeers {
+            background: linear-gradient(135deg, #7B1E1E 0%, #D4A574 100%);
+        }
+
+        .gradient-cloudpeers-soft {
+            background: linear-gradient(135deg, rgba(123, 30, 30, 0.1) 0%, rgba(212, 165, 116, 0.1) 100%);
+        }
+
+        .text-maroon { color: #7B1E1E; }
+        .bg-maroon { background-color: #7B1E1E; }
+        .border-maroon { border-color: #7B1E1E; }
+
+        .text-tan { color: #D4A574; }
+        .bg-tan { background-color: #D4A574; }
+        .border-tan { border-color: #D4A574; }
+
+        /* Animations */
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .animate-spin-slow {
+            animation: spin-slow 3s linear infinite;
+        }
+
+        /* Code block styling */
+        pre {
+            background: #1f2937;
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+        }
+
+        code {
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            color: #D4A574;
+        }
+
+        /* Status badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .status-ready {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .status-warning {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .status-info {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        /* Tailwind Config */
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        maroon: {
+                            DEFAULT: '#7B1E1E',
+                            dark: '#5A1616',
+                            light: '#9B2E2E',
+                        },
+                        tan: {
+                            DEFAULT: '#D4A574',
+                            dark: '#B08A5C',
+                            light: '#E4C5A4',
+                        }
+                    }
+                }
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 via-white to-tan-50 text-slate-900 min-h-screen">
+    <div x-data="creatorPortal()" x-init="init()">
+        <!-- Header -->
+        <header class="bg-white/90 backdrop-blur-lg border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+            <div class="container mx-auto px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-lg gradient-cloudpeers flex items-center justify-center">
+                            <span class="text-white font-bold text-xl">CP</span>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-bold text-maroon">Event Creator Portal</h1>
+                            <p class="text-sm text-slate-600" x-text="config.event?.title || 'CloudPeers Events Platform'"></p>
+                        </div>
+                    </div>
+                    <div class="status-badge status-ready">
+                        <i data-lucide="check-circle" class="w-4 h-4"></i>
+                        Ready to Deploy
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Tab Navigation -->
+        <nav class="bg-white border-b border-slate-200 sticky top-[73px] z-40">
+            <div class="container mx-auto px-6">
+                <div class="flex gap-1 overflow-x-auto">
+                    <button
+                        @click="activeTab = 'overview'"
+                        :class="activeTab === 'overview' ? 'border-maroon text-maroon' : 'border-transparent text-slate-600 hover:text-maroon'"
+                        class="px-6 py-3 border-b-2 font-medium text-sm whitespace-nowrap transition-colors"
+                    >
+                        <i data-lucide="home" class="w-4 h-4 inline mr-2"></i>
+                        Overview
+                    </button>
+                    <button
+                        @click="activeTab = 'preview'"
+                        :class="activeTab === 'preview' ? 'border-maroon text-maroon' : 'border-transparent text-slate-600 hover:text-maroon'"
+                        class="px-6 py-3 border-b-2 font-medium text-sm whitespace-nowrap transition-colors"
+                    >
+                        <i data-lucide="eye" class="w-4 h-4 inline mr-2"></i>
+                        Preview
+                    </button>
+                    <button
+                        @click="activeTab = 'config'"
+                        :class="activeTab === 'config' ? 'border-maroon text-maroon' : 'border-transparent text-slate-600 hover:text-maroon'"
+                        class="px-6 py-3 border-b-2 font-medium text-sm whitespace-nowrap transition-colors"
+                    >
+                        <i data-lucide="settings" class="w-4 h-4 inline mr-2"></i>
+                        Configuration
+                    </button>
+                    <button
+                        @click="activeTab = 'potluck'"
+                        :class="activeTab === 'potluck' ? 'border-maroon text-maroon' : 'border-transparent text-slate-600 hover:text-maroon'"
+                        class="px-6 py-3 border-b-2 font-medium text-sm whitespace-nowrap transition-colors"
+                    >
+                        <i data-lucide="utensils" class="w-4 h-4 inline mr-2"></i>
+                        Potluck
+                        <span x-show="config.potluck?.enabled" class="ml-2 status-badge status-info text-xs px-2 py-0.5">ON</span>
+                    </button>
+                    <button
+                        @click="activeTab = 'music'"
+                        :class="activeTab === 'music' ? 'border-maroon text-maroon' : 'border-transparent text-slate-600 hover:text-maroon'"
+                        class="px-6 py-3 border-b-2 font-medium text-sm whitespace-nowrap transition-colors"
+                    >
+                        <i data-lucide="music" class="w-4 h-4 inline mr-2"></i>
+                        Music/Playlist
+                        <span x-show="config.music?.enabled" class="ml-2 status-badge status-info text-xs px-2 py-0.5">ON</span>
+                    </button>
+                    <button
+                        @click="activeTab = 'guests'"
+                        :class="activeTab === 'guests' ? 'border-maroon text-maroon' : 'border-transparent text-slate-600 hover:text-maroon'"
+                        class="px-6 py-3 border-b-2 font-medium text-sm whitespace-nowrap transition-colors"
+                    >
+                        <i data-lucide="users" class="w-4 h-4 inline mr-2"></i>
+                        Guest Settings
+                    </button>
+                    <button
+                        @click="activeTab = 'deploy'"
+                        :class="activeTab === 'deploy' ? 'border-maroon text-maroon' : 'border-transparent text-slate-600 hover:text-maroon'"
+                        class="px-6 py-3 border-b-2 font-medium text-sm whitespace-nowrap transition-colors"
+                    >
+                        <i data-lucide="rocket" class="w-4 h-4 inline mr-2"></i>
+                        Deploy
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="container mx-auto px-6 py-8 max-w-7xl">
+
+            <!-- Overview Tab -->
+            <section x-show="activeTab === 'overview'" x-transition class="space-y-8">
+                <div class="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm">
+                    <h2 class="text-3xl font-bold mb-6 text-maroon">Event Overview</h2>
+
+                    <div class="grid md:grid-cols-2 gap-6 mb-8">
+                        <div>
+                            <label class="text-sm font-medium text-slate-500 mb-1 block">Event Name</label>
+                            <p class="text-xl font-semibold text-slate-900" x-text="config.event?.title || 'Untitled Event'"></p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-slate-500 mb-1 block">Date & Time</label>
+                            <p class="text-xl font-semibold text-slate-900" x-text="formatDateTime()"></p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-slate-500 mb-1 block">Venue</label>
+                            <p class="text-xl font-semibold text-slate-900" x-text="config.event?.location || 'TBD'"></p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-slate-500 mb-1 block">Event URL</label>
+                            <p class="text-xl font-semibold text-maroon" x-text="config.event?.slug ? `https://events.cloudpeers.com/${config.event.slug}` : 'Not configured'"></p>
+                        </div>
+                    </div>
+
+                    <div class="mb-8">
+                        <label class="text-sm font-medium text-slate-500 mb-2 block">Description</label>
+                        <p class="text-slate-700 leading-relaxed" x-text="config.event?.description || 'No description provided'"></p>
+                    </div>
+
+                    <!-- Quick Stats -->
+                    <div class="bg-gradient-cloudpeers-soft rounded-xl p-6 border border-tan">
+                        <h4 class="font-semibold mb-4 text-maroon text-lg">Quick Stats</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-maroon" x-text="config.schedule?.length || 0"></div>
+                                <div class="text-sm text-slate-600 mt-1">Schedule Items</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-maroon" x-text="config.speakers?.length || 0"></div>
+                                <div class="text-sm text-slate-600 mt-1">Speakers</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-maroon" x-text="config.potluck?.enabled ? 'YES' : 'NO'"></div>
+                                <div class="text-sm text-slate-600 mt-1">Potluck Enabled</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-maroon" x-text="config.music?.enabled ? 'YES' : 'NO'"></div>
+                                <div class="text-sm text-slate-600 mt-1">Music Enabled</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature Cards -->
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="bg-white rounded-xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="w-12 h-12 rounded-lg bg-maroon/10 flex items-center justify-center mb-4">
+                            <i data-lucide="calendar" class="w-6 h-6 text-maroon"></i>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">Event Registration</h3>
+                        <p class="text-sm text-slate-600">Collect attendee information with custom forms</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="w-12 h-12 rounded-lg bg-tan/20 flex items-center justify-center mb-4">
+                            <i data-lucide="qr-code" class="w-6 h-6 text-tan-dark"></i>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">QR Code</h3>
+                        <p class="text-sm text-slate-600">Instant mobile registration with QR codes</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="w-12 h-12 rounded-lg bg-maroon/10 flex items-center justify-center mb-4">
+                            <i data-lucide="image" class="w-6 h-6 text-maroon"></i>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">Photo Gallery</h3>
+                        <p class="text-sm text-slate-600">Share memories with magic link access</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Preview Tab -->
+            <section x-show="activeTab === 'preview'" x-transition>
+                <div class="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-3xl font-bold text-maroon">Event Page Preview</h2>
+                        <a
+                            :href="`output/${config.event?.slug || 'event'}.html`"
+                            target="_blank"
+                            class="px-4 py-2 gradient-cloudpeers text-white rounded-lg hover:shadow-lg transition-all flex items-center gap-2"
+                        >
+                            <i data-lucide="external-link" class="w-4 h-4"></i>
+                            Open in New Tab
+                        </a>
+                    </div>
+
+                    <div class="bg-slate-100 rounded-xl overflow-hidden border border-slate-300" style="height: 700px;">
+                        <iframe
+                            :src="`output/${config.event?.slug || 'event'}.html`"
+                            class="w-full h-full border-0"
+                            title="Event Page Preview"
+                        ></iframe>
+                    </div>
+
+                    <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <p class="text-sm text-blue-900 flex items-start gap-2">
+                            <i data-lucide="info" class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5"></i>
+                            <span>This is a live preview of your event page. Test the registration form, potluck sign-ups, and music requests to ensure everything works correctly.</span>
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Configuration Tab -->
+            <section x-show="activeTab === 'config'" x-transition>
+                <div class="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-3xl font-bold text-maroon">Event Configuration</h2>
+                        <button
+                            @click="downloadConfig()"
+                            class="px-4 py-2 bg-tan text-white rounded-lg hover:bg-tan-dark transition-colors flex items-center gap-2"
+                        >
+                            <i data-lucide="download" class="w-4 h-4"></i>
+                            Download JSON
+                        </button>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div>
+                            <label class="text-sm font-medium text-slate-700 mb-2 block">Configuration File</label>
+                            <pre class="text-sm max-h-[500px] overflow-auto"><code x-text="JSON.stringify(config, null, 2)"></code></pre>
+                        </div>
+
+                        <div class="p-6 bg-amber-50 rounded-xl border border-amber-200">
+                            <h4 class="font-semibold mb-3 text-amber-900 flex items-center gap-2">
+                                <i data-lucide="edit" class="w-5 h-5"></i>
+                                How to Edit Configuration
+                            </h4>
+                            <p class="text-sm text-amber-800 mb-3">To make changes to your event:</p>
+                            <ol class="text-sm text-amber-800 space-y-2 list-decimal list-inside ml-2">
+                                <li>Download the configuration JSON using the button above</li>
+                                <li>Edit the file in your preferred text editor</li>
+                                <li>Run the event generator: <code class="bg-amber-100 px-2 py-1 rounded font-mono">npm run generate:event your-config.json</code></li>
+                                <li>Refresh this page to see your changes</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Potluck Tab -->
+            <section x-show="activeTab === 'potluck'" x-transition>
+                <div class="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm">
+                    <h2 class="text-3xl font-bold mb-6 text-maroon flex items-center gap-3">
+                        <i data-lucide="utensils" class="w-8 h-8"></i>
+                        Potluck Settings
+                    </h2>
+
+                    <div x-show="!config.potluck?.enabled" class="text-center py-12">
+                        <i data-lucide="utensils" class="w-16 h-16 text-slate-300 mx-auto mb-4"></i>
+                        <p class="text-slate-500 text-lg mb-2">Potluck feature is not enabled for this event</p>
+                        <p class="text-sm text-slate-400">Enable it in your event configuration to allow guests to sign up for dishes.</p>
+                    </div>
+
+                    <div x-show="config.potluck?.enabled" class="space-y-6">
+                        <div class="p-6 bg-green-50 rounded-xl border border-green-200">
+                            <div class="flex items-center gap-2 mb-2">
+                                <i data-lucide="check-circle" class="w-5 h-5 text-green-600"></i>
+                                <h4 class="font-semibold text-green-900">Potluck Enabled</h4>
+                            </div>
+                            <p class="text-sm text-green-800">Guests can sign up to bring dishes to your event!</p>
+                        </div>
+
+                        <div>
+                            <h4 class="font-semibold text-slate-900 mb-3">Food Categories</h4>
+                            <div class="flex flex-wrap gap-2">
+                                <template x-for="category in (config.potluck?.categories || [])" :key="category">
+                                    <span class="px-4 py-2 bg-tan/20 text-tan-dark rounded-full text-sm font-medium border border-tan" x-text="category"></span>
+                                </template>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 class="font-semibold text-slate-900 mb-2">Settings</h4>
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-2 p-3 bg-slate-50 rounded-lg">
+                                    <i :data-lucide="config.potluck?.showWhatOthersBring ? 'check' : 'x'" class="w-4 h-4" :class="config.potluck?.showWhatOthersBring ? 'text-green-600' : 'text-slate-400'"></i>
+                                    <span class="text-sm">Show what others are bringing</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div x-show="config.potluck?.instructions">
+                            <h4 class="font-semibold text-slate-900 mb-2">Instructions for Guests</h4>
+                            <p class="text-sm text-slate-700 bg-slate-50 p-4 rounded-lg" x-text="config.potluck?.instructions"></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Music/Playlist Tab -->
+            <section x-show="activeTab === 'music'" x-transition>
+                <div class="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm">
+                    <h2 class="text-3xl font-bold mb-6 text-maroon flex items-center gap-3">
+                        <i data-lucide="music" class="w-8 h-8"></i>
+                        Music & Playlist Settings
+                    </h2>
+
+                    <div x-show="!config.music?.enabled" class="text-center py-12">
+                        <i data-lucide="music" class="w-16 h-16 text-slate-300 mx-auto mb-4"></i>
+                        <p class="text-slate-500 text-lg mb-2">Music feature is not enabled for this event</p>
+                        <p class="text-sm text-slate-400">Enable it to let guests request songs or create custom songs with AI.</p>
+                    </div>
+
+                    <div x-show="config.music?.enabled" class="space-y-6">
+                        <div class="p-6 bg-purple-50 rounded-xl border border-purple-200">
+                            <div class="flex items-center gap-2 mb-2">
+                                <i data-lucide="check-circle" class="w-5 h-5 text-purple-600"></i>
+                                <h4 class="font-semibold text-purple-900">Music Requests Enabled</h4>
+                            </div>
+                            <p class="text-sm text-purple-800">Guests can contribute to the event playlist!</p>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="font-semibold text-slate-900 mb-2">Request Type</h4>
+                                <span class="inline-block px-4 py-2 bg-maroon/10 text-maroon rounded-lg text-sm font-medium" x-text="config.music?.type"></span>
+                            </div>
+                            <div x-show="config.music?.service">
+                                <h4 class="font-semibold text-slate-900 mb-2">AI Service</h4>
+                                <span class="inline-block px-4 py-2 bg-tan/20 text-tan-dark rounded-lg text-sm font-medium uppercase" x-text="config.music?.service"></span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-slate-900 mb-2">Max Songs Per Guest</h4>
+                                <span class="inline-block px-4 py-2 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium" x-text="config.music?.maxSongsPerGuest"></span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-slate-900 mb-2">Show Playlist</h4>
+                                <span :class="config.music?.showPlaylist ? 'bg-green-50 text-green-700' : 'bg-slate-50 text-slate-600'" class="inline-block px-4 py-2 rounded-lg text-sm font-medium" x-text="config.music?.showPlaylist ? 'Yes' : 'No'"></span>
+                            </div>
+                        </div>
+
+                        <div x-show="config.music?.instructions">
+                            <h4 class="font-semibold text-slate-900 mb-2">Instructions for Guests</h4>
+                            <p class="text-sm text-slate-700 bg-slate-50 p-4 rounded-lg" x-text="config.music?.instructions"></p>
+                        </div>
+
+                        <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                            <p class="text-sm text-blue-900 flex items-start gap-2">
+                                <i data-lucide="info" class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5"></i>
+                                <span><strong>Music Types:</strong>
+                                    <span class="block mt-1">• <strong>song_request:</strong> Guests request existing songs</span>
+                                    <span class="block">• <strong>custom_song:</strong> Guests create custom songs with AI (Suno/Udio)</span>
+                                    <span class="block">• <strong>both:</strong> Guests can do either</span>
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Guest Settings Tab -->
+            <section x-show="activeTab === 'guests'" x-transition>
+                <div class="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm">
+                    <h2 class="text-3xl font-bold mb-6 text-maroon flex items-center gap-3">
+                        <i data-lucide="users" class="w-8 h-8"></i>
+                        Guest & RSVP Settings
+                    </h2>
+
+                    <div class="space-y-6">
+                        <!-- Capacity -->
+                        <div class="p-6 bg-slate-50 rounded-xl">
+                            <h4 class="font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                                <i data-lucide="users-2" class="w-5 h-5 text-maroon"></i>
+                                Guest Capacity
+                            </h4>
+                            <div x-show="config.guestSettings?.capacity?.enabled">
+                                <div class="grid md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="text-sm text-slate-600">Maximum Guests</label>
+                                        <p class="text-2xl font-bold text-maroon" x-text="config.guestSettings?.capacity?.maxGuests || 'Unlimited'"></p>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm text-slate-600">Waitlist</label>
+                                        <p class="text-lg font-semibold" :class="config.guestSettings?.capacity?.enableWaitlist ? 'text-green-600' : 'text-slate-400'" x-text="config.guestSettings?.capacity?.enableWaitlist ? 'Enabled' : 'Disabled'"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <p x-show="!config.guestSettings?.capacity?.enabled" class="text-slate-500">No capacity limit set</p>
+                        </div>
+
+                        <!-- Plus Ones -->
+                        <div class="p-6 bg-slate-50 rounded-xl">
+                            <h4 class="font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                                <i data-lucide="user-plus" class="w-5 h-5 text-maroon"></i>
+                                Plus-Ones
+                            </h4>
+                            <div x-show="config.guestSettings?.plusOnes?.allowed">
+                                <p class="text-slate-700">Guests can bring up to <strong x-text="config.guestSettings?.plusOnes?.maxPerGuest"></strong> plus-one(s)</p>
+                            </div>
+                            <p x-show="!config.guestSettings?.plusOnes?.allowed" class="text-slate-500">Plus-ones not allowed</p>
+                        </div>
+
+                        <!-- Approval Settings -->
+                        <div class="p-6 bg-slate-50 rounded-xl">
+                            <h4 class="font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                                <i data-lucide="check-square" class="w-5 h-5 text-maroon"></i>
+                                Approval & Permissions
+                            </h4>
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-2">
+                                    <i :data-lucide="config.guestSettings?.approval?.requireApproval ? 'check' : 'x'" class="w-4 h-4" :class="config.guestSettings?.approval?.requireApproval ? 'text-green-600' : 'text-slate-400'"></i>
+                                    <span class="text-sm">Require host approval for RSVPs</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <i :data-lucide="config.guestSettings?.approval?.allowMutualInvites ? 'check' : 'x'" class="w-4 h-4" :class="config.guestSettings?.approval?.allowMutualInvites ? 'text-green-600' : 'text-slate-400'"></i>
+                                    <span class="text-sm">Allow guests to send mutual invites</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <i :data-lucide="config.guestSettings?.approval?.allowGuestPhotos ? 'check' : 'x'" class="w-4 h-4" :class="config.guestSettings?.approval?.allowGuestPhotos ? 'text-green-600' : 'text-slate-400'"></i>
+                                    <span class="text-sm">Allow guests to upload photos</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- RSVP Collection -->
+                        <div class="p-6 bg-slate-50 rounded-xl">
+                            <h4 class="font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                                <i data-lucide="clipboard-list" class="w-5 h-5 text-maroon"></i>
+                                RSVP Information Collection
+                            </h4>
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-2">
+                                    <i data-lucide="check" class="w-4 h-4 text-green-600"></i>
+                                    <span class="text-sm">Name collection: <strong>Always collected</strong></span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <i data-lucide="check" class="w-4 h-4 text-green-600"></i>
+                                    <span class="text-sm">Email collection: <strong>Always collected</strong></span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <i :data-lucide="config.rsvpOptions?.collectPhone ? 'check' : 'x'" class="w-4 h-4" :class="config.rsvpOptions?.collectPhone ? 'text-green-600' : 'text-slate-400'"></i>
+                                    <span class="text-sm">Phone number collection</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Deploy Tab -->
+            <section x-show="activeTab === 'deploy'" x-transition>
+                <div class="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm">
+                    <h2 class="text-3xl font-bold mb-8 text-maroon flex items-center gap-3">
+                        <i data-lucide="rocket" class="w-8 h-8"></i>
+                        Deployment Instructions
+                    </h2>
+
+                    <!-- Pre-deployment Checklist -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-bold mb-4 text-slate-900">Pre-Deployment Checklist</h3>
+                        <div class="space-y-3">
+                            <label class="flex items-start gap-3 p-4 bg-slate-50 rounded-xl border-2 border-slate-200 cursor-pointer hover:border-maroon transition-colors">
+                                <input type="checkbox" class="mt-1 w-5 h-5 text-maroon rounded border-slate-300 focus:ring-maroon">
+                                <div>
+                                    <div class="font-semibold text-slate-900">Preview looks correct</div>
+                                    <div class="text-sm text-slate-600">Checked event page preview, all content displays properly</div>
+                                </div>
+                            </label>
+
+                            <label class="flex items-start gap-3 p-4 bg-slate-50 rounded-xl border-2 border-slate-200 cursor-pointer hover:border-maroon transition-colors">
+                                <input type="checkbox" class="mt-1 w-5 h-5 text-maroon rounded border-slate-300 focus:ring-maroon">
+                                <div>
+                                    <div class="font-semibold text-slate-900">Configuration reviewed</div>
+                                    <div class="text-sm text-slate-600">Verified all event details, dates, times, and venue information</div>
+                                </div>
+                            </label>
+
+                            <label class="flex items-start gap-3 p-4 bg-slate-50 rounded-xl border-2 border-slate-200 cursor-pointer hover:border-maroon transition-colors">
+                                <input type="checkbox" class="mt-1 w-5 h-5 text-maroon rounded border-slate-300 focus:ring-maroon">
+                                <div>
+                                    <div class="font-semibold text-slate-900">Registration tested</div>
+                                    <div class="text-sm text-slate-600">Tested the registration form with a test email</div>
+                                </div>
+                            </label>
+
+                            <label class="flex items-start gap-3 p-4 bg-slate-50 rounded-xl border-2 border-slate-200 cursor-pointer hover:border-maroon transition-colors">
+                                <input type="checkbox" class="mt-1 w-5 h-5 text-maroon rounded border-slate-300 focus:ring-maroon">
+                                <div>
+                                    <div class="font-semibold text-slate-900">Potluck/Music features tested</div>
+                                    <div class="text-sm text-slate-600">If enabled, verified potluck sign-ups and music requests work</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Deployment Steps -->
+                    <div class="space-y-8">
+                        <div class="p-6 bg-gradient-cloudpeers-soft rounded-xl border border-tan">
+                            <h3 class="text-xl font-bold mb-4 text-maroon flex items-center gap-2">
+                                <span class="w-8 h-8 rounded-full gradient-cloudpeers text-white flex items-center justify-center font-bold">1</span>
+                                Generate Event Page
+                            </h3>
+                            <p class="text-slate-700 mb-3">Create your event page from the configuration:</p>
+                            <pre class="bg-slate-900 text-tan p-4 rounded-lg text-sm overflow-x-auto"><code>npm run generate:event path/to/your-config.json</code></pre>
+                            <p class="text-sm text-slate-600 mt-2">This creates a fully functional event page in <code class="bg-slate-100 px-2 py-1 rounded text-maroon">event-pages/output/</code></p>
+                        </div>
+
+                        <div class="p-6 bg-gradient-cloudpeers-soft rounded-xl border border-tan">
+                            <h3 class="text-xl font-bold mb-4 text-maroon flex items-center gap-2">
+                                <span class="w-8 h-8 rounded-full gradient-cloudpeers text-white flex items-center justify-center font-bold">2</span>
+                                Deploy to Cloudflare Pages
+                            </h3>
+                            <p class="text-slate-700 mb-3">Deploy the event page to production:</p>
+                            <pre class="bg-slate-900 text-tan p-4 rounded-lg text-sm overflow-x-auto"><code># Install Wrangler CLI (if not installed)
+npm install -g wrangler
+
+# Deploy to Cloudflare Pages
+wrangler pages publish event-pages/output --project-name=your-event-name</code></pre>
+                        </div>
+
+                        <div class="p-6 bg-gradient-cloudpeers-soft rounded-xl border border-tan">
+                            <h3 class="text-xl font-bold mb-4 text-maroon flex items-center gap-2">
+                                <span class="w-8 h-8 rounded-full gradient-cloudpeers text-white flex items-center justify-center font-bold">3</span>
+                                Configure Custom Domain
+                            </h3>
+                            <p class="text-slate-700 mb-3">In the Cloudflare Dashboard:</p>
+                            <ol class="text-sm text-slate-700 space-y-2 list-decimal list-inside ml-4">
+                                <li>Navigate to <strong>Workers & Pages</strong> → Your project</li>
+                                <li>Go to <strong>Settings</strong> → <strong>Custom domains</strong></li>
+                                <li>Click <strong>Set up a custom domain</strong></li>
+                                <li>Enter your domain (e.g., <code class="bg-slate-100 px-2 py-1 rounded text-maroon">your-event.cloudpeers.com</code>)</li>
+                                <li>Wait for DNS propagation (usually 1-5 minutes)</li>
+                            </ol>
+                        </div>
+
+                        <div class="p-6 bg-gradient-cloudpeers-soft rounded-xl border border-tan">
+                            <h3 class="text-xl font-bold mb-4 text-maroon flex items-center gap-2">
+                                <span class="w-8 h-8 rounded-full gradient-cloudpeers text-white flex items-center justify-center font-bold">4</span>
+                                Test Live Site
+                            </h3>
+                            <p class="text-slate-700 mb-3">Once deployed, verify these features:</p>
+                            <ul class="text-sm text-slate-700 space-y-2 list-disc list-inside ml-4">
+                                <li>Visit your event URL</li>
+                                <li>Test registration form with a real email</li>
+                                <li>Verify QR code works on mobile</li>
+                                <li>Test potluck sign-ups (if enabled)</li>
+                                <li>Test music requests (if enabled)</li>
+                                <li>Check mobile responsiveness</li>
+                                <li>Confirm all links work correctly</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Support -->
+                    <div class="mt-8 p-6 bg-blue-50 rounded-xl border border-blue-200">
+                        <h4 class="font-semibold mb-3 text-blue-900 flex items-center gap-2">
+                            <i data-lucide="help-circle" class="w-5 h-5"></i>
+                            Need Help?
+                        </h4>
+                        <p class="text-sm text-blue-800 mb-3">For technical support or questions:</p>
+                        <ul class="text-sm text-blue-800 space-y-1">
+                            <li>• <strong>Technical issues:</strong> Check the documentation in <code class="bg-blue-100 px-2 py-1 rounded">README.md</code></li>
+                            <li>• <strong>Content changes:</strong> Edit your configuration JSON file</li>
+                            <li>• <strong>Feature requests:</strong> Contact the CloudPeers team</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Footer -->
+        <footer class="py-8 px-6 bg-slate-900 text-white mt-12">
+            <div class="container mx-auto max-w-7xl text-center">
+                <p class="text-sm text-slate-400">
+                    CloudPeers Event Creator Portal •
+                    <a href="https://cloudpeers.com" class="text-tan hover:underline">CloudPeers</a> •
+                    <a href="../README.md" class="text-tan hover:underline">Documentation</a>
+                </p>
+                <p class="text-xs text-slate-500 mt-2">
+                    Multi-Tenant Event Management Platform
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        function creatorPortal() {
+            return {
+                activeTab: 'overview',
+                config: {},
+
+                async init() {
+                    await this.loadConfig();
+                    lucide.createIcons();
+                },
+
+                async loadConfig() {
+                    try {
+                        // Try to load the example config
+                        const response = await fetch('example-config.json');
+                        this.config = await response.json();
+                    } catch (error) {
+                        console.error('Error loading configuration:', error);
+                        // Set default empty config
+                        this.config = {
+                            event: {
+                                title: 'Sample Event',
+                                slug: 'sample-event',
+                                date: '2026-01-01',
+                                time: '6:00 PM',
+                                location: 'TBD'
+                            },
+                            potluck: { enabled: false },
+                            music: { enabled: false }
+                        };
+                    }
+                },
+
+                formatDateTime() {
+                    if (!this.config.event) return 'Not configured';
+                    return `${this.config.event.date || 'TBD'} at ${this.config.event.time || 'TBD'}`;
+                },
+
+                downloadConfig() {
+                    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.config, null, 2));
+                    const downloadAnchorNode = document.createElement('a');
+                    downloadAnchorNode.setAttribute("href", dataStr);
+                    downloadAnchorNode.setAttribute("download", `${this.config.event?.slug || 'event'}-config.json`);
+                    document.body.appendChild(downloadAnchorNode);
+                    downloadAnchorNode.click();
+                    downloadAnchorNode.remove();
+                }
+            }
+        }
+
+        // Reload icons when tab changes
+        document.addEventListener('alpine:initialized', () => {
+            setTimeout(() => lucide.createIcons(), 100);
+        });
+    </script>
+</body>
+</html>

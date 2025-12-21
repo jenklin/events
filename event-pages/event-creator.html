@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Your Event - CloudPeers Events</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* CloudPeers Brand Colors */
+        .gradient-cloudpeers {
+            background: linear-gradient(135deg, #7B1E1E 0%, #D4A574 100%);
+        }
+
+        .gradient-cloudpeers-soft {
+            background: linear-gradient(135deg, rgba(123, 30, 30, 0.1) 0%, rgba(212, 165, 116, 0.1) 100%);
+        }
+
+        .text-maroon { color: #7B1E1E; }
+        .bg-maroon { background-color: #7B1E1E; }
+        .border-maroon { border-color: #7B1E1E; }
+
+        .text-tan { color: #D4A574; }
+        .bg-tan { background-color: #D4A574; }
+        .border-tan { border-color: #D4A574; }
+
+        /* Form styling */
+        .form-input {
+            @apply w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-maroon focus:border-maroon transition-all;
+        }
+
+        .form-label {
+            @apply block text-sm font-medium text-slate-700 mb-2;
+        }
+
+        .form-section {
+            @apply bg-white rounded-xl p-6 border border-slate-200 shadow-sm mb-6;
+        }
+
+        /* Tailwind Config */
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        maroon: {
+                            DEFAULT: '#7B1E1E',
+                            dark: '#5A1616',
+                            light: '#9B2E2E',
+                        },
+                        tan: {
+                            DEFAULT: '#D4A574',
+                            dark: '#B08A5C',
+                            light: '#E4C5A4',
+                        }
+                    }
+                }
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 via-white to-tan-50 text-slate-900 min-h-screen">
+    <div x-data="eventCreator()" x-init="init()">
+        <!-- Header -->
+        <header class="bg-white/90 backdrop-blur-lg border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+            <div class="container mx-auto px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-lg gradient-cloudpeers flex items-center justify-center">
+                            <span class="text-white font-bold text-xl">CP</span>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-bold text-maroon">Create Your Event</h1>
+                            <p class="text-sm text-slate-600">CloudPeers Events Platform</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button
+                            @click="generateEvent()"
+                            class="px-6 py-2 gradient-cloudpeers text-white rounded-lg hover:shadow-lg transition-all flex items-center gap-2 font-semibold"
+                        >
+                            <i data-lucide="rocket" class="w-5 h-5"></i>
+                            Generate Event Page
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="container mx-auto px-6 py-8 max-w-7xl">
+            <div class="grid lg:grid-cols-3 gap-8">
+
+                <!-- Left Column: Form -->
+                <div class="lg:col-span-2 space-y-6">
+
+                    <!-- Import Section -->
+                    <div class="form-section">
+                        <h2 class="text-xl font-bold mb-4 text-maroon flex items-center gap-2">
+                            <i data-lucide="upload" class="w-6 h-6"></i>
+                            Quick Start
+                        </h2>
+                        <div class="flex gap-4">
+                            <label class="flex-1 cursor-pointer">
+                                <input
+                                    type="file"
+                                    accept=".json"
+                                    @change="importConfig($event)"
+                                    class="hidden"
+                                >
+                                <div class="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center hover:border-maroon transition-colors">
+                                    <i data-lucide="file-json" class="w-12 h-12 text-slate-400 mx-auto mb-3"></i>
+                                    <p class="font-medium text-slate-700">Upload JSON Config</p>
+                                    <p class="text-sm text-slate-500 mt-1">Click to browse</p>
+                                </div>
+                            </label>
+                            <button
+                                @click="loadTemplate()"
+                                class="flex-1 border-2 border-dashed border-slate-300 rounded-lg p-6 text-center hover:border-maroon transition-colors"
+                            >
+                                <i data-lucide="copy" class="w-12 h-12 text-slate-400 mx-auto mb-3"></i>
+                                <p class="font-medium text-slate-700">Load Example</p>
+                                <p class="text-sm text-slate-500 mt-1">Start with template</p>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Basic Event Info -->
+                    <div class="form-section">
+                        <h2 class="text-xl font-bold mb-4 text-maroon flex items-center gap-2">
+                            <i data-lucide="calendar" class="w-6 h-6"></i>
+                            Event Details
+                        </h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="form-label">Event Name *</label>
+                                <input
+                                    type="text"
+                                    x-model="event.title"
+                                    placeholder="Tech Innovation Meetup"
+                                    class="form-input"
+                                >
+                            </div>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="form-label">Event ID/Slug *</label>
+                                    <input
+                                        type="text"
+                                        x-model="event.slug"
+                                        placeholder="tech-meetup-jan2026"
+                                        class="form-input"
+                                    >
+                                    <p class="text-xs text-slate-500 mt-1">URL: events.cloudpeers.com/<span x-text="event.slug || 'your-event'"></span></p>
+                                </div>
+                                <div>
+                                    <label class="form-label">Category</label>
+                                    <input
+                                        type="text"
+                                        x-model="event.category"
+                                        placeholder="Technology & Networking"
+                                        class="form-input"
+                                    >
+                                </div>
+                            </div>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="form-label">Date *</label>
+                                    <input
+                                        type="date"
+                                        x-model="event.date"
+                                        class="form-input"
+                                    >
+                                </div>
+                                <div>
+                                    <label class="form-label">Time *</label>
+                                    <input
+                                        type="text"
+                                        x-model="event.time"
+                                        placeholder="6:00 PM - 9:00 PM"
+                                        class="form-input"
+                                    >
+                                </div>
+                            </div>
+                            <div>
+                                <label class="form-label">Location *</label>
+                                <input
+                                    type="text"
+                                    x-model="event.location"
+                                    placeholder="CloudPeers HQ, San Francisco"
+                                    class="form-input"
+                                >
+                            </div>
+                            <div>
+                                <label class="form-label">Description *</label>
+                                <textarea
+                                    x-model="event.description"
+                                    rows="3"
+                                    placeholder="Join us for an evening of innovation, networking, and collaboration..."
+                                    class="form-input"
+                                ></textarea>
+                            </div>
+                            <div>
+                                <label class="form-label">Capacity (optional)</label>
+                                <input
+                                    type="number"
+                                    x-model="event.capacity"
+                                    placeholder="100"
+                                    class="form-input"
+                                >
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Features -->
+                    <div class="form-section">
+                        <h2 class="text-xl font-bold mb-4 text-maroon flex items-center gap-2">
+                            <i data-lucide="sparkles" class="w-6 h-6"></i>
+                            Event Features
+                        </h2>
+                        <div class="space-y-4">
+                            <!-- Potluck -->
+                            <div class="p-4 bg-slate-50 rounded-lg">
+                                <label class="flex items-center gap-3 cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        x-model="potluck.enabled"
+                                        class="w-5 h-5 text-maroon rounded border-slate-300 focus:ring-maroon"
+                                    >
+                                    <div class="flex-1">
+                                        <div class="font-semibold text-slate-900">Enable Potluck</div>
+                                        <div class="text-sm text-slate-600">Let guests sign up to bring food and drinks</div>
+                                    </div>
+                                    <i data-lucide="utensils" class="w-5 h-5 text-tan"></i>
+                                </label>
+                                <div x-show="potluck.enabled" x-transition class="mt-4 space-y-3">
+                                    <div>
+                                        <label class="form-label">Food Categories (comma separated)</label>
+                                        <input
+                                            type="text"
+                                            x-model="potluckCategories"
+                                            placeholder="Appetizers, Main Dishes, Desserts, Beverages"
+                                            class="form-input"
+                                        >
+                                    </div>
+                                    <label class="flex items-center gap-2">
+                                        <input
+                                            type="checkbox"
+                                            x-model="potluck.showWhatOthersBring"
+                                            class="w-4 h-4 text-maroon rounded"
+                                        >
+                                        <span class="text-sm">Show what others are bringing</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Music -->
+                            <div class="p-4 bg-slate-50 rounded-lg">
+                                <label class="flex items-center gap-3 cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        x-model="music.enabled"
+                                        class="w-5 h-5 text-maroon rounded border-slate-300 focus:ring-maroon"
+                                    >
+                                    <div class="flex-1">
+                                        <div class="font-semibold text-slate-900">Enable Music Requests</div>
+                                        <div class="text-sm text-slate-600">Let guests request or create songs with AI</div>
+                                    </div>
+                                    <i data-lucide="music" class="w-5 h-5 text-tan"></i>
+                                </label>
+                                <div x-show="music.enabled" x-transition class="mt-4 space-y-3">
+                                    <div>
+                                        <label class="form-label">Request Type</label>
+                                        <select x-model="music.type" class="form-input">
+                                            <option value="song_request">Song Requests (existing songs)</option>
+                                            <option value="custom_song">Custom AI Songs</option>
+                                            <option value="both">Both</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="form-label">AI Service</label>
+                                        <select x-model="music.service" class="form-input">
+                                            <option value="suno">Suno AI</option>
+                                            <option value="udio">Udio AI</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="form-label">Max Songs Per Guest</label>
+                                        <input
+                                            type="number"
+                                            x-model="music.maxSongsPerGuest"
+                                            class="form-input"
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Photo Gallery -->
+                            <div class="p-4 bg-slate-50 rounded-lg">
+                                <label class="flex items-center gap-3 cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        x-model="enableGallery"
+                                        class="w-5 h-5 text-maroon rounded border-slate-300 focus:ring-maroon"
+                                    >
+                                    <div class="flex-1">
+                                        <div class="font-semibold text-slate-900">Enable Photo Gallery</div>
+                                        <div class="text-sm text-slate-600">Share event photos with magic link access</div>
+                                    </div>
+                                    <i data-lucide="image" class="w-5 h-5 text-tan"></i>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Registration Settings -->
+                    <div class="form-section">
+                        <h2 class="text-xl font-bold mb-4 text-maroon flex items-center gap-2">
+                            <i data-lucide="user-check" class="w-6 h-6"></i>
+                            Registration Settings
+                        </h2>
+                        <div class="space-y-3">
+                            <label class="flex items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    x-model="registration.enabled"
+                                    class="w-4 h-4 text-maroon rounded"
+                                >
+                                <span class="text-sm font-medium">Enable registration</span>
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    x-model="registration.collectPhone"
+                                    class="w-4 h-4 text-maroon rounded"
+                                >
+                                <span class="text-sm">Collect phone numbers</span>
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    x-model="registration.collectCompany"
+                                    class="w-4 h-4 text-maroon rounded"
+                                >
+                                <span class="text-sm">Collect company/organization</span>
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    x-model="registration.requireApproval"
+                                    class="w-4 h-4 text-maroon rounded"
+                                >
+                                <span class="text-sm">Require host approval for RSVPs</span>
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right Column: Preview & Actions -->
+                <div class="lg:col-span-1 space-y-6">
+
+                    <!-- Live Preview Card -->
+                    <div class="bg-white rounded-xl p-6 border border-slate-200 shadow-sm sticky top-24">
+                        <h3 class="text-lg font-bold mb-4 text-maroon flex items-center gap-2">
+                            <i data-lucide="eye" class="w-5 h-5"></i>
+                            Live Preview
+                        </h3>
+
+                        <div class="space-y-4">
+                            <div class="p-4 bg-gradient-cloudpeers-soft rounded-lg border border-tan">
+                                <h4 class="font-bold text-lg text-maroon mb-2" x-text="event.title || 'Your Event Name'"></h4>
+                                <div class="space-y-1 text-sm text-slate-700">
+                                    <p><i data-lucide="calendar" class="w-4 h-4 inline mr-2"></i><span x-text="event.date || 'Date TBD'"></span></p>
+                                    <p><i data-lucide="clock" class="w-4 h-4 inline mr-2"></i><span x-text="event.time || 'Time TBD'"></span></p>
+                                    <p><i data-lucide="map-pin" class="w-4 h-4 inline mr-2"></i><span x-text="event.location || 'Location TBD'"></span></p>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-wrap gap-2">
+                                <span x-show="potluck.enabled" class="px-3 py-1 bg-green-100 text-green-700 text-xs rounded-full">
+                                    <i data-lucide="utensils" class="w-3 h-3 inline mr-1"></i>Potluck
+                                </span>
+                                <span x-show="music.enabled" class="px-3 py-1 bg-purple-100 text-purple-700 text-xs rounded-full">
+                                    <i data-lucide="music" class="w-3 h-3 inline mr-1"></i>Music
+                                </span>
+                                <span x-show="enableGallery" class="px-3 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
+                                    <i data-lucide="image" class="w-3 h-3 inline mr-1"></i>Gallery
+                                </span>
+                            </div>
+
+                            <div class="pt-4 border-t border-slate-200">
+                                <p class="text-xs text-slate-500 mb-2">Event URL:</p>
+                                <code class="text-xs bg-slate-100 px-2 py-1 rounded block overflow-x-auto">
+                                    events.cloudpeers.com/<span x-text="event.slug || 'your-event'"></span>
+                                </code>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+                        <h3 class="text-lg font-bold mb-4 text-maroon">Quick Actions</h3>
+                        <div class="space-y-3">
+                            <button
+                                @click="generateEvent()"
+                                class="w-full px-4 py-3 gradient-cloudpeers text-white rounded-lg hover:shadow-lg transition-all flex items-center justify-center gap-2 font-semibold"
+                            >
+                                <i data-lucide="rocket" class="w-5 h-5"></i>
+                                Generate Event Page
+                            </button>
+                            <button
+                                @click="downloadConfig()"
+                                class="w-full px-4 py-3 bg-tan text-white rounded-lg hover:bg-tan-dark transition-colors flex items-center justify-center gap-2"
+                            >
+                                <i data-lucide="download" class="w-5 h-5"></i>
+                                Download Config
+                            </button>
+                            <button
+                                @click="resetForm()"
+                                class="w-full px-4 py-3 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors flex items-center justify-center gap-2"
+                            >
+                                <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+                                Reset Form
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Help -->
+                    <div class="bg-blue-50 rounded-xl p-6 border border-blue-200">
+                        <h4 class="font-semibold mb-2 text-blue-900 flex items-center gap-2">
+                            <i data-lucide="help-circle" class="w-5 h-5"></i>
+                            Need Help?
+                        </h4>
+                        <p class="text-sm text-blue-800 mb-3">Follow these steps:</p>
+                        <ol class="text-sm text-blue-800 space-y-1 list-decimal list-inside">
+                            <li>Fill in your event details</li>
+                            <li>Enable features you want</li>
+                            <li>Click "Generate Event Page"</li>
+                            <li>Download and deploy</li>
+                        </ol>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Modal -->
+        <div
+            x-show="showSuccess"
+            x-transition
+            class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+            @click.self="showSuccess = false"
+        >
+            <div class="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="check-circle" class="w-10 h-10 text-green-600"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2 text-slate-900">Event Configuration Ready!</h3>
+                    <p class="text-slate-600 mb-6">Your event configuration has been created. Download it and run the generator to create your event page.</p>
+
+                    <div class="bg-slate-50 rounded-lg p-4 mb-6 text-left">
+                        <p class="text-sm font-medium text-slate-700 mb-2">Next steps:</p>
+                        <ol class="text-sm text-slate-600 space-y-1 list-decimal list-inside">
+                            <li>Download the configuration file</li>
+                            <li>Run: <code class="bg-slate-200 px-2 py-0.5 rounded text-xs">npm run generate:event config.json</code></li>
+                            <li>Find your event in <code class="bg-slate-200 px-2 py-0.5 rounded text-xs">event-pages/output/</code></li>
+                            <li>Deploy to Cloudflare Pages</li>
+                        </ol>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button
+                            @click="downloadConfig(); showSuccess = false"
+                            class="flex-1 px-4 py-2 gradient-cloudpeers text-white rounded-lg hover:shadow-lg transition-all"
+                        >
+                            Download Config
+                        </button>
+                        <button
+                            @click="showSuccess = false"
+                            class="flex-1 px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function eventCreator() {
+            return {
+                event: {
+                    id: '',
+                    title: '',
+                    slug: '',
+                    category: '',
+                    date: '',
+                    time: '',
+                    location: '',
+                    description: '',
+                    capacity: null
+                },
+                potluck: {
+                    enabled: false,
+                    categories: [],
+                    showWhatOthersBring: true
+                },
+                potluckCategories: '',
+                music: {
+                    enabled: false,
+                    type: 'both',
+                    service: 'suno',
+                    maxSongsPerGuest: 3
+                },
+                registration: {
+                    enabled: true,
+                    collectPhone: true,
+                    collectCompany: true,
+                    requireApproval: false
+                },
+                enableGallery: false,
+                showSuccess: false,
+
+                init() {
+                    lucide.createIcons();
+                },
+
+                async loadTemplate() {
+                    try {
+                        const response = await fetch('example-config.json');
+                        const config = await response.json();
+                        this.populateForm(config);
+                        lucide.createIcons();
+                    } catch (error) {
+                        alert('Error loading template. Make sure example-config.json exists.');
+                    }
+                },
+
+                async importConfig(event) {
+                    const file = event.target.files[0];
+                    if (!file) return;
+
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        try {
+                            const config = JSON.parse(e.target.result);
+                            this.populateForm(config);
+                            lucide.createIcons();
+                        } catch (error) {
+                            alert('Error parsing JSON file. Please check the format.');
+                        }
+                    };
+                    reader.readAsText(file);
+                },
+
+                populateForm(config) {
+                    if (config.event) {
+                        this.event = { ...this.event, ...config.event };
+                    }
+                    if (config.potluck) {
+                        this.potluck = { ...this.potluck, ...config.potluck };
+                        this.potluckCategories = (config.potluck.categories || []).join(', ');
+                    }
+                    if (config.music) {
+                        this.music = { ...this.music, ...config.music };
+                    }
+                    if (config.registration) {
+                        this.registration = { ...this.registration, ...config.registration };
+                    }
+                },
+
+                buildConfig() {
+                    // Auto-generate ID from slug
+                    this.event.id = this.event.slug || 'event-' + Date.now();
+
+                    // Parse potluck categories
+                    if (this.potluckCategories) {
+                        this.potluck.categories = this.potluckCategories.split(',').map(c => c.trim()).filter(c => c);
+                    }
+
+                    return {
+                        event: this.event,
+                        potluck: this.potluck.enabled ? this.potluck : undefined,
+                        music: this.music.enabled ? this.music : undefined,
+                        registration: this.registration,
+                        branding: {
+                            primaryColor: '#7B1E1E',
+                            secondaryColor: '#D4A574'
+                        },
+                        integrations: {
+                            supabaseUrl: 'https://your-project.supabase.co',
+                            supabaseAnonKey: 'your-anon-key-here'
+                        }
+                    };
+                },
+
+                generateEvent() {
+                    // Validate required fields
+                    if (!this.event.title || !this.event.slug || !this.event.date || !this.event.time || !this.event.location) {
+                        alert('Please fill in all required fields (marked with *)');
+                        return;
+                    }
+
+                    this.showSuccess = true;
+                    lucide.createIcons();
+                },
+
+                downloadConfig() {
+                    const config = this.buildConfig();
+                    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(config, null, 2));
+                    const downloadAnchorNode = document.createElement('a');
+                    downloadAnchorNode.setAttribute("href", dataStr);
+                    downloadAnchorNode.setAttribute("download", `${this.event.slug || 'event'}-config.json`);
+                    document.body.appendChild(downloadAnchorNode);
+                    downloadAnchorNode.click();
+                    downloadAnchorNode.remove();
+                },
+
+                resetForm() {
+                    if (confirm('Are you sure you want to reset the form? All data will be lost.')) {
+                        this.event = {
+                            id: '',
+                            title: '',
+                            slug: '',
+                            category: '',
+                            date: '',
+                            time: '',
+                            location: '',
+                            description: '',
+                            capacity: null
+                        };
+                        this.potluck = {
+                            enabled: false,
+                            categories: [],
+                            showWhatOthersBring: true
+                        };
+                        this.potluckCategories = '';
+                        this.music = {
+                            enabled: false,
+                            type: 'both',
+                            service: 'suno',
+                            maxSongsPerGuest: 3
+                        };
+                        this.registration = {
+                            enabled: true,
+                            collectPhone: true,
+                            collectCompany: true,
+                            requireApproval: false
+                        };
+                        this.enableGallery = false;
+                    }
+                }
+            }
+        }
+
+        // Reload icons when needed
+        document.addEventListener('alpine:initialized', () => {
+            setTimeout(() => lucide.createIcons(), 100);
+        });
+
+        // Reload icons on any Alpine update
+        document.addEventListener('alpine:mutated', () => {
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>

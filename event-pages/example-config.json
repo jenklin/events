@@ -1,0 +1,162 @@
+{
+  "event": {
+    "id": "tech-meetup-jan2026",
+    "title": "Tech Innovation Meetup",
+    "slug": "tech-meetup-jan2026",
+    "category": "Technology & Networking",
+    "date": "January 15, 2026",
+    "time": "6:00 PM - 9:00 PM",
+    "timezone": "PST",
+    "location": "CloudPeers HQ, San Francisco",
+    "description": "Join us for an evening of innovation, networking, and collaboration with tech leaders from across the Bay Area.",
+    "whatToExpect": {
+      "intro": "An engaging evening of tech talks, networking, and hands-on demos from leading innovators.",
+      "content": "<p>This meetup brings together developers, designers, and entrepreneurs to share ideas and build connections.</p><p>You'll have the opportunity to:</p><ul class='list-disc list-inside space-y-2'><li>Learn from industry experts</li><li>Network with fellow tech professionals</li><li>Participate in hands-on workshops</li><li>Enjoy refreshments and socialize</li></ul>"
+    },
+    "capacity": 100,
+    "tags": ["technology", "networking", "innovation", "startups"]
+  },
+
+  "venue": {
+    "name": "CloudPeers Innovation Center",
+    "description": "A modern event space designed for collaboration and creativity.",
+    "address": {
+      "street": "123 Tech Street",
+      "city": "San Francisco",
+      "state": "CA",
+      "country": "USA",
+      "postalCode": "94105"
+    },
+    "coordinates": {
+      "lat": 37.7749,
+      "lng": -122.4194
+    },
+    "mapUrl": "https://maps.google.com/?q=123+Tech+Street+San+Francisco+CA",
+    "parking": "Street parking available. Garage parking at 456 Market Street.",
+    "accessibility": "Wheelchair accessible. Elevators available."
+  },
+
+  "schedule": [
+    {
+      "time": "18:00",
+      "title": "Registration & Networking",
+      "description": "Check in, grab refreshments, and meet fellow attendees",
+      "type": "networking",
+      "duration": 30
+    },
+    {
+      "time": "18:30",
+      "title": "Welcome & Opening Remarks",
+      "description": "Introduction to CloudPeers and tonight's agenda",
+      "speaker": "Jennifer Lin, CEO CloudPeers",
+      "type": "session",
+      "duration": 15
+    },
+    {
+      "time": "18:45",
+      "title": "Keynote: The Future of AI-Native Applications",
+      "description": "Exploring how AI is transforming software development",
+      "speaker": "Dr. Sarah Chen, AI Research Lead",
+      "type": "session",
+      "duration": 30
+    },
+    {
+      "time": "19:15",
+      "title": "Panel Discussion: Building Scalable Systems",
+      "description": "Best practices from engineers at leading tech companies",
+      "type": "session",
+      "duration": 45
+    },
+    {
+      "time": "20:00",
+      "title": "Networking & Demo Booths",
+      "description": "Explore demos, connect with speakers, and enjoy refreshments",
+      "type": "networking",
+      "duration": 60
+    }
+  ],
+
+  "speakers": [
+    {
+      "name": "Dr. Sarah Chen",
+      "title": "AI Research Lead at TechCorp",
+      "bio": "Sarah leads AI research at TechCorp with a focus on natural language processing and machine learning systems. She holds a PhD in Computer Science from Stanford.",
+      "photo": "https://example.com/speakers/sarah-chen.jpg",
+      "linkedin": "https://linkedin.com/in/sarahchen",
+      "twitter": "https://twitter.com/sarahchen"
+    },
+    {
+      "name": "Marcus Rodriguez",
+      "title": "Principal Engineer at CloudScale",
+      "bio": "Marcus has 15 years of experience building distributed systems. He's passionate about developer tools and open source software.",
+      "photo": "https://example.com/speakers/marcus-rodriguez.jpg",
+      "linkedin": "https://linkedin.com/in/marcusrodriguez",
+      "website": "https://marcusrodriguez.dev"
+    },
+    {
+      "name": "Emma Thompson",
+      "title": "VP of Engineering at StartupXYZ",
+      "bio": "Emma leads engineering teams and has scaled startups from seed to Series B. She's an advocate for engineering culture and mentorship.",
+      "linkedin": "https://linkedin.com/in/emmathompson"
+    }
+  ],
+
+  "registration": {
+    "enabled": true,
+    "collectPhone": true,
+    "collectCompany": true,
+    "customFields": [
+      {
+        "id": "company",
+        "label": "Company/Organization",
+        "type": "text",
+        "required": false,
+        "placeholder": "Acme Inc."
+      },
+      {
+        "id": "role",
+        "label": "Your Role",
+        "type": "select",
+        "options": [
+          "Software Engineer",
+          "Designer",
+          "Product Manager",
+          "Founder/CEO",
+          "Student",
+          "Other"
+        ],
+        "required": true
+      },
+      {
+        "id": "interests",
+        "label": "What brings you to this event?",
+        "type": "textarea",
+        "required": false,
+        "placeholder": "Tell us what you're hoping to learn or who you'd like to meet..."
+      }
+    ],
+    "requireApproval": false,
+    "sendConfirmation": true
+  },
+
+  "branding": {
+    "primaryColor": "#7B1E1E",
+    "secondaryColor": "#D4A574"
+  },
+
+  "integrations": {
+    "supabaseUrl": "https://your-project.supabase.co",
+    "supabaseAnonKey": "your-anon-key-here",
+    "analytics": {
+      "googleAnalytics": "G-XXXXXXXXXX"
+    },
+    "calendar": {
+      "googleCalendar": true,
+      "ics": true
+    },
+    "social": {
+      "shareButtons": true,
+      "ogImage": "https://example.com/og-image.jpg"
+    }
+  }
+}
