@@ -1,0 +1,33 @@
+{
+  "name": "cloudpeers-events",
+  "version": "1.0.0",
+  "description": "CloudPeers Custom Events - MCP Service for event management",
+  "scripts": {
+    "dev": "cd app && npm run dev",
+    "build": "cd app && npm run build",
+    "start": "cd app && npm run start",
+    "deploy:staging": "./deploy.sh staging",
+    "deploy:prod": "./deploy.sh prod",
+    "deploy:ga": "./deploy.sh prod",
+    "verify-db": "node verify-database.js",
+    "install:app": "cd app && npm install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jenklin/events"
+  },
+  "keywords": [
+    "events",
+    "rsvp",
+    "cloudpeers",
+    "mcp",
+    "potluck",
+    "music"
+  ],
+  "author": "CloudPeers",
+  "license": "MIT",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.47.10",
+    "dotenv": "^16.4.7"
+  }
+}
