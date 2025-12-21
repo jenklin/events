@@ -1,7 +1,7 @@
 -- =====================================================
--- Partiful-Enhanced Events Database Schema
+-- Enhanced Events Database Schema
 -- =====================================================
--- Feature parity with https://partiful.com/create
+-- Feature parity with modern event management platforms
 -- Includes: RSVP management, guest tracking, waitlists,
 -- approvals, activity logs, and more
 -- =====================================================
@@ -27,7 +27,7 @@ CREATE TABLE events (
      - custom_subdomain: NULL → uses path-based URL: events.cloudpeers.com/e/event-id
   */
 
-  -- Cover Image & Theme (Partiful feature)
+  -- Cover Image & Theme (Modern event platform feature)
   cover_image_type TEXT CHECK (cover_image_type IN ('preset', 'custom')),
   cover_image_theme TEXT CHECK (cover_image_theme IN ('classic', 'eclectic', 'fancy', 'literary', 'digital', 'elegant', 'simple')),
   cover_image_url TEXT,
@@ -49,10 +49,10 @@ CREATE TABLE events (
   location_description TEXT,
   nearest_station TEXT,
   google_maps_link TEXT,
-  hide_location_until_rsvp BOOLEAN DEFAULT FALSE,  -- Partiful feature
+  hide_location_until_rsvp BOOLEAN DEFAULT FALSE,  -- Modern event platform feature
   show_location_only_approved BOOLEAN DEFAULT FALSE,
 
-  -- Capacity & Waitlist (Partiful features)
+  -- Capacity & Waitlist (Modern event platform features)
   capacity_enabled BOOLEAN DEFAULT FALSE,
   max_guests INTEGER,                     -- NULL means unlimited
   enable_waitlist BOOLEAN DEFAULT FALSE,
@@ -66,7 +66,7 @@ CREATE TABLE events (
   cost_per_person BOOLEAN DEFAULT TRUE,
   cost_description TEXT,
 
-  -- Visibility (Partiful features)
+  -- Visibility (Modern event platform features)
   is_public BOOLEAN DEFAULT FALSE,
   password_hash TEXT,                      -- Password protection
   show_guest_names BOOLEAN DEFAULT TRUE,
@@ -76,10 +76,10 @@ CREATE TABLE events (
 
   -- RSVP Settings
   rsvp_enabled BOOLEAN DEFAULT TRUE,
-  require_approval BOOLEAN DEFAULT FALSE,  -- Partiful: host approval required
+  require_approval BOOLEAN DEFAULT FALSE,  -- Modern event platforms: host approval required
   allow_plus_ones BOOLEAN DEFAULT FALSE,
   max_plus_ones INTEGER DEFAULT 0,
-  allow_mutual_invites BOOLEAN DEFAULT FALSE, -- Partiful: guests invite contacts
+  allow_mutual_invites BOOLEAN DEFAULT FALSE, -- Modern event platforms: guests invite contacts
   collect_guest_photos BOOLEAN DEFAULT FALSE,
 
   -- Potluck Settings (OPTIONAL)
@@ -142,7 +142,7 @@ CREATE INDEX idx_events_public ON events(is_public) WHERE is_public = TRUE;
 CREATE INDEX idx_events_not_deleted ON events(event_date) WHERE deleted_at IS NULL;
 
 -- =====================================================
--- RSVP RESPONSES TABLE (Partiful-style)
+-- RSVP RESPONSES TABLE (Modern)
 -- =====================================================
 
 CREATE TABLE rsvp_responses (
@@ -153,9 +153,9 @@ CREATE TABLE rsvp_responses (
   guest_email TEXT NOT NULL,
   guest_name TEXT NOT NULL,
   guest_phone TEXT,
-  guest_photo_url TEXT,                    -- Partiful: guest can upload photo
+  guest_photo_url TEXT,                    -- Modern event platforms: guest can upload photo
 
-  -- RSVP Status (Partiful: Going/Maybe/Can't Go)
+  -- RSVP Status (Modern event platforms: Going/Maybe/Can't Go)
   status TEXT NOT NULL CHECK (status IN ('going', 'maybe', 'cant_go', 'pending', 'approved', 'declined', 'waitlisted')),
   previous_status TEXT,                    -- Track status changes
 
@@ -216,7 +216,7 @@ CREATE TABLE rsvp_responses (
   }
   */
 
-  -- Approval Workflow (Partiful feature)
+  -- Approval Workflow (Modern event platform feature)
   requires_approval BOOLEAN DEFAULT FALSE,
   approved_by TEXT,                        -- Host email who approved
   approved_at TIMESTAMP WITH TIME ZONE,
@@ -252,7 +252,7 @@ CREATE INDEX idx_rsvp_pending_approval ON rsvp_responses(event_id, status)
 CREATE INDEX idx_rsvp_created ON rsvp_responses(created_at DESC);
 
 -- =====================================================
--- GUEST ACTIVITY LOG (Partiful: activity timestamps)
+-- GUEST ACTIVITY LOG (Modern event platforms: activity timestamps)
 -- =====================================================
 
 CREATE TABLE guest_activity_log (
@@ -309,7 +309,7 @@ CREATE INDEX idx_activity_guest ON guest_activity_log(guest_email);
 CREATE INDEX idx_activity_time ON guest_activity_log(created_at DESC);
 
 -- =====================================================
--- WAITLIST TABLE (Partiful feature)
+-- WAITLIST TABLE (Modern event platform feature)
 -- =====================================================
 
 CREATE TABLE event_waitlist (
@@ -354,7 +354,7 @@ CREATE INDEX idx_waitlist_position ON event_waitlist(event_id, position);
 CREATE INDEX idx_waitlist_status ON event_waitlist(event_id, status);
 
 -- =====================================================
--- GUEST COMMENTS/MESSAGES (Optional Partiful feature)
+-- GUEST COMMENTS/MESSAGES (Optional Modern event platform feature)
 -- =====================================================
 
 CREATE TABLE guest_comments (
@@ -826,7 +826,7 @@ CREATE INDEX idx_events_date_status ON events(event_date, is_public) WHERE delet
 CREATE INDEX idx_rsvp_event_status_created ON rsvp_responses(event_id, status, created_at DESC);
 CREATE INDEX idx_activity_event_type_time ON guest_activity_log(event_id, activity_type, created_at DESC);
 
-COMMENT ON TABLE events IS 'Partiful-enhanced events with RSVP management, capacity limits, and waitlists';
+COMMENT ON TABLE events IS 'Enhanced events with RSVP management, capacity limits, and waitlists';
 COMMENT ON TABLE rsvp_responses IS 'Guest RSVPs with Going/Maybe/Cannot Go statuses, approvals, and plus-ones';
 COMMENT ON TABLE guest_activity_log IS 'Activity timeline showing when guests RSVP, share, comment, etc.';
 COMMENT ON TABLE event_waitlist IS 'Waitlist for events at capacity with position tracking';

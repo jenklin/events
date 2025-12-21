@@ -1,7 +1,7 @@
 /**
- * Partiful-Enhanced Event Template Schema
+ * Enhanced Event Template Schema
  *
- * Feature parity with https://partiful.com/create including:
+ * Feature parity with modern event management platforms including:
  * - Multi-response RSVP (Going/Maybe/Can't Go)
  * - Guest management (approval, waitlist, mutual invites)
  * - Cover image themes
@@ -11,7 +11,7 @@
  * - Public/private visibility controls
  */
 
-export interface PartifulEnhancedTemplate {
+export interface Modern Event PlatformsEnhancedTemplate {
   // ========================================
   // BRANDING (White-label customization)
   // ========================================
@@ -43,7 +43,7 @@ export interface PartifulEnhancedTemplate {
     title: string;                          // Required
     description: string;
 
-    // Cover Image & Theme (Partiful feature)
+    // Cover Image & Theme (Modern event platform feature)
     coverImage: {
       type: 'preset' | 'custom';
       theme?: 'classic' | 'eclectic' | 'fancy' | 'literary' | 'digital' | 'elegant' | 'simple';
@@ -53,7 +53,7 @@ export interface PartifulEnhancedTemplate {
 
     // Host Information
     host: {
-      name: string;                         // Host nickname (optional in Partiful)
+      name: string;                         // Host nickname (optional in Modern Event Platforms)
       email: string;
       photo?: string;
     };
@@ -74,7 +74,7 @@ export interface PartifulEnhancedTemplate {
       description?: string;
       nearestStation?: string;
       googleMapsLink: string;
-      hideUntilRsvp: boolean;              // Partiful feature: hide location before RSVP
+      hideUntilRsvp: boolean;              // Modern event platform feature: hide location before RSVP
       showOnlyApproved?: boolean;          // Only show to approved guests
     };
 
@@ -82,7 +82,7 @@ export interface PartifulEnhancedTemplate {
     capacity: {
       enabled: boolean;
       maxGuests: number | 'unlimited';
-      enableWaitlist: boolean;             // Partiful feature
+      enableWaitlist: boolean;             // Modern event platform feature
       currentCount?: number;
       waitlistCount?: number;
     };
@@ -103,12 +103,12 @@ export interface PartifulEnhancedTemplate {
   };
 
   // ========================================
-  // RSVP CONFIGURATION (Partiful features)
+  // RSVP CONFIGURATION (Modern event platform features)
   // ========================================
   rsvp: {
     enabled: boolean;
 
-    // Response Options (emoji-based like Partiful)
+    // Response Options (emoji-based like Modern Event Platforms)
     responseTypes: Array<{
       value: 'going' | 'maybe' | 'cant_go';
       label: string;
@@ -122,7 +122,7 @@ export interface PartifulEnhancedTemplate {
       requireApproval: boolean;            // Host must approve RSVPs
       allowPlusOnes: boolean;
       maxPlusOnes?: number;
-      allowMutualInvites: boolean;         // Partiful: guests invite mutual contacts
+      allowMutualInvites: boolean;         // Modern event platforms: guests invite mutual contacts
       collectPhotos: boolean;              // Allow guest photo uploads
     };
 
@@ -177,7 +177,7 @@ export interface PartifulEnhancedTemplate {
   };
 
   // ========================================
-  // VISIBILITY & SHARING (Partiful features)
+  // VISIBILITY & SHARING (Modern event platform features)
   // ========================================
   visibility: {
     isPublic: boolean;                     // Public vs private event
@@ -307,7 +307,7 @@ export interface PartifulEnhancedTemplate {
   };
 
   // ========================================
-  // HOST TOOLS (Partiful features)
+  // HOST TOOLS (Modern event platform features)
   // ========================================
   hostTools?: {
     // Quick Actions
@@ -345,9 +345,9 @@ export interface PartifulEnhancedTemplate {
 }
 
 /**
- * Example: Partiful-style Birthday Party
+ * Example: Modern Birthday Party
  */
-export const examplePartifulEvent: PartifulEnhancedTemplate = {
+export const exampleModern Event PlatformsEvent: Modern Event PlatformsEnhancedTemplate = {
   branding: {
     organizationName: "CloudPeers Events",
     logo: {

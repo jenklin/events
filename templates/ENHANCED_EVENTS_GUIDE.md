@@ -1,12 +1,12 @@
-# Partiful-Enhanced Event Template - Complete Guide
+# Enhanced Event Template - Complete Guide
 
 ## Overview
 
-This template system provides **feature parity with Partiful** (https://partiful.com/create) while retaining all existing CloudPeers Events features including QR codes, photo galleries, and white-label branding.
+This template system provides **comprehensive event management features** inspired by modern event platforms. All existing CloudPeers Events features are retained including QR codes, photo galleries, and white-label branding.
 
 ## 🎯 Key Features
 
-### ✅ Core Partiful Features
+### ✅ Core Event Management Features
 - **Multi-response RSVP**: Going ✅ / Maybe 🤔 / Can't Go ❌
 - **Guest Management**: Approval workflow, waitlist, mutual invites
 - **Cover Themes**: 7 preset themes (Classic, Eclectic, Fancy, Literary, Digital, Elegant, Simple)
@@ -16,7 +16,7 @@ This template system provides **feature parity with Partiful** (https://partiful
 - **Public/Private Events**: Control visibility and guest list display
 - **Plus Ones**: Configurable guest limits per RSVP
 
-### 🎉 Enhanced Features (Beyond Partiful)
+### 🎉 Enhanced Features
 - **Potluck Management** (OPTIONAL): Track what each guest is bringing
 - **Music Contributions** (OPTIONAL): Song requests OR AI-generated custom songs
 - **QR Codes**: Auto-generated for easy event sharing (retained from existing system)
@@ -28,7 +28,7 @@ This template system provides **feature parity with Partiful** (https://partiful
 
 ## 📋 Complete Feature Comparison
 
-| Feature | Partiful | CloudPeers Enhanced | Notes |
+| Feature | Modern Event Platforms | CloudPeers Enhanced | Notes |
 |---------|----------|---------------------|-------|
 | **Event Details** |
 | Event title | ✅ | ✅ | Required |
@@ -93,7 +93,7 @@ See `partiful-enhanced-schema.ts` for complete interface.
 See `partiful-database-schema.sql` for complete schema.
 
 **Core tables:**
-- `events` - Event details with Partiful-enhanced fields
+- `events` - Event details with Enhanced fields
 - `rsvp_responses` - Guest RSVPs with status, plus ones, food, music
 - `guest_activity_log` - Timeline of all guest actions
 - `event_waitlist` - Waitlist with position tracking
@@ -111,7 +111,7 @@ See `partiful-database-schema.sql` for complete schema.
 
 ## 🎨 Event Types & Examples
 
-### Example 1: Birthday Party (like Partiful)
+### Example 1: Birthday Party (like modern event platforms)
 
 ```json
 {
@@ -376,7 +376,7 @@ branding: {
 - [ ] Seed sample event
 
 ### Phase 2: API Development
-- [ ] Event creation endpoint with Partiful fields
+- [ ] Event creation endpoint with modern event platforms fields
 - [ ] RSVP submission with multi-response types
 - [ ] Waitlist management
 - [ ] Guest approval workflow
