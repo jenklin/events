@@ -16,7 +16,10 @@
     "generate:example": "cd event-pages/generator && tsx generate.ts ../example-config.json",
     "install:all": "npm install && cd creator-portal && npm install",
     "clean": "rm -rf creator-portal/.next gallery/.next event-pages/output/*",
-    "typecheck": "cd creator-portal && tsc --noEmit"
+    "typecheck": "cd creator-portal && tsc --noEmit",
+    "deploy:staging": "./deploy.sh staging",
+    "deploy:prod": "./deploy.sh prod",
+    "deploy:ga": "./deploy.sh prod"
   },
   "devDependencies": {
     "tsx": "^4.7.0",
