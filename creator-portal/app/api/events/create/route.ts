@@ -13,6 +13,9 @@ export async function POST(req: NextRequest) {
     const supabase = getSupabaseAdmin();
     const body = await req.json();
 
+    // Extract overwrite flag (not part of the main schema)
+    const overwrite = body.overwrite === true;
+
     // Validate request body
     const validatedData = eventFormSchema.parse(body);
 
@@ -25,11 +28,19 @@ export async function POST(req: NextRequest) {
         .eq('custom_subdomain', subdomain)
         .maybeSingle();
 
-      if (existingEvent) {
+      if (existingEvent && !overwrite) {
         return NextResponse.json(
           { error: `Subdomain "${subdomain}" is already taken` },
           { status: 400 }
         );
+      }
+
+      // If overwrite is true and subdomain exists, soft delete the existing event
+      if (existingEvent && overwrite) {
+        await supabase
+          .from('events')
+          .update({ deleted_at: new Date().toISOString() })
+          .eq('custom_subdomain', subdomain);
       }
     }
 
@@ -40,11 +51,19 @@ export async function POST(req: NextRequest) {
       .eq('event_id', validatedData.urlBranding.customSlug)
       .maybeSingle();
 
-    if (existingSlug) {
+    if (existingSlug && !overwrite) {
       return NextResponse.json(
         { error: `URL slug "${validatedData.urlBranding.customSlug}" is already taken` },
         { status: 400 }
       );
+    }
+
+    // If overwrite is true and slug exists, soft delete the existing event
+    if (existingSlug && overwrite) {
+      await supabase
+        .from('events')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('event_id', validatedData.urlBranding.customSlug);
     }
 
     // Create event in database

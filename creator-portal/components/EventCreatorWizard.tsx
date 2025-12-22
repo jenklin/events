@@ -149,7 +149,7 @@ export default function EventCreatorWizard() {
     }
   };
 
-  const onSubmit = async (data: EventFormData) => {
+  const onSubmit = async (data: EventFormData, overwrite: boolean = false) => {
     setIsPublishing(true);
     try {
       console.log('Submitting event data:', data);
@@ -157,13 +157,32 @@ export default function EventCreatorWizard() {
       const response = await fetch('/api/events/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, overwrite }),
       });
 
       const result = await response.json();
 
       if (!response.ok) {
         console.error('Server response error:', result);
+
+        // Check if it's a duplicate slug/subdomain error
+        const isDuplicateSlug = result.error?.includes('is already taken');
+
+        if (isDuplicateSlug && !overwrite) {
+          // Prompt user to overwrite
+          const confirmOverwrite = confirm(
+            `${result.error}\n\nDo you want to overwrite the existing event with this new data?\n\n` +
+            `Warning: This will permanently delete the existing event and all its data (RSVPs, photos, etc.).`
+          );
+
+          if (confirmOverwrite) {
+            // Retry with overwrite flag
+            setIsPublishing(false);
+            await onSubmit(data, true);
+            return;
+          }
+          return;
+        }
 
         // Show detailed validation errors
         if (result.error === 'Validation failed' && result.details) {
@@ -187,6 +206,60 @@ export default function EventCreatorWizard() {
     }
   };
 
+  // Export current form data as JSON
+  const exportFormData = () => {
+    const currentData = form.getValues();
+    const dataStr = JSON.stringify(currentData, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    const fileName = `event-${currentData.urlBranding?.customSlug || 'draft'}-${Date.now()}.json`;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  // Import form data from JSON file
+  const importFormData = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'application/json,.json';
+    input.onchange = (e: Event) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const jsonData = JSON.parse(event.target?.result as string);
+
+          // Validate the imported data against the schema
+          const validatedData = eventFormSchema.parse(jsonData);
+
+          // Reset form with imported data
+          form.reset(validatedData);
+
+          alert('Event data imported successfully!');
+        } catch (error: any) {
+          console.error('Import error:', error);
+          if (error.name === 'ZodError') {
+            const errorMessages = error.errors
+              .map((err: any) => `${err.path.join('.')}: ${err.message}`)
+              .join('\n');
+            alert(`Invalid JSON format:\n\n${errorMessages}`);
+          } else {
+            alert('Failed to import JSON file. Please check the file format.');
+          }
+        }
+      };
+      reader.readAsText(file);
+    };
+    input.click();
+  };
+
   const CurrentStepComponent = STEPS[currentStep - 1].component;
   const progress = (currentStep / STEPS.length) * 100;
 
@@ -201,6 +274,30 @@ export default function EventCreatorWizard() {
           <p className="text-slate-300">
             Step {currentStep} of {STEPS.length}: {STEPS[currentStep - 1].name}
           </p>
+
+          {/* Import/Export Buttons */}
+          <div className="flex justify-center gap-3 mt-4">
+            <button
+              type="button"
+              onClick={importFormData}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors text-sm flex items-center gap-2"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+              </svg>
+              Import JSON
+            </button>
+            <button
+              type="button"
+              onClick={exportFormData}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium transition-colors text-sm flex items-center gap-2"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Export JSON
+            </button>
+          </div>
         </div>
 
         {/* Progress Bar */}
