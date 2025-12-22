@@ -31,9 +31,10 @@ echo -e "${GREEN}✓ Correct directory: events${NC}"
 echo -e "${GREEN}✓ Deploying: Custom Events (CloudPeers Event Management Service)${NC}"
 echo ""
 
-# Configuration
-PROJECT_ID="${GCP_PROJECT_ID:-gen-lang-client-0243928474}"
-REGION="${CLOUD_RUN_REGION:-us-west1}"
+# Configuration - ALWAYS deploy events to gen-lang (cloudpeers project)
+# Do NOT use GCP_PROJECT_ID env var to avoid confusion with MCP platform
+PROJECT_ID="gen-lang-client-0243928474"  # CloudPeers events project
+REGION="us-west1"
 IMAGE_NAME="custom-events"
 
 # Verify active account
