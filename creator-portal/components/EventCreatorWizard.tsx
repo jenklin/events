@@ -110,9 +110,36 @@ export default function EventCreatorWizard() {
   }
 
   const nextStep = async () => {
-    const isValid = await form.trigger();
+    // Define which fields to validate for each step
+    const stepFields: Record<number, any> = {
+      1: ['eventBasics.title', 'eventBasics.coverImage'],
+      2: [
+        'dateLocation.date',
+        'dateLocation.startTime',
+        'dateLocation.venueName',
+        'dateLocation.address',
+      ],
+      3: ['guestSettings'],
+      4: ['rsvpOptions'],
+      5: ['potluck', 'music'],
+      6: ['urlBranding.customSlug'],
+      7: ['visibility'],
+      8: ['host.name', 'host.email', 'additional'],
+    };
+
+    // Validate only the current step's fields
+    const fieldsToValidate = stepFields[currentStep];
+    const isValid = fieldsToValidate
+      ? await form.trigger(fieldsToValidate)
+      : true;
+
     if (isValid && currentStep < STEPS.length) {
       setCurrentStep(currentStep + 1);
+    } else if (!isValid) {
+      // Scroll to first error
+      const errors = form.formState.errors;
+      console.log('Validation errors:', errors);
+      alert('Please fill in all required fields before continuing.');
     }
   };
 
@@ -125,17 +152,30 @@ export default function EventCreatorWizard() {
   const onSubmit = async (data: EventFormData) => {
     setIsPublishing(true);
     try {
+      console.log('Submitting event data:', data);
+
       const response = await fetch('/api/events/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to create event');
-      }
-
       const result = await response.json();
+
+      if (!response.ok) {
+        console.error('Server response error:', result);
+
+        // Show detailed validation errors
+        if (result.error === 'Validation failed' && result.details) {
+          const errorMessages = result.details
+            .map((err: any) => `${err.path.join('.')}: ${err.message}`)
+            .join('\n');
+          alert(`Validation failed:\n\n${errorMessages}`);
+        } else {
+          alert(`Failed to create event: ${result.error || 'Unknown error'}`);
+        }
+        return;
+      }
 
       // Redirect to success page
       window.location.href = `/events/success?id=${result.eventId}`;

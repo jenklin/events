@@ -4,7 +4,7 @@ import { UseFormReturn } from 'react-hook-form';
 import { EventFormData, getEventUrl } from '@/lib/eventSchema';
 
 export default function UrlBrandingForm({ form }: { form: UseFormReturn<EventFormData> }) {
-  const { register, watch } = form;
+  const { register, watch, formState: { errors } } = form;
 
   const customSlug = watch('urlBranding.customSlug');
   const subdomainEnabled = watch('urlBranding.customSubdomain.enabled');
@@ -36,6 +36,11 @@ export default function UrlBrandingForm({ form }: { form: UseFormReturn<EventFor
             className="flex-1 px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500"
           />
         </div>
+        {errors.urlBranding?.customSlug && (
+          <p className="mt-1 text-sm text-red-600">
+            {errors.urlBranding.customSlug.message}
+          </p>
+        )}
         <p className="mt-1 text-sm text-slate-500">Only lowercase letters, numbers, and hyphens</p>
       </div>
 

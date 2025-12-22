@@ -4,7 +4,7 @@ import { UseFormReturn } from 'react-hook-form';
 import { EventFormData } from '@/lib/eventSchema';
 
 export default function AdditionalDetailsForm({ form }: { form: UseFormReturn<EventFormData> }) {
-  const { register, watch } = form;
+  const { register, watch, formState: { errors } } = form;
   const hasCost = watch('additional.cost.hasCost');
 
   return (
@@ -27,6 +27,11 @@ export default function AdditionalDetailsForm({ form }: { form: UseFormReturn<Ev
               placeholder="Mike Johnson"
               className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500"
             />
+            {errors.host?.name && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.host.name.message}
+              </p>
+            )}
           </div>
 
           <div>
@@ -37,6 +42,11 @@ export default function AdditionalDetailsForm({ form }: { form: UseFormReturn<Ev
               placeholder="mike@example.com"
               className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500"
             />
+            {errors.host?.email && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.host.email.message}
+              </p>
+            )}
             <p className="mt-1 text-sm text-slate-500">For event management and notifications</p>
           </div>
         </div>
