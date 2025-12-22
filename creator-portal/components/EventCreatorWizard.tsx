@@ -312,7 +312,7 @@ export default function EventCreatorWizard() {
 
         {/* Form */}
         <div className="bg-white rounded-lg shadow-2xl p-8">
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+          <form onSubmit={form.handleSubmit((data) => onSubmit(data))}>
             <CurrentStepComponent form={form} />
 
             {/* Navigation Buttons */}
