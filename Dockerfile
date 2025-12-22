@@ -47,12 +47,18 @@ ENV PORT=8080
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Copy standalone output (includes minimal node_modules and server.js)
+# For workspace standalone builds, Next.js nests output under workspace name
+# Copy root standalone structure
 COPY --from=builder --chown=nextjs:nodejs /app/creator-portal/.next/standalone ./
+# Copy creator-portal workspace files on top
+COPY --from=builder --chown=nextjs:nodejs /app/creator-portal/.next/standalone/creator-portal ./creator-portal
 # Copy static files
-COPY --from=builder --chown=nextjs:nodejs /app/creator-portal/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/creator-portal/.next/static ./creator-portal/.next/static
 # Copy public files (may be empty)
-COPY --from=builder --chown=nextjs:nodejs /app/creator-portal/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/creator-portal/public ./creator-portal/public
+
+# Set working directory to the workspace app
+WORKDIR /app/creator-portal
 
 USER nextjs
 
