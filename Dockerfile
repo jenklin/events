@@ -10,14 +10,14 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Copy package files
-COPY app/package*.json ./
+COPY creator-portal/package*.json ./
 RUN npm ci
 
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-COPY app .
+COPY creator-portal .
 
 # Build args for environment variables
 ARG NEXT_PUBLIC_SUPABASE_URL
