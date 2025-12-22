@@ -180,7 +180,7 @@ npm run deploy:events:staging
 - Gallery integration (basic)
 
 **Expected Staging URL:**
-- Service: `custom-events-staging`
+- Service: `cloudpeers-events-staging`
 - Region: `us-west1`
 - Memory: 1GB
 - CPU: 1 vCPU

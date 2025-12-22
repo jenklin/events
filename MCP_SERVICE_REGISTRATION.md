@@ -1,13 +1,13 @@
-# Custom Events - MCP Service Registration
+# CloudPeers Events - MCP Service Registration
 
 ## Service Overview
 
-**Service Name**: Custom Events
-**Service ID**: `custom-events`
+**Service Name**: CloudPeers Events
+**Service ID**: `cloudpeers-events`
 **Version**: 1.0.0
 **Provider**: CloudPeers
 **Category**: Event Management
-**Marketplace URL**: https://services.cloudpeers.com/custom-events
+**Marketplace URL**: https://services.cloudpeers.com/cloudpeers-events
 
 ---
 
@@ -630,8 +630,8 @@ Response: Complete breakdown by category
 
 ```json
 {
-  "serviceId": "custom-events",
-  "name": "Custom Events",
+  "serviceId": "cloudpeers-events",
+  "name": "CloudPeers Events",
   "tagline": "Beautiful event pages with RSVP, potluck, and AI music",
   "description": "Create and manage stunning event pages in minutes...",
   "category": "Event Management",
@@ -659,7 +659,7 @@ Response: Complete breakdown by category
     "homepage": "https://events.cloudpeers.com",
     "docs": "https://docs.cloudpeers.com/services/custom-events",
     "api": "https://events-api.cloudpeers.com",
-    "marketplace": "https://services.cloudpeers.com/custom-events"
+    "marketplace": "https://services.cloudpeers.com/cloudpeers-events"
   },
   "support": {
     "email": "support@cloudpeers.com",

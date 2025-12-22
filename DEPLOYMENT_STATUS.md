@@ -122,7 +122,7 @@ cd /Users/jenklin/dev/cloudpeers-mcp/events
 ```
 
 **Configuration**:
-- Service: `custom-events-staging`
+- Service: `cloudpeers-events-staging`
 - Memory: 1GB
 - CPU: 1
 - Max Instances: 3
@@ -134,7 +134,7 @@ cd /Users/jenklin/dev/cloudpeers-mcp/events
 ```
 
 **Configuration**:
-- Service: `custom-events`
+- Service: `cloudpeers-events`
 - Memory: 2GB
 - CPU: 2
 - Max Instances: 10
@@ -161,8 +161,8 @@ SUPABASE_SERVICE_ROLE_KEY=eyJhbGci...
 The service is ready to be registered on **services.cloudpeers.com**
 
 **Service Details**:
-- **Service ID**: `custom-events`
-- **Name**: CloudPeers Custom Events
+- **Service ID**: `cloudpeers-events`
+- **Name**: CloudPeers Events
 - **Description**: Create beautiful event pages with RSVP, potluck tracking, music contributions, and more
 - **MCP Tools**: 7 tools (create_event, get_event_stats, get_guest_list, etc.)
 - **MCP Resources**: 6 resources (event details, RSVPs, potluck, music, QR codes, gallery)
@@ -236,7 +236,7 @@ See `MCP_SERVICE_REGISTRATION.md` for complete registration details.
 - **Repository**: https://github.com/jenklin/events
 - **Supabase Project**: https://supabase.com/dashboard/project/efpspxzgvbsqfyelbkdw
 - **Local Dev**: http://localhost:3001 (currently running)
-- **Marketplace**: https://services.cloudpeers.com/custom-events (pending registration)
+- **Marketplace**: https://services.cloudpeers.com/cloudpeers-events (pending registration)
 
 ---
 

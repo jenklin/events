@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Custom Events Deployment Script using Cloud Build
+# CloudPeers Events Deployment Script using Cloud Build
 # Usage: ./deploy.sh [staging|prod]
-# Service: custom-events (CloudPeers vertical - Event Management)
+# Service: cloudpeers-events (CloudPeers vertical - Event Management)
 # Marketplace: services.cloudpeers.com
 
 set -e  # Exit on error
@@ -20,7 +20,7 @@ CURRENT_DIR=$(basename "$PWD")
 if [[ "$CURRENT_DIR" != "$EXPECTED_DIR" ]]; then
   echo -e "${RED}ERROR: Wrong directory!${NC}"
   echo ""
-  echo "This script deploys: ${GREEN}Custom Events${NC}"
+  echo "This script deploys: ${GREEN}CloudPeers Events${NC}"
   echo "Expected directory:  ${GREEN}events${NC}"
   echo "Current directory:   ${RED}$CURRENT_DIR${NC}"
   echo ""
@@ -28,14 +28,14 @@ if [[ "$CURRENT_DIR" != "$EXPECTED_DIR" ]]; then
 fi
 
 echo -e "${GREEN}✓ Correct directory: events${NC}"
-echo -e "${GREEN}✓ Deploying: Custom Events (CloudPeers Event Management Service)${NC}"
+echo -e "${GREEN}✓ Deploying: CloudPeers Events (CloudPeers Event Management Service)${NC}"
 echo ""
 
 # Configuration - ALWAYS deploy events to gen-lang (cloudpeers project)
 # Do NOT use GCP_PROJECT_ID env var to avoid confusion with MCP platform
 PROJECT_ID="gen-lang-client-0243928474"  # CloudPeers events project
 REGION="us-west1"
-IMAGE_NAME="custom-events"
+IMAGE_NAME="cloudpeers-events"
 
 # Verify active account
 ACTIVE_ACCOUNT=$(gcloud config get-value account 2>/dev/null)
@@ -43,7 +43,7 @@ REQUIRED_ACCOUNT="jkl@cloudpeers.com"
 
 if [[ "$ACTIVE_ACCOUNT" != "$REQUIRED_ACCOUNT" ]]; then
   echo -e "${YELLOW}Warning: Active account is ${ACTIVE_ACCOUNT}${NC}"
-  echo -e "${YELLOW}Custom Events deployments should use ${REQUIRED_ACCOUNT}${NC}"
+  echo -e "${YELLOW}CloudPeers Events deployments should use ${REQUIRED_ACCOUNT}${NC}"
   echo -e "${YELLOW}Switching to ${REQUIRED_ACCOUNT}...${NC}"
   gcloud config set account "$REQUIRED_ACCOUNT" 2>/dev/null || true
 fi
@@ -65,7 +65,7 @@ fi
 
 # Environment-specific configuration
 if [ "$ENV" = "prod" ]; then
-  SERVICE_NAME="custom-events"
+  SERVICE_NAME="cloudpeers-events"
   MAX_INSTANCES=10
   MIN_INSTANCES=0
   MEMORY="2Gi"
@@ -80,7 +80,7 @@ if [ "$ENV" = "prod" ]; then
     exit 0
   fi
 else
-  SERVICE_NAME="custom-events-staging"
+  SERVICE_NAME="cloudpeers-events-staging"
   MAX_INSTANCES=3
   MIN_INSTANCES=0
   MEMORY="1Gi"
@@ -158,8 +158,8 @@ echo "2. View logs: gcloud run logs read ${SERVICE_NAME} --region=${REGION} --pr
 echo "3. Register service: See MCP_SERVICE_REGISTRATION.md"
 echo ""
 echo -e "${GREEN}Service is registered in CloudPeers marketplace:${NC}"
-echo "Service ID: custom-events"
-echo "Marketplace: https://services.cloudpeers.com/custom-events"
+echo "Service ID: cloudpeers-events"
+echo "Marketplace: https://services.cloudpeers.com/cloudpeers-events"
 echo "Documentation: See MCP_SERVICE_REGISTRATION.md"
 echo ""
 

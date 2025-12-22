@@ -119,8 +119,8 @@ npm run deploy:events:staging
 **Expected output:**
 ```
 ✓ Deployment successful!
-Service: custom-events-staging
-URL: https://custom-events-staging-[hash]-uw.a.run.app
+Service: cloudpeers-events-staging
+URL: https://cloudpeers-events-staging-[hash]-uw.a.run.app
 ```
 
 ### Step 3: Test Staging
@@ -138,7 +138,7 @@ npm run deploy:events:prod
 ```
 
 **Production settings:**
-- Service: `custom-events`
+- Service: `cloudpeers-events`
 - Memory: 2GB
 - CPU: 2 vCPU
 - Max instances: 10
@@ -227,13 +227,13 @@ Account: jkl@cloudpeers.com
 ## 🎯 Deployment Targets
 
 ### Staging
-- **Service**: `custom-events-staging`
-- **URL**: `https://custom-events-staging-[hash]-uw.a.run.app`
+- **Service**: `cloudpeers-events-staging`
+- **URL**: `https://cloudpeers-events-staging-[hash]-uw.a.run.app`
 - **Resources**: 1GB RAM, 1 CPU, max 3 instances
 
 ### Production
-- **Service**: `custom-events`
-- **URL**: `https://custom-events-[hash]-uw.a.run.app`
+- **Service**: `cloudpeers-events`
+- **URL**: `https://cloudpeers-events-[hash]-uw.a.run.app`
 - **Resources**: 2GB RAM, 2 CPU, max 10 instances
 - **Requires**: Confirmation prompt
 
@@ -267,7 +267,7 @@ gcloud run logs read custom-events --region=us-west1
 - **Local Dev**: http://localhost:3001 (currently running)
 - **Repository**: https://github.com/jenklin/events
 - **Supabase**: https://supabase.com/dashboard/project/efpspxzgvbsqfyelbkdw
-- **Marketplace**: https://services.cloudpeers.com/custom-events (pending)
+- **Marketplace**: https://services.cloudpeers.com/cloudpeers-events (pending)
 
 ---
 

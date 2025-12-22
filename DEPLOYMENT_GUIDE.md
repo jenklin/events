@@ -106,7 +106,7 @@ gcloud run deploy "${SERVICE_NAME}" \
 
 ### Staging Environment
 
-**Service Name**: `custom-events-staging`
+**Service Name**: `cloudpeers-events-staging`
 
 | Setting | Value |
 |---------|-------|
@@ -117,11 +117,11 @@ gcloud run deploy "${SERVICE_NAME}" \
 | Concurrency | 40 requests/container |
 | Region | us-west1 |
 
-**Expected URL**: `https://custom-events-staging-[hash]-uw.a.run.app`
+**Expected URL**: `https://cloudpeers-events-staging-[hash]-uw.a.run.app`
 
 ### Production Environment
 
-**Service Name**: `custom-events`
+**Service Name**: `cloudpeers-events`
 
 | Setting | Value |
 |---------|-------|
@@ -132,7 +132,7 @@ gcloud run deploy "${SERVICE_NAME}" \
 | Concurrency | 80 requests/container |
 | Region | us-west1 |
 
-**Expected URL**: `https://custom-events-[hash]-uw.a.run.app`
+**Expected URL**: `https://cloudpeers-events-[hash]-uw.a.run.app`
 
 **Production Confirmation**:
 ```
@@ -218,20 +218,20 @@ gcloud builds log --stream
 ### View Service Logs
 ```bash
 # Events service logs (staging)
-gcloud run logs read custom-events-staging \
+gcloud run logs read cloudpeers-events-staging \
   --region=us-west1 \
   --project=gen-lang-client-0243928474
 
 # Events service logs (production)
-gcloud run logs read custom-events \
+gcloud run logs read cloudpeers-events \
   --region=us-west1 \
   --project=gen-lang-client-0243928474 \
   --limit=100
 ```
 
 ### Cloud Run Console
-- **Staging**: https://console.cloud.google.com/run/detail/us-west1/custom-events-staging
-- **Production**: https://console.cloud.google.com/run/detail/us-west1/custom-events
+- **Staging**: https://console.cloud.google.com/run/detail/us-west1/cloudpeers-events-staging
+- **Production**: https://console.cloud.google.com/run/detail/us-west1/cloudpeers-events
 
 ---
 
@@ -329,12 +329,12 @@ npm run verify-db
 
 ## 📞 Support
 
-**Project**: CloudPeers Custom Events
+**Project**: CloudPeers Events
 **Repository**: https://github.com/jenklin/events
-**Service ID**: `custom-events`
-**Marketplace**: https://services.cloudpeers.com/custom-events
+**Service ID**: `cloudpeers-events`
+**Marketplace**: https://services.cloudpeers.com/cloudpeers-events
 
 For deployment issues, check:
 1. Cloud Build logs: `gcloud builds log`
-2. Cloud Run logs: `gcloud run logs read custom-events`
+2. Cloud Run logs: `gcloud run logs read cloudpeers-events`
 3. Supabase dashboard: https://supabase.com/dashboard/project/efpspxzgvbsqfyelbkdw
