@@ -47,11 +47,12 @@ ENV PORT=8080
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Copy necessary files from creator-portal build
-# Note: public directory exists but may be empty
-COPY --from=builder --chown=nextjs:nodejs /app/creator-portal/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/creator-portal/.next/standalone ./
+# Copy standalone output (includes minimal node_modules and server.js)
+COPY --from=builder --chown=nextjs:nodejs /app/creator-portal/.next/standalone/creator-portal ./
+# Copy static files
 COPY --from=builder --chown=nextjs:nodejs /app/creator-portal/.next/static ./.next/static
+# Copy public files
+COPY --from=builder --chown=nextjs:nodejs /app/creator-portal/public ./public
 
 USER nextjs
 
