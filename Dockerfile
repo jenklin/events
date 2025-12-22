@@ -48,10 +48,10 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 # Copy standalone output (includes minimal node_modules and server.js)
-COPY --from=builder --chown=nextjs:nodejs /app/creator-portal/.next/standalone/creator-portal ./
+COPY --from=builder --chown=nextjs:nodejs /app/creator-portal/.next/standalone ./
 # Copy static files
 COPY --from=builder --chown=nextjs:nodejs /app/creator-portal/.next/static ./.next/static
-# Copy public files
+# Copy public files (may be empty)
 COPY --from=builder --chown=nextjs:nodejs /app/creator-portal/public ./public
 
 USER nextjs
