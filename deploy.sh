@@ -97,18 +97,21 @@ IMAGE_URI="gcr.io/${PROJECT_ID}/${IMAGE_NAME}:${IMAGE_TAG}"
 echo -e "${GREEN}Step 1: Building with Cloud Build${NC}"
 echo "Image URI: ${IMAGE_URI}"
 
-# Get Supabase credentials from environment or .env.local
-if [ -f app/.env.local ]; then
-  export $(grep -v '^#' app/.env.local | xargs)
-fi
+# Get Supabase credentials from GCP Secret Manager
+echo -e "${GREEN}Fetching secrets from GCP Secret Manager...${NC}"
+NEXT_PUBLIC_SUPABASE_URL=$(gcloud secrets versions access latest --secret="VITE_SUPABASE_URL" --project="${PROJECT_ID}" 2>/dev/null)
+NEXT_PUBLIC_SUPABASE_ANON_KEY=$(gcloud secrets versions access latest --secret="VITE_SUPABASE_ANON_KEY" --project="${PROJECT_ID}" 2>/dev/null)
+SUPABASE_SERVICE_ROLE_KEY=$(gcloud secrets versions access latest --secret="SUPABASE_SERVICE_ROLE_KEY" --project="${PROJECT_ID}" 2>/dev/null)
 
 if [ -z "$NEXT_PUBLIC_SUPABASE_URL" ]; then
-  echo -e "${RED}ERROR: NEXT_PUBLIC_SUPABASE_URL not found${NC}"
-  echo "Please set Supabase credentials in app/.env.local"
+  echo -e "${RED}ERROR: Failed to fetch VITE_SUPABASE_URL from Secret Manager${NC}"
+  echo "Please ensure you have access to secrets in project ${PROJECT_ID}"
   exit 1
 fi
 
-# Submit build to Cloud Build
+echo -e "${GREEN}✓ Secrets fetched successfully${NC}"
+
+# Submit build to Cloud Build (using Secret Manager)
 gcloud builds submit \
   --config=cloudbuild.yaml \
   --substitutions="_IMAGE_URI=${IMAGE_URI},_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL},_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY},_SUPABASE_SERVICE_KEY=${SUPABASE_SERVICE_ROLE_KEY}" \
@@ -117,7 +120,7 @@ gcloud builds submit \
 
 echo -e "${GREEN}Step 2: Deploying to Cloud Run${NC}"
 
-# Deploy to Cloud Run
+# Deploy to Cloud Run (using Secret Manager secrets)
 gcloud run deploy "${SERVICE_NAME}" \
   --image="${IMAGE_URI}" \
   --platform=managed \
@@ -130,7 +133,8 @@ gcloud run deploy "${SERVICE_NAME}" \
   --concurrency="${CONCURRENCY}" \
   --port=8080 \
   --allow-unauthenticated \
-  --set-env-vars="NODE_ENV=production,NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL},NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY},SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}" \
+  --set-env-vars="NODE_ENV=production" \
+  --update-secrets="NEXT_PUBLIC_SUPABASE_URL=VITE_SUPABASE_URL:latest,NEXT_PUBLIC_SUPABASE_ANON_KEY=VITE_SUPABASE_ANON_KEY:latest,SUPABASE_SERVICE_ROLE_KEY=SUPABASE_SERVICE_ROLE_KEY:latest" \
   --timeout=540 \
   --no-cpu-throttling \
   --execution-environment=gen2

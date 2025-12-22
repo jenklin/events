@@ -1,5 +1,6 @@
 # Custom Events - Cloud Build Configuration
 # Builds Docker image and pushes to Google Container Registry
+# Uses GCP Secret Manager for Supabase credentials
 
 steps:
   # Step 1: Build Docker image
@@ -33,3 +34,6 @@ timeout: '1200s'
 # Store built image
 images:
   - '${_IMAGE_URI}'
+
+# Note: Secrets are passed via substitutions from deploy.sh
+# Deploy script fetches from Secret Manager and passes as build args
