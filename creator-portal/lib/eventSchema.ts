@@ -37,7 +37,10 @@ export const eventFormSchema = z.object({
     coverImage: z.object({
       type: z.enum(['preset', 'custom']),
       theme: z.enum(coverThemes).optional(),
-      customUrl: z.string().url().optional(),
+      customUrl: z.string().refine(
+        (val) => !val || val.startsWith('data:image/') || val.startsWith('http://') || val.startsWith('https://'),
+        { message: 'Must be a valid URL or data URL' }
+      ).optional(),
     }),
   }),
 

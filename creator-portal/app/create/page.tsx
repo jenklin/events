@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Calendar, Clock, MapPin, Users, Music, Utensils, Image, Rocket } from 'lucide-react';
+import { Calendar, Clock, MapPin, Users, Music, Utensils, Image, Rocket, Upload, X } from 'lucide-react';
 
 interface EventFormData {
   title: string;
@@ -24,12 +24,15 @@ interface EventFormData {
   musicEnabled: boolean;
   galleryEnabled: boolean;
   requireApproval: boolean;
+  coverImageUrl: string;
+  coverImageType: 'preset' | 'custom';
 }
 
 export default function CreateEventPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [imagePreview, setImagePreview] = useState<string>('');
 
   const [formData, setFormData] = useState<EventFormData>({
     title: '',
@@ -51,6 +54,8 @@ export default function CreateEventPage() {
     musicEnabled: false,
     galleryEnabled: false,
     requireApproval: false,
+    coverImageUrl: '',
+    coverImageType: 'preset',
   });
 
   const updateField = (field: string, value: any) => {
@@ -61,6 +66,33 @@ export default function CreateEventPage() {
     setFormData(prev => ({
       ...prev,
       location: { ...prev.location, [field]: value }
+    }));
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result as string;
+        setImagePreview(base64);
+        setFormData(prev => ({
+          ...prev,
+          coverImageUrl: base64,
+          coverImageType: 'custom'
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = () => {
+    setImagePreview('');
+    setFormData(prev => ({
+      ...prev,
+      coverImageUrl: '',
+      coverImageType: 'preset'
     }));
   };
 
@@ -77,10 +109,15 @@ export default function CreateEventPage() {
         eventBasics: {
           title: formData.title,
           description: formData.description,
-          coverImage: {
-            type: 'theme',
-            theme: 'gradient-sunset',
-          },
+          coverImage: formData.coverImageType === 'custom' && formData.coverImageUrl
+            ? {
+                type: 'custom',
+                customUrl: formData.coverImageUrl,
+              }
+            : {
+                type: 'preset',
+                theme: 'elegant',
+              },
         },
         dateLocation: {
           date: formData.date,
@@ -113,12 +150,14 @@ export default function CreateEventPage() {
           },
         },
         rsvpOptions: {
-          enabled: true,
-          fields: ['name', 'email'],
+          collectName: true,
+          collectEmail: true,
+          collectPhone: false,
+          customQuestions: [],
         },
         potluck: formData.potluckEnabled ? {
           enabled: true,
-          categories: ['Appetizers', 'Main Dishes', 'Side Dishes', 'Desserts', 'Drinks'],
+          categories: ['Appetizer', 'Main Dish', 'Side Dish', 'Dessert', 'Drinks'],
         } : undefined,
         music: formData.musicEnabled ? {
           enabled: true,
@@ -235,6 +274,51 @@ export default function CreateEventPage() {
                   className="w-full px-4 py-3 border-2 border-stone-200 rounded-xl focus:ring-2 focus:ring-red-900/20 focus:border-red-900 transition-all resize-none"
                   placeholder="Tell your guests what to expect..."
                 />
+              </div>
+
+              {/* Cover Image Upload */}
+              <div>
+                <label className="block text-sm font-semibold text-stone-700 mb-2 flex items-center gap-2">
+                  <Image className="w-4 h-4 text-red-900" />
+                  Cover Image (optional)
+                </label>
+
+                {!imagePreview ? (
+                  <label className="block w-full cursor-pointer">
+                    <div className="border-2 border-dashed border-stone-300 rounded-xl p-8 hover:border-red-900 hover:bg-red-50/50 transition-all">
+                      <div className="flex flex-col items-center gap-3 text-center">
+                        <div className="w-12 h-12 rounded-full bg-stone-100 flex items-center justify-center">
+                          <Upload className="w-6 h-6 text-stone-600" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-stone-900">Click to upload cover image</p>
+                          <p className="text-sm text-stone-600 mt-1">PNG, JPG, or GIF up to 10MB</p>
+                        </div>
+                      </div>
+                    </div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
+                  </label>
+                ) : (
+                  <div className="relative w-full aspect-[2/1] rounded-xl overflow-hidden border-2 border-stone-200">
+                    <img
+                      src={imagePreview}
+                      alt="Cover preview"
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={removeImage}
+                      className="absolute top-3 right-3 w-8 h-8 bg-red-900 text-white rounded-full flex items-center justify-center hover:bg-red-800 transition-all shadow-lg"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div className="grid md:grid-cols-2 gap-4">
