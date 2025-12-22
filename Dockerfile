@@ -9,15 +9,19 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Copy package files
-COPY creator-portal/package*.json ./
-RUN npm ci
+# Copy workspace root package files (required for npm workspaces)
+COPY package*.json ./
+COPY creator-portal/package*.json ./creator-portal/
+RUN npm ci --workspace=creator-portal --include-workspace-root
 
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
+# Copy workspace node_modules (includes creator-portal dependencies)
 COPY --from=deps /app/node_modules ./node_modules
-COPY creator-portal .
+COPY --from=deps /app/creator-portal/node_modules ./creator-portal/node_modules
+COPY creator-portal ./creator-portal
+WORKDIR /app/creator-portal
 
 # Build args for environment variables
 ARG NEXT_PUBLIC_SUPABASE_URL
@@ -43,11 +47,11 @@ ENV PORT=8080
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Copy necessary files
+# Copy necessary files from creator-portal build
 # Note: public directory exists but may be empty
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/creator-portal/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/creator-portal/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/creator-portal/.next/static ./.next/static
 
 USER nextjs
 
