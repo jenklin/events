@@ -114,18 +114,20 @@ if [ -z "$NEXT_PUBLIC_SUPABASE_URL" ] || [ -z "$NEXT_PUBLIC_SUPABASE_ANON_KEY" ]
 fi
 echo -e "${GREEN}✓ Public config fetched${NC}"
 
-# Pre-flight: the runtime SA must be able to read the service-role secret it mounts,
-# or the revision fails with "Permission denied on secret" (mirrors geojourney/deploy.sh).
-if ! gcloud secrets get-iam-policy SUPABASE_SERVICE_ROLE_KEY --project="${PROJECT_ID}" \
-    --flatten="bindings[].members" \
-    --filter="bindings.role=roles/secretmanager.secretAccessor AND bindings.members=serviceAccount:${RUNTIME_SA}" \
-    --format="value(bindings.members)" 2>/dev/null | grep -q "${RUNTIME_SA}"; then
-  echo -e "${YELLOW}Granting secretAccessor on SUPABASE_SERVICE_ROLE_KEY to ${RUNTIME_SA}...${NC}"
-  gcloud secrets add-iam-policy-binding SUPABASE_SERVICE_ROLE_KEY \
-    --member="serviceAccount:${RUNTIME_SA}" --role="roles/secretmanager.secretAccessor" \
-    --project="${PROJECT_ID}" >/dev/null || { echo -e "${RED}Grant failed — run as a heli-ent owner${NC}"; exit 1; }
-fi
-echo -e "${GREEN}✓ Runtime SA can read the service-role secret${NC}"
+# Pre-flight: the runtime SA must read every secret the revision mounts, or it fails
+# with "Permission denied on secret" (mirrors geojourney/deploy.sh).
+for SECRET in SUPABASE_SERVICE_ROLE_KEY EVENTS_CLOUDPEERS_WEBHOOK_SECRET; do
+  if ! gcloud secrets get-iam-policy "$SECRET" --project="${PROJECT_ID}" \
+      --flatten="bindings[].members" \
+      --filter="bindings.role=roles/secretmanager.secretAccessor AND bindings.members=serviceAccount:${RUNTIME_SA}" \
+      --format="value(bindings.members)" 2>/dev/null | grep -q "${RUNTIME_SA}"; then
+    echo -e "${YELLOW}Granting secretAccessor on ${SECRET} to ${RUNTIME_SA}...${NC}"
+    gcloud secrets add-iam-policy-binding "$SECRET" \
+      --member="serviceAccount:${RUNTIME_SA}" --role="roles/secretmanager.secretAccessor" \
+      --project="${PROJECT_ID}" >/dev/null || { echo -e "${RED}Grant failed on ${SECRET} — run as a heli-ent owner${NC}"; exit 1; }
+  fi
+done
+echo -e "${GREEN}✓ Runtime SA can read all mounted secrets${NC}"
 
 # Submit build to Cloud Build (using Secret Manager)
 gcloud builds submit \
@@ -151,7 +153,7 @@ gcloud run deploy "${SERVICE_NAME}" \
   --port=8080 \
   --allow-unauthenticated \
   --set-env-vars="NODE_ENV=production,NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL},NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}" \
-  --update-secrets="SUPABASE_SERVICE_ROLE_KEY=SUPABASE_SERVICE_ROLE_KEY:latest" \
+  --update-secrets="SUPABASE_SERVICE_ROLE_KEY=SUPABASE_SERVICE_ROLE_KEY:latest,CLOUDPEERS_WEBHOOK_SECRET=EVENTS_CLOUDPEERS_WEBHOOK_SECRET:latest" \
   --timeout=540 \
   --no-cpu-throttling \
   --execution-environment=gen2
