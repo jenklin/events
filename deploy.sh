@@ -31,11 +31,13 @@ echo -e "${GREEN}✓ Correct directory: events${NC}"
 echo -e "${GREEN}✓ Deploying: CloudPeers Events (CloudPeers Event Management Service)${NC}"
 echo ""
 
-# Configuration - ALWAYS deploy events to gen-lang (cloudpeers project)
-# Do NOT use GCP_PROJECT_ID env var to avoid confusion with MCP platform
-PROJECT_ID="gen-lang-client-0243928474"  # CloudPeers events project
-REGION="us-west1"
+# Configuration — events runs on heli-ent (org project), consolidated off the
+# personal gen-lang project on 2026-06-17. Runbook:
+# cloudpeers-mcp/mcp/docs/GEN_LANG_TO_HELI_ENT_MIGRATION_RUNBOOK_2026-06-17.md
+PROJECT_ID="heli-ent"
+REGION="us-central1"
 IMAGE_NAME="cloudpeers-events"
+RUNTIME_SA="cloudpeers-deployer@heli-ent.iam.gserviceaccount.com"
 
 # Verify active account
 ACTIVE_ACCOUNT=$(gcloud config get-value account 2>/dev/null)
@@ -97,24 +99,38 @@ IMAGE_URI="gcr.io/${PROJECT_ID}/${IMAGE_NAME}:${IMAGE_TAG}"
 echo -e "${GREEN}Step 1: Building with Cloud Build${NC}"
 echo "Image URI: ${IMAGE_URI}"
 
-# Get Supabase credentials from GCP Secret Manager
-echo -e "${GREEN}Fetching secrets from GCP Secret Manager...${NC}"
-NEXT_PUBLIC_SUPABASE_URL=$(gcloud secrets versions access latest --secret="VITE_SUPABASE_URL" --project="${PROJECT_ID}" 2>/dev/null)
-NEXT_PUBLIC_SUPABASE_ANON_KEY=$(gcloud secrets versions access latest --secret="VITE_SUPABASE_ANON_KEY" --project="${PROJECT_ID}" 2>/dev/null)
-SUPABASE_SERVICE_ROLE_KEY=$(gcloud secrets versions access latest --secret="SUPABASE_SERVICE_ROLE_KEY" --project="${PROJECT_ID}" 2>/dev/null)
+# Public client config (URL + anon key) → build args: Next.js bakes NEXT_PUBLIC_* at
+# build time. The service-role key is deliberately NOT baked into the image — it's
+# injected at runtime as a secret (deploy step below). heli-ent secret names are
+# SUPABASE_URL / SUPABASE_ANON_KEY (NOT the VITE_* names, which don't exist here and
+# were the cause of the 2026-06-17 events outage).
+echo -e "${GREEN}Fetching public Supabase config from Secret Manager...${NC}"
+NEXT_PUBLIC_SUPABASE_URL=$(gcloud secrets versions access latest --secret="SUPABASE_URL" --project="${PROJECT_ID}" 2>/dev/null)
+NEXT_PUBLIC_SUPABASE_ANON_KEY=$(gcloud secrets versions access latest --secret="SUPABASE_ANON_KEY" --project="${PROJECT_ID}" 2>/dev/null)
 
-if [ -z "$NEXT_PUBLIC_SUPABASE_URL" ]; then
-  echo -e "${RED}ERROR: Failed to fetch VITE_SUPABASE_URL from Secret Manager${NC}"
-  echo "Please ensure you have access to secrets in project ${PROJECT_ID}"
+if [ -z "$NEXT_PUBLIC_SUPABASE_URL" ] || [ -z "$NEXT_PUBLIC_SUPABASE_ANON_KEY" ]; then
+  echo -e "${RED}ERROR: Failed to fetch SUPABASE_URL / SUPABASE_ANON_KEY from ${PROJECT_ID}${NC}"
   exit 1
 fi
+echo -e "${GREEN}✓ Public config fetched${NC}"
 
-echo -e "${GREEN}✓ Secrets fetched successfully${NC}"
+# Pre-flight: the runtime SA must be able to read the service-role secret it mounts,
+# or the revision fails with "Permission denied on secret" (mirrors geojourney/deploy.sh).
+if ! gcloud secrets get-iam-policy SUPABASE_SERVICE_ROLE_KEY --project="${PROJECT_ID}" \
+    --flatten="bindings[].members" \
+    --filter="bindings.role=roles/secretmanager.secretAccessor AND bindings.members=serviceAccount:${RUNTIME_SA}" \
+    --format="value(bindings.members)" 2>/dev/null | grep -q "${RUNTIME_SA}"; then
+  echo -e "${YELLOW}Granting secretAccessor on SUPABASE_SERVICE_ROLE_KEY to ${RUNTIME_SA}...${NC}"
+  gcloud secrets add-iam-policy-binding SUPABASE_SERVICE_ROLE_KEY \
+    --member="serviceAccount:${RUNTIME_SA}" --role="roles/secretmanager.secretAccessor" \
+    --project="${PROJECT_ID}" >/dev/null || { echo -e "${RED}Grant failed — run as a heli-ent owner${NC}"; exit 1; }
+fi
+echo -e "${GREEN}✓ Runtime SA can read the service-role secret${NC}"
 
 # Submit build to Cloud Build (using Secret Manager)
 gcloud builds submit \
   --config=cloudbuild.yaml \
-  --substitutions="_IMAGE_URI=${IMAGE_URI},_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL},_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY},_SUPABASE_SERVICE_KEY=${SUPABASE_SERVICE_ROLE_KEY}" \
+  --substitutions="_IMAGE_URI=${IMAGE_URI},_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL},_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY},_SUPABASE_SERVICE_KEY=" \
   --project="${PROJECT_ID}" \
   --timeout=20m
 
@@ -126,6 +142,7 @@ gcloud run deploy "${SERVICE_NAME}" \
   --platform=managed \
   --region="${REGION}" \
   --project="${PROJECT_ID}" \
+  --service-account="${RUNTIME_SA}" \
   --memory="${MEMORY}" \
   --cpu="${CPU}" \
   --min-instances="${MIN_INSTANCES}" \
@@ -133,8 +150,8 @@ gcloud run deploy "${SERVICE_NAME}" \
   --concurrency="${CONCURRENCY}" \
   --port=8080 \
   --allow-unauthenticated \
-  --set-env-vars="NODE_ENV=production" \
-  --update-secrets="NEXT_PUBLIC_SUPABASE_URL=VITE_SUPABASE_URL:latest,NEXT_PUBLIC_SUPABASE_ANON_KEY=VITE_SUPABASE_ANON_KEY:latest,SUPABASE_SERVICE_ROLE_KEY=SUPABASE_SERVICE_ROLE_KEY:latest" \
+  --set-env-vars="NODE_ENV=production,NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL},NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}" \
+  --update-secrets="SUPABASE_SERVICE_ROLE_KEY=SUPABASE_SERVICE_ROLE_KEY:latest" \
   --timeout=540 \
   --no-cpu-throttling \
   --execution-environment=gen2

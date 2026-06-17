@@ -22,11 +22,12 @@ npm run generate:example # generator with example config
 ```
 
 ## Deploy
-**GCP project:** `gen-lang-client-0243928474` (us-west1). Activate the right config first:
+**GCP project:** `heli-ent` (us-central1) — consolidated off the personal gen-lang project on 2026-06-17 (runbook: `cloudpeers-mcp/mcp/docs/GEN_LANG_TO_HELI_ENT_MIGRATION_RUNBOOK_2026-06-17.md`).
 ```bash
-gcloud config configurations activate cloudpeers-gen
-npm run deploy:staging   # → cloudpeers-events-staging (= events.cloudpeers.com)
+gcloud config configurations activate heli-ent
+npm run deploy:staging   # → cloudpeers-events-staging (heli-ent, = events.cloudpeers.com)
 ```
+Runs as `cloudpeers-deployer@heli-ent`. Supabase URL/anon-key come from heli-ent `SUPABASE_URL`/`SUPABASE_ANON_KEY` (build-args, since Next.js bakes `NEXT_PUBLIC_*`), and the service-role key is injected at runtime as a secret — **not** baked into the image, and **not** the `VITE_*` names (those don't exist on heli-ent and caused the 2026-06-17 outage).
 
 ## ⚠️ Staging is prod
 `events.cloudpeers.com` is mapped to `cloudpeers-events-staging`. `deploy:staging` ships user-visible changes. `deploy:prod` does **not** change the public domain — it deploys an idle sibling.
