@@ -23,7 +23,7 @@ export default function UploadPage({ params }: { params: { albumId: string } }) 
       <h1 className="text-xl font-semibold">Upload to album (editors only)</h1>
       <input type="file" onChange={e=>setFile(e.target.files?.[0] ?? null)} />
       <button onClick={onUpload} className="rounded bg-black text-white px-3 py-1 text-sm">Upload</button>
-      <div className="text-sm text-neutral-600">{status}</div>
+      <div className="text-sm text-paradigm-muted">{status}</div>
     </main>
   )
 }

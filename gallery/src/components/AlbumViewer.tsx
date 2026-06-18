@@ -173,7 +173,7 @@ export default function AlbumViewer({ albumId }: { albumId: string }) {
       <div className="mb-4">
         <a
           href={`${typeof window !== 'undefined' ? window.location.pathname.split('/a/')[0] : ''}/login`}
-          className="inline-flex items-center gap-2 px-3 py-2 text-sm text-neutral-600 hover:text-neutral-900 transition-colors rounded-lg hover:bg-neutral-100"
+          className="inline-flex items-center gap-2 px-3 py-2 text-sm text-paradigm-muted hover:text-white transition-colors rounded-lg hover:bg-paradigm-panel"
           aria-label="Back to event registration"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -185,15 +185,15 @@ export default function AlbumViewer({ albumId }: { albumId: string }) {
 
       <header className="mb-6 flex items-end justify-between">
         <div>
-          <p className="text-sm text-neutral-500 mb-2">{content.albumSubtitle}</p>
+          <p className="text-sm text-paradigm-muted mb-2">{content.albumSubtitle}</p>
           <h1 className="text-2xl font-semibold">{album?.title ?? 'Album'}</h1>
-          {album?.description && <p className="text-neutral-600">{album.description}</p>}
+          {album?.description && <p className="text-paradigm-muted">{album.description}</p>}
         </div>
         <div className="flex items-center gap-4">
           {role === 'editor' && (
             <a
               href={`${window.location.pathname.split('/a/')[0]}/a/${albumId}/upload`}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium"
+              className="px-4 py-2 bg-paradigm-accent text-white rounded-lg hover:bg-paradigm-accent-light transition text-sm font-medium"
             >
               Upload Photos
             </a>
@@ -216,8 +216,8 @@ export default function AlbumViewer({ albumId }: { albumId: string }) {
             onClick={() => setFilter('all')}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
               filter === 'all'
-                ? 'bg-purple-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? 'bg-paradigm-purple text-white'
+                : 'bg-paradigm-panel text-paradigm-text hover:bg-paradigm-dark'
             }`}
           >
             All Photos ({assets.length})
@@ -226,29 +226,29 @@ export default function AlbumViewer({ albumId }: { albumId: string }) {
             onClick={() => setFilter('official')}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
               filter === 'official'
-                ? 'bg-purple-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? 'bg-paradigm-purple text-white'
+                : 'bg-paradigm-panel text-paradigm-text hover:bg-paradigm-dark'
             }`}
           >
-            📸 Official ({assets.filter(a => !a.isUserUpload).length})
+            Official ({assets.filter(a => !a.isUserUpload).length})
           </button>
           <button
             onClick={() => setFilter('community')}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
               filter === 'community'
-                ? 'bg-purple-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? 'bg-paradigm-purple text-white'
+                : 'bg-paradigm-panel text-paradigm-text hover:bg-paradigm-dark'
             }`}
           >
-            👥 Community ({assets.filter(a => a.isUserUpload).length})
+            Community ({assets.filter(a => a.isUserUpload).length})
           </button>
           {currentUserEmail && assets.some(a => a.uploaderEmail === currentUserEmail) && (
             <button
               onClick={() => setFilter('mine')}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                 filter === 'mine'
-                  ? 'bg-purple-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-paradigm-purple text-white'
+                  : 'bg-paradigm-panel text-paradigm-text hover:bg-paradigm-dark'
               }`}
             >
               My Uploads ({assets.filter(a => a.uploaderEmail === currentUserEmail).length})
@@ -259,24 +259,24 @@ export default function AlbumViewer({ albumId }: { albumId: string }) {
 
       <section className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
         {filteredAssets.map(a => (
-          <button key={a.id} onClick={() => setSelected(a)} className="group relative overflow-hidden rounded-xl bg-white shadow-sm">
+          <button key={a.id} onClick={() => setSelected(a)} className="group relative overflow-hidden rounded-xl bg-paradigm-panel shadow-sm">
             {a.type === 'image' ? (
               <img className="h-48 w-full object-cover transition group-hover:scale-105"
                    src={`https://imagedelivery.net/${process.env.NEXT_PUBLIC_CF_IMAGES_HASH}/${a.provider_id}/public`}
                    alt="" />
             ) : (
-              <div className="h-48 w-full grid place-items-center text-sm text-neutral-500">Video</div>
+              <div className="h-48 w-full grid place-items-center text-sm text-paradigm-muted">Video</div>
             )}
 
             {/* Attribution Badge */}
             {a.uploader && (
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent px-3 py-2">
                 <div className="flex items-center gap-2 text-white text-xs">
-                  <div className="w-5 h-5 rounded-full bg-purple-500 flex items-center justify-center text-xs font-semibold">
+                  <div className="w-5 h-5 rounded-full bg-paradigm-purple flex items-center justify-center text-xs font-semibold">
                     {a.uploader.charAt(0).toUpperCase()}
                   </div>
                   <span className="font-medium truncate">
-                    {a.isUserUpload ? `by ${a.uploader}` : `📸 ${a.uploader}`}
+                    {a.isUserUpload ? `by ${a.uploader}` : `${a.uploader}`}
                   </span>
                 </div>
               </div>
@@ -291,7 +291,7 @@ export default function AlbumViewer({ albumId }: { albumId: string }) {
           {currentIndex > 0 && (
             <button
               onClick={(e) => { e.stopPropagation(); goToPrevious(); }}
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center text-white transition z-50"
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-paradigm-panel/10 hover:bg-paradigm-panel/20 backdrop-blur-sm flex items-center justify-center text-white transition z-50"
               aria-label="Previous photo"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -304,7 +304,7 @@ export default function AlbumViewer({ albumId }: { albumId: string }) {
           {currentIndex < assets.length - 1 && (
             <button
               onClick={(e) => { e.stopPropagation(); goToNext(); }}
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center text-white transition z-50"
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-paradigm-panel/10 hover:bg-paradigm-panel/20 backdrop-blur-sm flex items-center justify-center text-white transition z-50"
               aria-label="Next photo"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -321,7 +321,7 @@ export default function AlbumViewer({ albumId }: { albumId: string }) {
           {/* Close Button */}
           <button
             onClick={() => setSelected(null)}
-            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center text-white transition z-50"
+            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-paradigm-panel/10 hover:bg-paradigm-panel/20 backdrop-blur-sm flex items-center justify-center text-white transition z-50"
             aria-label="Close"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -329,7 +329,7 @@ export default function AlbumViewer({ albumId }: { albumId: string }) {
             </svg>
           </button>
 
-          <div className="w-full max-w-5xl rounded-2xl bg-white p-4" onClick={e => e.stopPropagation()}>
+          <div className="w-full max-w-5xl rounded-2xl bg-paradigm-panel p-4" onClick={e => e.stopPropagation()}>
             {selected.type === 'image' ? (
               <img className="w-full h-auto rounded-xl" src={`https://imagedelivery.net/${process.env.NEXT_PUBLIC_CF_IMAGES_HASH}/${selected.provider_id}/public`} alt="" />
             ) : (
@@ -348,7 +348,7 @@ export default function AlbumViewer({ albumId }: { albumId: string }) {
       {isAuthenticated && !showUpload && (
         <button
           onClick={() => setShowUpload(true)}
-          className="fixed bottom-6 right-6 flex items-center gap-2 px-6 py-4 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 font-semibold z-40"
+          className="fixed bottom-6 right-6 flex items-center gap-2 px-6 py-4 bg-gradient-to-r from-paradigm-purple to-paradigm-purple-light text-white rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 font-semibold z-40"
           aria-label="Upload your photos"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -468,7 +468,7 @@ function Comments({ assetId, isVideo, content }: {
         <input value={body} onChange={e=>setBody(e.target.value)} placeholder={content.memoriesPlaceholder} className="flex-1 border rounded px-2 py-1 text-sm"/>
         <button onClick={submit} className="rounded bg-[var(--brand-accent)] text-white px-3 py-1 text-sm">{content.memoriesButton}</button>
       </div>
-      {replyTo && <div className="text-xs text-neutral-500 mt-1">Replying… <button className="underline" onClick={()=>setReplyTo(undefined)}>cancel</button></div>}
+      {replyTo && <div className="text-xs text-paradigm-muted mt-1">Replying… <button className="underline" onClick={()=>setReplyTo(undefined)}>cancel</button></div>}
     </div>
   )
 }
@@ -486,8 +486,8 @@ function nest(items:any[]) {
 
 function CommentNode({ c, onReply }: { c:any, onReply:(id:string)=>void }) {
   return (
-    <div className="rounded-lg bg-neutral-50 p-2">
-      <div className="text-xs text-neutral-500 flex gap-2 items-center">
+    <div className="rounded-lg bg-paradigm-deep-black p-2">
+      <div className="text-xs text-paradigm-muted flex gap-2 items-center">
         <span>{c.author_name ?? 'User'}</span>
         {c.markers?.t != null && <span>• t={Math.round(c.markers.t)}s</span>}
       </div>

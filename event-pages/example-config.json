@@ -7,7 +7,7 @@
     "date": "January 15, 2026",
     "time": "6:00 PM - 9:00 PM",
     "timezone": "PST",
-    "location": "CloudPeers HQ, San Francisco",
+    "location": "cloudpeers HQ, San Francisco",
     "description": "Join us for an evening of innovation, networking, and collaboration with tech leaders from across the Bay Area.",
     "whatToExpect": {
       "intro": "An engaging evening of tech talks, networking, and hands-on demos from leading innovators.",
@@ -18,7 +18,7 @@
   },
 
   "venue": {
-    "name": "CloudPeers Innovation Center",
+    "name": "cloudpeers Innovation Center",
     "description": "A modern event space designed for collaboration and creativity.",
     "address": {
       "street": "123 Tech Street",
@@ -47,8 +47,8 @@
     {
       "time": "18:30",
       "title": "Welcome & Opening Remarks",
-      "description": "Introduction to CloudPeers and tonight's agenda",
-      "speaker": "Jennifer Lin, CEO CloudPeers",
+      "description": "Introduction to cloudpeers and tonight's agenda",
+      "speaker": "Jennifer Lin, CEO cloudpeers",
       "type": "session",
       "duration": 15
     },

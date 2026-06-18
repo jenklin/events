@@ -156,7 +156,19 @@ gcloud run deploy "${SERVICE_NAME}" \
   --update-secrets="SUPABASE_SERVICE_ROLE_KEY=SUPABASE_SERVICE_ROLE_KEY:latest,CLOUDPEERS_WEBHOOK_SECRET=EVENTS_CLOUDPEERS_WEBHOOK_SECRET:latest" \
   --timeout=540 \
   --no-cpu-throttling \
+  --cpu-boost \
   --execution-environment=gen2
+
+# Ensure the new revision actually serves. Cloud Run does NOT auto-shift traffic
+# if it was previously pinned to a specific revision — every deploy then creates
+# a revision that gets 0% traffic and is retired, silently making deploys a no-op
+# (mirrors the carepeers prod incident 2026-06-01). Force 100% traffic to latest.
+echo -e "${GREEN}Step 2b: Routing traffic to the latest revision${NC}"
+gcloud run services update-traffic "${SERVICE_NAME}" \
+  --platform=managed \
+  --region="${REGION}" \
+  --project="${PROJECT_ID}" \
+  --to-latest
 
 echo -e "${GREEN}Step 3: Retrieving service URL${NC}"
 

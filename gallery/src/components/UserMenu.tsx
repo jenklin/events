@@ -47,14 +47,14 @@ export function UserMenu({ basePath = '' }: UserMenuProps) {
       {/* User Avatar Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition"
+        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-paradigm-panel transition"
         aria-label="User menu"
       >
-        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-sm font-semibold">
+        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-paradigm-purple to-paradigm-teal flex items-center justify-center text-white text-sm font-semibold">
           {(userName || userEmail).charAt(0).toUpperCase()}
         </div>
         <svg
-          className={`w-4 h-4 text-gray-600 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          className={`w-4 h-4 text-paradigm-muted transition-transform ${isOpen ? 'rotate-180' : ''}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -65,11 +65,11 @@ export function UserMenu({ basePath = '' }: UserMenuProps) {
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+        <div className="absolute right-0 mt-2 w-64 bg-paradigm-panel rounded-lg shadow-lg border border-white/10 py-2 z-50">
           {/* User Info */}
-          <div className="px-4 py-3 border-b border-gray-100">
-            <p className="text-sm font-medium text-gray-900">{userName || 'User'}</p>
-            <p className="text-xs text-gray-500 truncate">{userEmail}</p>
+          <div className="px-4 py-3 border-b border-white/10">
+            <p className="text-sm font-medium text-white">{userName || 'User'}</p>
+            <p className="text-xs text-paradigm-muted truncate">{userEmail}</p>
           </div>
 
           {/* Sign Out Button */}

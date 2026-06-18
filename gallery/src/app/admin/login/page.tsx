@@ -29,7 +29,7 @@ export default function Login() {
         <input value={email} onChange={e=>setEmail(e.target.value)} placeholder="Email" className="border rounded px-2 py-1 text-sm" />
         <button onClick={submit} className="rounded bg-black text-white px-3 py-1 text-sm">Send link</button>
       </div>
-      <div className="text-sm text-neutral-600">{status}</div>
+      <div className="text-sm text-paradigm-muted">{status}</div>
     </main>
   )
 }

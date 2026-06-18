@@ -264,11 +264,11 @@ export default function EventCreatorWizard() {
   const progress = (currentStep / STEPS.length) * 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen bg-paradigm-deep-black bg-gradient-to-br from-paradigm-deep-black via-[#0b0a14] to-paradigm-deep-black">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">
+          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-white mb-2">
             Create Your Event
           </h1>
           <p className="text-slate-300">
@@ -276,25 +276,19 @@ export default function EventCreatorWizard() {
           </p>
 
           {/* Import/Export Buttons */}
-          <div className="flex justify-center gap-3 mt-4">
+          <div className="flex flex-wrap justify-center gap-3 mt-4">
             <button
               type="button"
               onClick={importFormData}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors text-sm flex items-center gap-2"
+              className="px-4 py-2 bg-paradigm-accent text-white rounded-lg hover:bg-paradigm-accent-light font-medium transition-colors text-sm"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-              </svg>
               Import JSON
             </button>
             <button
               type="button"
               onClick={exportFormData}
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium transition-colors text-sm flex items-center gap-2"
+              className="px-4 py-2 bg-paradigm-teal text-white rounded-lg hover:bg-paradigm-teal/80 font-medium transition-colors text-sm"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-              </svg>
               Export JSON
             </button>
           </div>
@@ -304,14 +298,14 @@ export default function EventCreatorWizard() {
         <div className="mb-8">
           <div className="w-full bg-slate-700 rounded-full h-2">
             <div
-              className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-300"
+              className="bg-gradient-to-r from-paradigm-purple to-paradigm-teal h-2 rounded-full transition-all duration-300"
               style={{ width: `${progress}%` }}
             />
           </div>
         </div>
 
         {/* Form */}
-        <div className="bg-white rounded-lg shadow-2xl p-8">
+        <div className="bg-paradigm-panel rounded-lg shadow-2xl p-8">
           <form onSubmit={form.handleSubmit((data) => onSubmit(data))}>
             <CurrentStepComponent form={form} />
 
@@ -321,7 +315,7 @@ export default function EventCreatorWizard() {
                 type="button"
                 onClick={prevStep}
                 disabled={currentStep === 1}
-                className="px-6 py-3 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors"
+                className="px-6 py-3 bg-paradigm-dark text-paradigm-text border border-white/10 rounded-lg hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors"
               >
                 ← Back
               </button>
@@ -330,7 +324,7 @@ export default function EventCreatorWizard() {
                 <button
                   type="button"
                   onClick={nextStep}
-                  className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 font-medium transition-all shadow-lg"
+                  className="px-6 py-3 bg-gradient-to-r from-paradigm-purple to-paradigm-coral text-white rounded-lg hover:from-purple-700 hover:to-paradigm-coral font-medium transition-all shadow-lg"
                 >
                   Continue →
                 </button>
@@ -338,9 +332,9 @@ export default function EventCreatorWizard() {
                 <button
                   type="submit"
                   disabled={isPublishing}
-                  className="px-8 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:from-green-700 hover:to-emerald-700 font-bold transition-all shadow-lg disabled:opacity-50"
+                  className="px-8 py-3 bg-gradient-to-r from-paradigm-purple to-paradigm-teal text-white rounded-lg hover:opacity-90 font-bold transition-all shadow-lg disabled:opacity-50"
                 >
-                  {isPublishing ? 'Publishing...' : '🎉 Publish Event'}
+                  {isPublishing ? 'Publishing...' : 'Publish Event'}
                 </button>
               )}
             </div>
@@ -354,10 +348,10 @@ export default function EventCreatorWizard() {
               key={step.id}
               className={`w-3 h-3 rounded-full transition-all ${
                 step.id === currentStep
-                  ? 'bg-purple-500 w-8'
+                  ? 'bg-paradigm-purple w-8'
                   : step.id < currentStep
-                  ? 'bg-green-500'
-                  : 'bg-slate-600'
+                  ? 'bg-paradigm-teal'
+                  : 'bg-white/15'
               }`}
             />
           ))}

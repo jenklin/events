@@ -1,4 +1,4 @@
-# CloudPeers Custom Events - Deployment Guide
+# cloudpeers Custom Events - Deployment Guide
 
 ## 🎯 Quick Start
 
@@ -311,7 +311,7 @@ npm run verify-db
 - [ ] Error monitoring configured
 
 ### Post-Deployment
-- [ ] Service registered in CloudPeers marketplace
+- [ ] Service registered in cloudpeers marketplace
 - [ ] Documentation updated
 - [ ] Team notified
 - [ ] Monitoring alerts configured
@@ -329,7 +329,7 @@ npm run verify-db
 
 ## 📞 Support
 
-**Project**: CloudPeers Events
+**Project**: cloudpeers Events
 **Repository**: https://github.com/jenklin/events
 **Service ID**: `cloudpeers-events`
 **Marketplace**: https://services.cloudpeers.com/cloudpeers-events

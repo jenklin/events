@@ -43,8 +43,8 @@ export function AttendeeList({ eventName }: AttendeeListProps) {
     return (
       <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 mb-6">
         <div className="animate-pulse">
-          <div className="h-4 bg-purple-200 rounded w-1/3 mb-2"></div>
-          <div className="h-3 bg-purple-100 rounded w-1/2"></div>
+          <div className="h-4 bg-paradigm-purple/30 rounded w-1/3 mb-2"></div>
+          <div className="h-3 bg-paradigm-purple/15 rounded w-1/2"></div>
         </div>
       </div>
     )
@@ -57,17 +57,17 @@ export function AttendeeList({ eventName }: AttendeeListProps) {
   const displayedAttendees = showAll ? attendees : attendees.slice(0, 12)
 
   return (
-    <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 mb-6 border border-purple-100">
+    <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 mb-6 border border-white/10">
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold">
+        <div className="w-10 h-10 rounded-full bg-paradigm-purple flex items-center justify-center text-white font-bold">
           {count}
         </div>
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">
+          <h3 className="text-lg font-semibold text-white">
             Who Was There That Night
           </h3>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-paradigm-muted">
             {count} {count === 1 ? 'person' : 'people'} joined this gathering
           </p>
         </div>
@@ -78,12 +78,12 @@ export function AttendeeList({ eventName }: AttendeeListProps) {
         {displayedAttendees.map((attendee, idx) => (
           <div
             key={idx}
-            className="flex items-center gap-2 bg-white rounded-lg px-3 py-2 shadow-sm border border-purple-100"
+            className="flex items-center gap-2 bg-paradigm-panel rounded-lg px-3 py-2 shadow-sm border border-white/10"
           >
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white text-sm font-semibold">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-paradigm-purple to-paradigm-teal flex items-center justify-center text-white text-sm font-semibold">
               {attendee.displayName.charAt(0).toUpperCase()}
             </div>
-            <span className="text-sm font-medium text-gray-700 truncate">
+            <span className="text-sm font-medium text-paradigm-text truncate">
               {attendee.displayName}
             </span>
           </div>
@@ -94,15 +94,15 @@ export function AttendeeList({ eventName }: AttendeeListProps) {
       {attendees.length > 12 && (
         <button
           onClick={() => setShowAll(!showAll)}
-          className="text-sm text-purple-600 hover:text-purple-700 font-medium"
+          className="text-sm text-paradigm-purple-light hover:text-paradigm-purple font-medium"
         >
           {showAll ? 'Show less' : `Show all ${count} attendees`}
         </button>
       )}
 
       {/* Community Message */}
-      <div className="mt-4 pt-4 border-t border-purple-200">
-        <p className="text-sm text-gray-600 italic">
+      <div className="mt-4 pt-4 border-t border-white/10">
+        <p className="text-sm text-paradigm-muted italic">
           "We're all part of this shared experience - each person brings their unique perspective to our collective story."
         </p>
       </div>

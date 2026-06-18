@@ -7,7 +7,7 @@ Complete deployment pipeline for the Events Platform service, including:
 - Gallery system (Next.js) deployment to Cloud Run
 - Cloudflare Worker configuration
 - Database migrations
-- CloudPeers service integration
+- cloudpeers service integration
 
 ## Architecture Overview
 
@@ -151,7 +151,7 @@ jobs:
             --format 'value(status.url)')
           echo "url=$URL" >> $GITHUB_OUTPUT
 
-      - name: Notify CloudPeers
+      - name: Notify cloudpeers
         run: |
           curl -X POST https://services.cloudpeers.com/api/observability/services/${{ secrets.CLOUDPEERS_SERVICE_ID }}/metrics \
             -H "Content-Type: application/json" \
@@ -499,7 +499,7 @@ curl https://events.redheli.com/gallery/api/health
 # Worker health (via gallery proxy)
 curl https://events.redheli.com/gallery/api/health
 
-# CloudPeers integration test
+# cloudpeers integration test
 curl -X POST https://events.redheli.com/api/webhooks/mcp \
   -H "Content-Type: application/json" \
   -H "x-cloudpeers-signature: test-signature" \
@@ -515,5 +515,5 @@ curl -X POST https://events.redheli.com/api/webhooks/mcp \
 5. Configure monitoring and alerts
 
 Continue to:
-- **07_INTEGRATION_GUIDE.md** - CloudPeers integration
+- **07_INTEGRATION_GUIDE.md** - cloudpeers integration
 - **08_TESTING_GUIDE.md** - End-to-end testing

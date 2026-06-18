@@ -52,7 +52,7 @@ Complete PostgreSQL schema with tables, views, functions, and triggers.
 
 ### 3. **ENHANCED_EVENTS_GUIDE.md**
 Comprehensive 500+ line guide with:
-- Feature comparison table (Modern Event Platforms vs CloudPeers Enhanced)
+- Feature comparison table (Modern Event Platforms vs cloudpeers Enhanced)
 - Complete template structure documentation
 - Event type examples (birthday party, potluck, fundraiser)
 - Integration details (QR codes, photo gallery, custom subdomains)
@@ -64,9 +64,9 @@ Comprehensive 500+ line guide with:
 
 ---
 
-## 🎯 Feature Comparison: Modern Event Platforms vs CloudPeers Enhanced
+## 🎯 Feature Comparison: Modern Event Platforms vs cloudpeers Enhanced
 
-| Feature Category | Modern Event Platforms | CloudPeers Enhanced |
+| Feature Category | Modern Event Platforms | cloudpeers Enhanced |
 |-----------------|----------|---------------------|
 | **Core RSVP** | ✅ Going/Maybe/Can't Go | ✅ Same + approval workflow |
 | **Guest Management** | ✅ Basic | ✅ Enhanced with waitlist |
@@ -81,7 +81,7 @@ Comprehensive 500+ line guide with:
 | **Music Contributions** | ❌ No | ✅ OPTIONAL songs or AI-generated |
 | **Custom Subdomains** | ❌ No | ✅ *.redheli.com or *.cloudpeers.com |
 | **White-Label Branding** | ❌ Limited | ✅ Full customization |
-| **MCP Integration** | ❌ No | ✅ CloudPeers A2A |
+| **MCP Integration** | ❌ No | ✅ cloudpeers A2A |
 
 ---
 
@@ -447,7 +447,7 @@ Gallery: https://techsummit.cloudpeers.com/gallery
 3. **Custom Subdomains** - Brand URLs on redheli.com or cloudpeers.com
 4. **Smart URL Functions** - Database-level URL generation (subdomain or path)
 5. **Activity Timeline** - Complete audit log of all guest actions
-6. **Feature Parity** - All modern event platform features + CloudPeers enhancements
+6. **Feature Parity** - All modern event platform features + cloudpeers enhancements
 
 ---
 

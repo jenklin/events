@@ -1,10 +1,10 @@
-# CloudPeers Events Platform
+# cloudpeers Events Platform
 
 > Complete event management platform with creator portal, event page generation, and photo galleries
 
 ## Overview
 
-CloudPeers Events is a multi-tenant event management platform that provides:
+cloudpeers Events is a multi-tenant event management platform that provides:
 
 1. **Creator Portal** - Modern dashboard to create and manage events
 2. **Event Page Generator** - Generate branded event landing pages
@@ -60,8 +60,8 @@ cloudpeers-events/
 ### ✅ Implemented
 
 - **Creator Portal UI** - Modern dashboard with shadcn/ui
-- **CloudPeers Branding** - Maroon, tan, and grey color scheme
-- **Event Page Template** - CloudPeers branded event landing page
+- **cloudpeers Branding** - Maroon, tan, and grey color scheme
+- **Event Page Template** - cloudpeers branded event landing page
 - **Event Generator** - TypeScript generator for event pages
 - **Type Definitions** - Complete TypeScript types
 - **Registration Form** - Alpine.js form with Supabase integration
@@ -177,7 +177,7 @@ npm run typecheck           # TypeScript type checking
 
 This platform is the evolution of the seoul-events-site with:
 
-✅ **CloudPeers Branding** - Updated from Red Helicopter colors
+✅ **cloudpeers Branding** - Updated from Red Helicopter colors
 ✅ **TypeScript** - Type-safe event generation
 ✅ **Modern UI** - shadcn/ui components
 ✅ **Clean Architecture** - Organized directory structure
@@ -202,8 +202,8 @@ See `docs/MIGRATION_GUIDE.md` for detailed migration instructions.
 
 ## License
 
-Copyright © 2025 CloudPeers. All rights reserved.
+Copyright © 2025 cloudpeers. All rights reserved.
 
 ---
 
-**Built with ❤️ by the CloudPeers Team**
+**Built with ❤️ by the cloudpeers Team**

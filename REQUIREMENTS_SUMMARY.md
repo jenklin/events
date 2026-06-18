@@ -1,4 +1,4 @@
-# CloudPeers Events Platform - Requirements Summary
+# cloudpeers Events Platform - Requirements Summary
 
 ## What You Need to Get events.cloudpeers.com Live
 
@@ -19,7 +19,7 @@
 | **Supabase** | Database + Auth | Free tier | 2-3 hours |
 | **Cloudflare** | Images + DNS + Worker | $5-20/mo | 2-3 hours |
 | **GitHub** | Code repository + CI/CD | Free | 1 hour |
-| **CloudPeers** | Service marketplace | TBD | 1 hour |
+| **cloudpeers** | Service marketplace | TBD | 1 hour |
 
 **Total Setup Time**: ~8-12 hours
 **Monthly Cost**: ~$30-75
@@ -131,10 +131,10 @@
 
 ---
 
-### 6. CloudPeers Integration
+### 6. cloudpeers Integration
 
 **Required**:
-- [ ] Service registration with CloudPeers
+- [ ] Service registration with cloudpeers
 - [ ] MCP webhook handler (`/api/webhooks/mcp`)
 - [ ] Signature verification (HMAC)
 - [ ] Capability implementations:
@@ -143,7 +143,7 @@
   - `gallery.create`
   - `gallery.authorize`
   - `event.analytics`
-- [ ] Metrics reporting to CloudPeers API
+- [ ] Metrics reporting to cloudpeers API
 - [ ] Agent card (`/.well-known/agent.json`)
 
 **Time**: 6-8 hours
@@ -178,7 +178,7 @@
 - [ ] Gallery photo upload
 - [ ] Gallery photo access
 - [ ] Branding customization
-- [ ] CloudPeers webhook
+- [ ] cloudpeers webhook
 - [ ] Mobile responsiveness
 - [ ] Cross-browser compatibility
 
@@ -206,7 +206,7 @@ NEXT_PUBLIC_CF_IMAGES_HASH=xxx
 NEXT_PUBLIC_APP_URL=https://events.cloudpeers.com
 JWT_SECRET=xxx  # openssl rand -hex 32
 
-# CloudPeers
+# cloudpeers
 CLOUDPEERS_WEBHOOK_SECRET=xxx  # openssl rand -hex 32
 CLOUDPEERS_SERVICE_ID=xxx  # From registration
 CLOUDPEERS_API_KEY=xxx
@@ -264,7 +264,7 @@ gcloud run domain-mappings create \
 - [ ] Test event creation
 - [ ] Test registration flow
 - [ ] Test gallery access
-- [ ] Test CloudPeers webhook
+- [ ] Test cloudpeers webhook
 - [ ] Monitor error rates
 
 ---
@@ -292,7 +292,7 @@ gcloud run domain-mappings create \
 ### Minimum Team
 | Role | Hours | Responsibilities |
 |------|-------|------------------|
-| **Backend Developer** | 40-50h | Database, APIs, CloudPeers integration |
+| **Backend Developer** | 40-50h | Database, APIs, cloudpeers integration |
 | **Frontend Developer** | 30-40h | Gallery UI, event templates |
 | **DevOps Engineer** | 30-40h | Cloud setup, CI/CD, deployment |
 
@@ -318,14 +318,14 @@ gcloud run domain-mappings create \
 - **Day 5**: Cloudflare Worker
 
 ### Week 3: Integration & Testing
-- **Days 1-2**: CloudPeers integration
+- **Days 1-2**: cloudpeers integration
 - **Days 3-4**: End-to-end testing
 - **Day 5**: Bug fixes
 
 ### Week 4: Launch
 - **Days 1-2**: Staging deployment + QA
 - **Day 3**: Production deployment
-- **Day 4**: CloudPeers marketplace publish
+- **Day 4**: cloudpeers marketplace publish
 - **Day 5**: Monitor + optimize
 
 **Total**: 20 working days (~4 weeks)
@@ -341,7 +341,7 @@ These MUST be completed in order:
 3. **Gallery Application** → Core functionality
 4. **Cloud Run Deployment** → Need live URL for DNS
 5. **Domain Configuration** → Need for Cloudflare Worker
-6. **CloudPeers Registration** → Need webhook secret for integration
+6. **cloudpeers Registration** → Need webhook secret for integration
 7. **Testing** → Must pass before launch
 8. **Launch** → Go live!
 
@@ -356,7 +356,7 @@ These MUST be completed in order:
 - Have backup SMTP provider ready (SendGrid, AWS SES)
 - Monitor email delivery rates
 
-### 2. CloudPeers Integration
+### 2. cloudpeers Integration
 **Risk**: Webhook signature verification issues
 **Mitigation**:
 - Test webhook locally with ngrok
@@ -389,7 +389,7 @@ These MUST be completed in order:
 - [ ] Magic link emails sent
 - [ ] Gallery photo upload
 - [ ] Gallery photo viewing
-- [ ] CloudPeers webhook responding
+- [ ] cloudpeers webhook responding
 - [ ] Metrics being reported
 - [ ] Health check endpoint returns 200
 
@@ -398,7 +398,7 @@ These MUST be completed in order:
 - [ ] Response times (target: <500ms p95)
 - [ ] User registrations
 - [ ] Gallery uploads
-- [ ] CloudPeers agent invocations
+- [ ] cloudpeers agent invocations
 
 ---
 
@@ -411,7 +411,7 @@ These MUST be completed in order:
 - **Quick Start**: `QUICK_START.md`
 
 ### External Services
-- **CloudPeers**: https://services.cloudpeers.com
+- **cloudpeers**: https://services.cloudpeers.com
 - **Supabase**: https://supabase.com/dashboard
 - **GCP Console**: https://console.cloud.google.com
 - **Cloudflare**: https://dash.cloudflare.com

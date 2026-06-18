@@ -1,4 +1,4 @@
-# CloudPeers Events Platform - Launch Checklist
+# cloudpeers Events Platform - Launch Checklist
 
 ## Goal
 Deploy fully functional Events Platform at **events.cloudpeers.com**
@@ -136,7 +136,7 @@ Deploy fully functional Events Platform at **events.cloudpeers.com**
   - [ ] `CLOUDFLARE_API_TOKEN`
   - [ ] `CLOUDPEERS_WEBHOOK_SECRET`
   - [ ] `JWT_SECRET` (generate: `openssl rand -hex 32`)
-  - [ ] `CLOUDPEERS_API_KEY` (from CloudPeers dashboard)
+  - [ ] `CLOUDPEERS_API_KEY` (from cloudpeers dashboard)
 - [ ] Grant Cloud Run access
   - [ ] Add IAM binding for each secret
   - [ ] Principal: Cloud Run service account
@@ -316,8 +316,8 @@ Deploy fully functional Events Platform at **events.cloudpeers.com**
 
 ## Phase 3: Integration & Testing (Week 3)
 
-### 3.1 CloudPeers Service Registration
-- [ ] Register service with CloudPeers
+### 3.1 cloudpeers Service Registration
+- [ ] Register service with cloudpeers
   ```bash
   curl -X POST https://services.cloudpeers.com/api/registry/register \
     -H "Content-Type: application/json" \
@@ -376,7 +376,7 @@ Deploy fully functional Events Platform at **events.cloudpeers.com**
   - [ ] Track registrations
   - [ ] Track gallery uploads
   - [ ] Track magic link sends
-- [ ] Set up CloudPeers observability
+- [ ] Set up cloudpeers observability
   - [ ] Configure service ID
   - [ ] Configure API key
   - [ ] Test metric posting
@@ -447,7 +447,7 @@ Deploy fully functional Events Platform at **events.cloudpeers.com**
   - [ ] Click magic link
   - [ ] Access album
   - [ ] Download photo
-- [ ] CloudPeers integration
+- [ ] cloudpeers integration
   - [ ] Test webhook delivery
   - [ ] Test capability invocation
   - [ ] Test metrics reporting
@@ -562,7 +562,7 @@ Deploy fully functional Events Platform at **events.cloudpeers.com**
 
 ---
 
-### 4.3 CloudPeers Marketplace Publishing
+### 4.3 cloudpeers Marketplace Publishing
 - [ ] Finalize service metadata
   - [ ] Service description
   - [ ] Feature list
@@ -578,7 +578,7 @@ Deploy fully functional Events Platform at **events.cloudpeers.com**
   - [ ] Test service discovery
   - [ ] Test semantic search
 - [ ] Announce launch
-  - [ ] CloudPeers community
+  - [ ] cloudpeers community
   - [ ] Social media
   - [ ] Email newsletter
   - [ ] Blog post
@@ -593,7 +593,7 @@ Deploy fully functional Events Platform at **events.cloudpeers.com**
   - [ ] Cloud Run metrics (CPU, memory, requests)
   - [ ] Supabase metrics (DB connections, queries)
   - [ ] Cloudflare metrics (bandwidth, requests)
-  - [ ] CloudPeers metrics (agent invocations)
+  - [ ] cloudpeers metrics (agent invocations)
 - [ ] Configure alerts
   - [ ] Error rate > 5%
   - [ ] Response time > 2s
@@ -654,7 +654,7 @@ Deploy fully functional Events Platform at **events.cloudpeers.com**
   - [ ] Register test user
   - [ ] Upload test photos
   - [ ] Access gallery
-  - [ ] Test CloudPeers integration
+  - [ ] Test cloudpeers integration
 - [ ] Team readiness
   - [ ] Support team online
   - [ ] DevOps on standby
@@ -665,7 +665,7 @@ Deploy fully functional Events Platform at **events.cloudpeers.com**
   - [ ] Change service status to `published`
   - [ ] Verify appears in catalog
 - [ ] Announce launch
-  - [ ] Post to CloudPeers community
+  - [ ] Post to cloudpeers community
   - [ ] Social media posts
   - [ ] Email announcement
 - [ ] Monitor closely
@@ -744,7 +744,7 @@ Deploy fully functional Events Platform at **events.cloudpeers.com**
 - **GCP Project**: `cloudpeers-events`
 - **Supabase Project**: `cloudpeers-events`
 - **Cloudflare Account**: [ID]
-- **CloudPeers Service ID**: [Will be assigned]
+- **cloudpeers Service ID**: [Will be assigned]
 
 ### Documentation
 - Implementation guides: `/Users/jenklin/dev/cloudpeers-mcp/events/`
@@ -782,7 +782,7 @@ Deploy fully functional Events Platform at **events.cloudpeers.com**
    - Mitigation: Proper indexing, connection pooling
    - Fallback: Upgrade Supabase plan
 
-4. **CloudPeers Integration Issues**
+4. **cloudpeers Integration Issues**
    - Mitigation: Thorough webhook testing
    - Fallback: Manual service registration
 

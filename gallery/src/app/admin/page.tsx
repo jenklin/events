@@ -58,7 +58,7 @@ export default function AdminPage() {
     return (
       <main className="space-y-6">
         <h1 className="text-2xl font-semibold">Admin</h1>
-        <p className="text-neutral-600">You must sign in.</p>
+        <p className="text-paradigm-muted">You must sign in.</p>
         <Link href="/admin/login" className="underline">Go to login</Link>
       </main>
     )
@@ -91,15 +91,15 @@ export default function AdminPage() {
         <h2 className="font-medium">Albums</h2>
         <div className="grid gap-3">
           {albums.map(a => (
-            <div key={a.id} className="rounded-xl border p-3 bg-white">
+            <div key={a.id} className="rounded-xl border p-3 bg-paradigm-panel">
               <div className="flex justify-between items-center">
                 <div>
                   <div className="font-medium">{a.title}</div>
-                  <div className="text-xs text-neutral-500">{a.id}</div>
+                  <div className="text-xs text-paradigm-muted">{a.id}</div>
                 </div>
                 <div className="flex gap-2">
-                  <Link href={`/a/${a.id}`} className="rounded bg-blue-600 text-white px-3 py-1 text-xs font-medium hover:bg-blue-700">View Album</Link>
-                  <Link href={`/a/${a.id}/upload`} className="rounded bg-green-600 text-white px-3 py-1 text-xs font-medium hover:bg-green-700">Upload</Link>
+                  <Link href={`/a/${a.id}`} className="rounded bg-paradigm-accent text-white px-3 py-1 text-xs font-medium hover:bg-paradigm-accent-light">View Album</Link>
+                  <Link href={`/a/${a.id}/upload`} className="rounded bg-paradigm-teal text-white px-3 py-1 text-xs font-medium hover:bg-paradigm-teal">Upload</Link>
                   <button onClick={()=>issueInvite(a.id, 'viewer')} className="rounded bg-neutral-800 text-white px-2 py-1 text-xs">Viewer Invite</button>
                   <button onClick={()=>issueInvite(a.id, 'editor')} className="rounded bg-neutral-800 text-white px-2 py-1 text-xs">Editor Invite</button>
                 </div>

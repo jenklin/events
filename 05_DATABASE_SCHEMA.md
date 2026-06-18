@@ -616,4 +616,4 @@ VALUES ('org-uuid', 'Test Event', '2025-06-01', ...);
 
 Continue to:
 - **06_DEPLOYMENT_WORKFLOW.md** - CI/CD pipeline setup
-- **07_INTEGRATION_GUIDE.md** - CloudPeers integration
+- **07_INTEGRATION_GUIDE.md** - cloudpeers integration

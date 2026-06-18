@@ -3,7 +3,7 @@
  *
  * Verifies the canonical cloudpeers webhook signature (§3b /
  * SERVICE_ONBOARDING_CONTRACT.md "L1 webhook-signature wire format"):
- *   Header:  X-CloudPeers-Signature: t=<unix_seconds>,v1=<hmac_hex>
+ *   Header:  X-cloudpeers-Signature: t=<unix_seconds>,v1=<hmac_hex>
  *   HMAC:    HMAC-SHA256(secret, `${t}.${rawBody}`) over the RAW request bytes
  *   Replay:  reject if |now - t| > 300s ; t is unix SECONDS
  *   Compare: constant-time ; fail-closed if no secret

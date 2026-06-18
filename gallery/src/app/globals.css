@@ -2,10 +2,44 @@
 @tailwind components;
 @tailwind utilities;
 
-/* CloudPeers Brand Colors */
+/*
+ * cloudpeers brand — dark mode (Brand Guidelines v4), mirrors cloudpeers.com.
+ * --brand-color / --brand-accent default to the cloudpeers palette but may be
+ * overridden at runtime per-album (see AlbumViewer theme injection).
+ */
 :root {
-  --brand-color: #7B1E1E;        /* CloudPeers Maroon */
-  --brand-accent: #D4A574;       /* CloudPeers Tan */
-  --brand-dark: #5A1616;         /* Maroon Dark */
-  --brand-light: #E4C5A4;        /* Tan Light */
+  --brand-color: #8b5cf6;        /* Paradigm Purple — primary */
+  --brand-accent: #14b8a6;       /* Paradigm Teal — accent */
+  --brand-dark: #7c3aed;         /* Purple dark */
+  --brand-light: #a78bfa;        /* Purple light */
 }
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background-color: #050505;
+  color: #e2e8f0;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #ffffff;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* Glass panel effect (matches cloudpeers.com) */
+.glass-panel {
+  background: rgba(21, 21, 24, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #0a0a0c; }
+::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #475569; }

@@ -10,7 +10,7 @@ cloudpeers-migration/
 ├── INDEX.md 📍                     # This file - Navigation guide
 │
 ├── Phase 1: Service Setup (Day 1-2)
-│   ├── 01_SERVICE_REGISTRATION.md  # CloudPeers registration
+│   ├── 01_SERVICE_REGISTRATION.md  # cloudpeers registration
 │   └── 02_SERVICE_ARCHITECTURE.md  # System design overview
 │
 ├── Phase 2: Core Implementation (Week 1-2)
@@ -20,7 +20,7 @@ cloudpeers-migration/
 │
 └── Phase 3: Deployment & Integration (Week 3)
     ├── 06_DEPLOYMENT_WORKFLOW.md   # CI/CD & Cloud Run
-    └── 07_INTEGRATION_GUIDE.md     # CloudPeers MCP integration
+    └── 07_INTEGRATION_GUIDE.md     # cloudpeers MCP integration
 ```
 
 ## 🎯 Choose Your Path
@@ -69,7 +69,7 @@ cloudpeers-migration/
 - Local Next.js gallery
 - Supabase database
 - Event template generator
-- CloudPeers registration
+- cloudpeers registration
 
 **When to use**: When you want to get started immediately
 **Time**: 2 hours (hands-on)
@@ -77,7 +77,7 @@ cloudpeers-migration/
 ---
 
 ### [01_SERVICE_REGISTRATION.md](./01_SERVICE_REGISTRATION.md)
-**Purpose**: Register service with CloudPeers
+**Purpose**: Register service with cloudpeers
 **Key Content**:
 - Service registration payload
 - Capabilities definition
@@ -88,7 +88,7 @@ cloudpeers-migration/
 **When to read**: Day 1 of implementation
 **Time**: 15 minutes + 30 minutes implementation
 
-**Prerequisites**: CloudPeers account
+**Prerequisites**: cloudpeers account
 
 **Key Change**: Agent ID is now `cloudpeers-events-platform-001` (generic, not organization-specific)
 
@@ -189,7 +189,7 @@ cloudpeers-migration/
 ---
 
 ### [07_INTEGRATION_GUIDE.md](./07_INTEGRATION_GUIDE.md)
-**Purpose**: Integrate with CloudPeers MCP
+**Purpose**: Integrate with cloudpeers MCP
 **Key Content**:
 - Webhook handler implementation
 - Signature verification
@@ -201,7 +201,7 @@ cloudpeers-migration/
 **When to read**: Week 3, Days 1-2
 **Time**: 3-4 hours implementation
 
-**Prerequisites**: Deployed service, CloudPeers service ID
+**Prerequisites**: Deployed service, cloudpeers service ID
 
 **Implements**: MCP protocol, observability
 
@@ -229,7 +229,7 @@ cloudpeers-migration/
 - Supabase Auth OTP
 - 30-day session cookies
 
-### CloudPeers MCP Integration
+### cloudpeers MCP Integration
 **Where**: 01, 07
 - Webhook-based event delivery
 - HMAC signature verification
@@ -244,7 +244,7 @@ Copy this to track your progress:
 ### Week 1: Foundation
 - [ ] Day 1: Read README & Architecture (1-2 hours)
 - [ ] Day 1: Complete Quick Start (2 hours)
-- [ ] Day 2: Register with CloudPeers (30 min)
+- [ ] Day 2: Register with cloudpeers (30 min)
 - [ ] Day 2: Review all 7 docs (2-3 hours)
 - [ ] Day 3: Set up Supabase (1 hour)
 - [ ] Day 3: Run database migrations (2 hours)
@@ -285,7 +285,7 @@ Copy this to track your progress:
 - [ ] Supabase account (free tier OK)
 - [ ] Google Cloud account (billing required)
 - [ ] Cloudflare account (free tier OK)
-- [ ] CloudPeers account
+- [ ] cloudpeers account
 - [ ] GitHub account
 
 ### CLI Tools
@@ -316,7 +316,7 @@ Copy this to track your progress:
 1. ✅ Read docs in order (01 → 07)
 2. ✅ Test each capability independently
 3. ✅ Use staging environment first
-4. ✅ Monitor CloudPeers metrics
+4. ✅ Monitor cloudpeers metrics
 
 ## 🎓 Learning Path
 
@@ -336,7 +336,7 @@ Copy this to track your progress:
 1. Review all 7 docs quickly
 2. Focus on [06_DEPLOYMENT_WORKFLOW.md](./06_DEPLOYMENT_WORKFLOW.md)
 3. Set up CI/CD pipeline
-4. Deploy and integrate with CloudPeers
+4. Deploy and integrate with cloudpeers
 
 ## 📞 Support
 
@@ -346,10 +346,10 @@ Copy this to track your progress:
 - **Authentication**: See [04_GALLERY_SYSTEM.md](./04_GALLERY_SYSTEM.md)
 - **Database**: See [05_DATABASE_SCHEMA.md](./05_DATABASE_SCHEMA.md)
 - **Deployment**: See [06_DEPLOYMENT_WORKFLOW.md](./06_DEPLOYMENT_WORKFLOW.md)
-- **CloudPeers**: See [07_INTEGRATION_GUIDE.md](./07_INTEGRATION_GUIDE.md)
+- **cloudpeers**: See [07_INTEGRATION_GUIDE.md](./07_INTEGRATION_GUIDE.md)
 
 ### External Resources
-- CloudPeers Docs: https://services.cloudpeers.com/docs
+- cloudpeers Docs: https://services.cloudpeers.com/docs
 - Supabase Docs: https://supabase.com/docs
 - Next.js Docs: https://nextjs.org/docs
 - Cloudflare Images: https://developers.cloudflare.com/images

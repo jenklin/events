@@ -4,7 +4,7 @@
 
 The Custom Events service uses the same Supabase instance as cloudpeers-mcp:
 - **Supabase URL**: `https://efpspxzgvbsqfyelbkdw.supabase.co`
-- **Project**: CloudPeers MCP
+- **Project**: cloudpeers MCP
 
 ## Setup Steps
 

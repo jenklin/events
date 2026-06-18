@@ -25,5 +25,5 @@ export default function Callback() {
     })
   }, [])
 
-  return <main className="p-6 text-sm text-neutral-600">{status}</main>
+  return <main className="p-6 text-sm text-paradigm-muted">{status}</main>
 }

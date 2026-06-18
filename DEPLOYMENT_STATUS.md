@@ -1,4 +1,4 @@
-# CloudPeers Custom Events - Deployment Status
+# cloudpeers Custom Events - Deployment Status
 
 ## ✅ Current Status: Ready for Database Setup & Testing
 
@@ -72,7 +72,7 @@
 
 #### 6. ✅ Git Repository
 - **Repository**: https://github.com/jenklin/events
-- **Latest Commit**: c768df9 - "Add CloudPeers MCP deployment configuration"
+- **Latest Commit**: c768df9 - "Add cloudpeers MCP deployment configuration"
 - **Files Tracked**: 26 files changed, 7,837 insertions
 
 ---
@@ -162,7 +162,7 @@ The service is ready to be registered on **services.cloudpeers.com**
 
 **Service Details**:
 - **Service ID**: `cloudpeers-events`
-- **Name**: CloudPeers Events
+- **Name**: cloudpeers Events
 - **Description**: Create beautiful event pages with RSVP, potluck tracking, music contributions, and more
 - **MCP Tools**: 7 tools (create_event, get_event_stats, get_guest_list, etc.)
 - **MCP Resources**: 6 resources (event details, RSVPs, potluck, music, QR codes, gallery)

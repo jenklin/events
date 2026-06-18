@@ -138,7 +138,7 @@ export default function EventPage({ event }: EventPageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="min-h-screen bg-gradient-to-br from-paradigm-deep-black to-paradigm-deep-black">
       {/* Cover Image */}
       {event.coverImage.url && (
         <div className="w-full h-64 md:h-96 bg-cover bg-center" style={{ backgroundImage: `url(${event.coverImage.url})` }} />
@@ -147,9 +147,9 @@ export default function EventPage({ event }: EventPageProps) {
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Event Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">{event.title}</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">{event.title}</h1>
           {event.description && (
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto">{event.description}</p>
+            <p className="text-lg text-paradigm-muted max-w-2xl mx-auto">{event.description}</p>
           )}
         </div>
 
@@ -158,26 +158,26 @@ export default function EventPage({ event }: EventPageProps) {
           <div className="space-y-4">
             {/* Date & Time */}
             <div>
-              <h3 className="font-semibold text-slate-900 mb-2">When</h3>
-              <p className="text-slate-700">
+              <h3 className="font-semibold text-white mb-2">When</h3>
+              <p className="text-paradigm-text">
                 {formatDate(event.date)}
                 <br />
                 {formatTime(event.startTime)}
                 {event.endTime && ` - ${formatTime(event.endTime)}`}
-                <span className="text-sm text-slate-500 ml-2">({event.timezone})</span>
+                <span className="text-sm text-paradigm-muted ml-2">({event.timezone})</span>
               </p>
             </div>
 
             {/* Location */}
             <div>
-              <h3 className="font-semibold text-slate-900 mb-2">Where</h3>
+              <h3 className="font-semibold text-white mb-2">Where</h3>
               {showLocationDetails ? (
-                <div className="text-slate-700">
+                <div className="text-paradigm-text">
                   {event.location.name && <p className="font-medium">{event.location.name}</p>}
                   {event.location.address && <p>{event.location.address}</p>}
                   {event.location.description && <p className="text-sm mt-1">{event.location.description}</p>}
                   {event.location.nearestStation && (
-                    <p className="text-sm text-slate-500 mt-1">Nearest station: {event.location.nearestStation}</p>
+                    <p className="text-sm text-paradigm-muted mt-1">Nearest station: {event.location.nearestStation}</p>
                   )}
                   {event.location.googleMapsLink && (
                     <a
@@ -191,25 +191,25 @@ export default function EventPage({ event }: EventPageProps) {
                   )}
                 </div>
               ) : (
-                <p className="text-slate-500 italic">Location details will be shared after you RSVP</p>
+                <p className="text-paradigm-muted italic">Location details will be shared after you RSVP</p>
               )}
             </div>
 
             {/* Host */}
             <div>
-              <h3 className="font-semibold text-slate-900 mb-2">Hosted by</h3>
-              <p className="text-slate-700">{event.host.name}</p>
+              <h3 className="font-semibold text-white mb-2">Hosted by</h3>
+              <p className="text-paradigm-text">{event.host.name}</p>
             </div>
 
             {/* Cost */}
             {event.cost.hasCost && (
               <div>
-                <h3 className="font-semibold text-slate-900 mb-2">Cost</h3>
-                <p className="text-slate-700">
+                <h3 className="font-semibold text-white mb-2">Cost</h3>
+                <p className="text-paradigm-text">
                   {event.cost.amount} {event.cost.currency}
                   {event.cost.perPerson && ' per person'}
                   {event.cost.description && (
-                    <span className="text-sm text-slate-500 block mt-1">{event.cost.description}</span>
+                    <span className="text-sm text-paradigm-muted block mt-1">{event.cost.description}</span>
                   )}
                 </p>
               </div>
@@ -218,13 +218,13 @@ export default function EventPage({ event }: EventPageProps) {
             {/* Capacity */}
             {event.capacity.enabled && event.visibility.showGuestCount && (
               <div>
-                <h3 className="font-semibold text-slate-900 mb-2">Capacity</h3>
+                <h3 className="font-semibold text-white mb-2">Capacity</h3>
                 <div className="flex items-center gap-2">
                   <Badge variant={event.capacity.isAtCapacity ? 'destructive' : 'default'}>
                     {event.capacity.currentGuests} / {event.capacity.maxGuests} guests
                   </Badge>
                   {event.capacity.isAtCapacity && event.capacity.enableWaitlist && (
-                    <span className="text-sm text-amber-600">Waitlist available</span>
+                    <span className="text-sm text-paradigm-gold">Waitlist available</span>
                   )}
                 </div>
               </div>
@@ -233,7 +233,7 @@ export default function EventPage({ event }: EventPageProps) {
             {/* RSVP Stats */}
             {event.visibility.showGuestCount && (
               <div>
-                <h3 className="font-semibold text-slate-900 mb-2">RSVPs</h3>
+                <h3 className="font-semibold text-white mb-2">RSVPs</h3>
                 <div className="flex gap-4">
                   <Badge variant="default">{event.stats.going} Going</Badge>
                   <Badge variant="secondary">{event.stats.maybe} Maybe</Badge>
@@ -246,14 +246,14 @@ export default function EventPage({ event }: EventPageProps) {
         {/* RSVP Form */}
         {event.rsvp.enabled && (
           <Card className="p-6">
-            <h2 className="text-2xl font-bold text-slate-900 mb-6">
+            <h2 className="text-2xl font-bold text-white mb-6">
               {hasRsvp ? 'Update Your RSVP' : 'RSVP'}
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Status Selection */}
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-3">Will you attend?</label>
+                <label className="block text-sm font-medium text-paradigm-text mb-3">Will you attend?</label>
                 <div className="flex gap-3">
                   <Button
                     type="button"
@@ -261,7 +261,7 @@ export default function EventPage({ event }: EventPageProps) {
                     onClick={() => setSelectedStatus('going')}
                     className="flex-1"
                   >
-                    ✅ Going
+                    Going
                   </Button>
                   <Button
                     type="button"
@@ -269,7 +269,7 @@ export default function EventPage({ event }: EventPageProps) {
                     onClick={() => setSelectedStatus('maybe')}
                     className="flex-1"
                   >
-                    🤔 Maybe
+                    Maybe
                   </Button>
                   <Button
                     type="button"
@@ -277,7 +277,7 @@ export default function EventPage({ event }: EventPageProps) {
                     onClick={() => setSelectedStatus('not_going')}
                     className="flex-1"
                   >
-                    ❌ Can't Go
+                    Can't Go
                   </Button>
                 </div>
               </div>
@@ -285,24 +285,24 @@ export default function EventPage({ event }: EventPageProps) {
               {/* Guest Info */}
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Name *</label>
+                  <label className="block text-sm font-medium text-paradigm-text mb-2">Name *</label>
                   <input
                     type="text"
                     value={guestName}
                     onChange={(e) => setGuestName(e.target.value)}
                     required
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Email *</label>
+                  <label className="block text-sm font-medium text-paradigm-text mb-2">Email *</label>
                   <input
                     type="email"
                     value={guestEmail}
                     onChange={(e) => setGuestEmail(e.target.value)}
                     onBlur={handleEmailBlur}
                     required
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -310,7 +310,7 @@ export default function EventPage({ event }: EventPageProps) {
               {/* Plus Ones */}
               {event.rsvp.allowPlusOnes && selectedStatus === 'going' && (
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <label className="block text-sm font-medium text-paradigm-text mb-2">
                     Plus Ones (max {event.rsvp.maxPlusOnes})
                   </label>
                   <input
@@ -319,19 +319,19 @@ export default function EventPage({ event }: EventPageProps) {
                     onChange={(e) => setPlusOnes(Math.max(0, Math.min(event.rsvp.maxPlusOnes, parseInt(e.target.value) || 0)))}
                     min="0"
                     max={event.rsvp.maxPlusOnes}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               )}
 
               {/* Notes */}
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Notes (optional)</label>
+                <label className="block text-sm font-medium text-paradigm-text mb-2">Notes (optional)</label>
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   rows={3}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Any questions or dietary restrictions?"
                 />
               </div>
@@ -353,7 +353,7 @@ export default function EventPage({ event }: EventPageProps) {
               </Button>
 
               {event.rsvp.requireApproval && (
-                <p className="text-sm text-slate-500 text-center">
+                <p className="text-sm text-paradigm-muted text-center">
                   Note: Your RSVP will require host approval
                 </p>
               )}

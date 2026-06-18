@@ -89,7 +89,7 @@ export function PhotoUpload({ albumId, onUploadComplete, onClose }: PhotoUploadP
           throw new Error('Failed to confirm upload')
         }
 
-        setUploadProgress(prev => ({ ...prev, [file.name]: '✓ Done!' }))
+        setUploadProgress(prev => ({ ...prev, [file.name]: 'Done!' }))
       }
 
       // Success!
@@ -107,16 +107,16 @@ export function PhotoUpload({ albumId, onUploadComplete, onClose }: PhotoUploadP
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" onClick={onClose}>
-      <div className="bg-white rounded-2xl max-w-2xl w-full p-8 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+      <div className="bg-paradigm-panel rounded-2xl max-w-2xl w-full p-8 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-2">
-            <h2 className="text-2xl font-bold text-gray-900">Add Your Photos</h2>
-            <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-2xl leading-none">
+            <h2 className="text-2xl font-bold text-white">Add Your Photos</h2>
+            <button onClick={onClose} className="text-paradigm-muted hover:text-paradigm-muted text-2xl leading-none">
               ×
             </button>
           </div>
-          <p className="text-gray-600">
+          <p className="text-paradigm-muted">
             Share your view of the evening - your perspective matters!
           </p>
         </div>
@@ -135,25 +135,24 @@ export function PhotoUpload({ albumId, onUploadComplete, onClose }: PhotoUploadP
           <label
             htmlFor="photo-upload-input"
             className={`block border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition
-              ${uploading ? 'border-gray-300 bg-gray-50 cursor-not-allowed' : 'border-purple-300 hover:border-purple-500 hover:bg-purple-50'}
+              ${uploading ? 'border-white/10 bg-paradigm-deep-black cursor-not-allowed' : 'border-paradigm-purple/40 hover:border-paradigm-purple hover:bg-purple-50'}
             `}
           >
             {files.length === 0 ? (
               <>
-                <div className="text-4xl mb-4">📸</div>
-                <p className="text-gray-700 font-medium mb-2">Choose photos from your device</p>
-                <p className="text-sm text-gray-500">Up to 10 photos · JPG, PNG · Max 10MB each</p>
+                <p className="text-paradigm-text font-medium mb-2">Choose photos from your device</p>
+                <p className="text-sm text-paradigm-muted">Up to 10 photos · JPG, PNG · Max 10MB each</p>
               </>
             ) : (
               <div className="text-left">
-                <p className="font-medium text-gray-900 mb-3">{files.length} photo{files.length > 1 ? 's' : ''} selected</p>
+                <p className="font-medium text-white mb-3">{files.length} photo{files.length > 1 ? 's' : ''} selected</p>
                 <div className="space-y-2">
                   {files.map((file, idx) => (
-                    <div key={idx} className="flex items-center justify-between text-sm bg-gray-100 rounded px-3 py-2">
+                    <div key={idx} className="flex items-center justify-between text-sm bg-paradigm-panel rounded px-3 py-2">
                       <span className="truncate flex-1">{file.name}</span>
-                      <span className="ml-2 text-gray-500">{(file.size / 1024 / 1024).toFixed(1)}MB</span>
+                      <span className="ml-2 text-paradigm-muted">{(file.size / 1024 / 1024).toFixed(1)}MB</span>
                       {uploadProgress[file.name] && (
-                        <span className="ml-2 text-purple-600 font-medium">{uploadProgress[file.name]}</span>
+                        <span className="ml-2 text-paradigm-purple-light font-medium">{uploadProgress[file.name]}</span>
                       )}
                     </div>
                   ))}
@@ -171,9 +170,9 @@ export function PhotoUpload({ albumId, onUploadComplete, onClose }: PhotoUploadP
         )}
 
         {/* Privacy Note */}
-        <div className="mb-6 p-4 bg-gray-50 rounded-lg text-sm text-gray-600">
+        <div className="mb-6 p-4 bg-paradigm-deep-black rounded-lg text-sm text-paradigm-muted">
           <p className="flex items-start gap-2">
-            <span>ℹ️</span>
+            <span>ℹ</span>
             <span>Photos are visible to all event attendees. Please respect others' privacy and only share appropriate images.</span>
           </p>
         </div>
@@ -184,14 +183,14 @@ export function PhotoUpload({ albumId, onUploadComplete, onClose }: PhotoUploadP
             <button
               onClick={() => { setFiles([]); setUploadProgress({}); setError('') }}
               disabled={uploading}
-              className="flex-1 px-6 py-3 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-6 py-3 border border-white/10 rounded-lg text-paradigm-text font-medium hover:bg-paradigm-deep-black transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Clear
             </button>
             <button
               onClick={handleUpload}
               disabled={uploading}
-              className="flex-1 px-6 py-3 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-6 py-3 bg-paradigm-purple text-white rounded-lg font-medium hover:bg-paradigm-purple-light transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {uploading ? 'Uploading...' : `Upload ${files.length} Photo${files.length > 1 ? 's' : ''}`}
             </button>

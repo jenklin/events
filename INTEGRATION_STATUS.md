@@ -1,4 +1,4 @@
-# CloudPeers Events Platform - Integration Status
+# cloudpeers Events Platform - Integration Status
 
 **Date**: December 21, 2025
 **Status**: Phase 1 Complete - Ready for Staging Deployment
@@ -134,7 +134,7 @@
 - ✅ Loading states during submission
 - ✅ Visual feedback for capacity limits
 - ✅ Conditional field visibility
-- ✅ CloudPeers branding (maroon/tan/grey)
+- ✅ cloudpeers branding (maroon/tan/grey)
 
 ---
 
@@ -295,13 +295,13 @@ curl "https://[staging-url]/api/events/test-event-dec-21/stats"
 **Current Gallery Status:**
 - ⚠️ Exists in `gallery/` directory (Next.js app)
 - ⚠️ Has basic structure but not integrated
-- ⚠️ Needs CloudPeers branding update
+- ⚠️ Needs cloudpeers branding update
 - ⚠️ Magic link authentication exists
 - ⚠️ Cloudflare Images integration pending
 
 **Tasks:**
 - [ ] Review seoul-events-site gallery implementation
-- [ ] Update branding to CloudPeers (maroon/tan/grey)
+- [ ] Update branding to cloudpeers (maroon/tan/grey)
 - [ ] Integrate with event system
   - [ ] Link gallery to event ID
   - [ ] Generate magic link URLs
@@ -542,7 +542,7 @@ cloudpeers-mcp/events/
 - Uses TypeScript for type safety
 - Supabase for backend (PostgreSQL + Auth + Realtime)
 - shadcn/ui for consistent UI components
-- CloudPeers branding (maroon #7B1E1E, tan #D4A574)
+- cloudpeers branding (maroon #7B1E1E, tan #D4A574)
 - Mobile-first responsive design
 - Activity logging for all user actions
 - Email queue ready for integration

@@ -1,4 +1,4 @@
-# CloudPeers Events Platform - New Directory Structure
+# cloudpeers Events Platform - New Directory Structure
 
 ## Proposed Clean Structure
 
@@ -21,7 +21,7 @@ cloudpeers-mcp/events/
 │
 ├── event-pages/                       # Generated event landing pages
 │   ├── templates/                    # Event page templates
-│   │   ├── default.html              # Default template (CloudPeers branded)
+│   │   ├── default.html              # Default template (cloudpeers branded)
 │   │   ├── minimal.html              # Minimal template
 │   │   └── premium.html              # Premium template
 │   ├── generator/                    # Event generator
@@ -71,14 +71,14 @@ cloudpeers-mcp/events/
 
 ## What Gets Migrated Where
 
-### From Seoul-Events-Site → CloudPeers Events
+### From Seoul-Events-Site → cloudpeers Events
 
 **Event Generator** (`template.html`, `generate-event.js`):
-- → `event-pages/templates/default.html` (with CloudPeers branding)
+- → `event-pages/templates/default.html` (with cloudpeers branding)
 - → `event-pages/generator/generate.ts` (TypeScript version)
 
 **Gallery** (`/gallery` folder):
-- → `gallery/` (updated with CloudPeers branding)
+- → `gallery/` (updated with cloudpeers branding)
 - Keep magic link authentication
 - Update Cloudflare Images integration
 
@@ -100,7 +100,7 @@ cloudpeers-mcp/events/
 2. **Shared Code**: Common utilities and types in `/shared`
 3. **Type Safety**: TypeScript everywhere
 4. **Modern Stack**: Next.js 14, React 18, shadcn/ui
-5. **CloudPeers Branded**: All templates use CloudPeers colors
+5. **cloudpeers Branded**: All templates use cloudpeers colors
 6. **Maintainable**: Clear organization, easy to find code
 7. **Scalable**: Easy to add new features
 
@@ -108,7 +108,7 @@ cloudpeers-mcp/events/
 
 1. Create new directory structure
 2. Move existing creator-portal code to new location
-3. Migrate event generator with CloudPeers branding
+3. Migrate event generator with cloudpeers branding
 4. Migrate gallery system
 5. Create shared types and utilities
 6. Update all import paths

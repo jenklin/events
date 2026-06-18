@@ -11,7 +11,7 @@ The Events Platform consists of two main components:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    CloudPeers MCP Layer                         │
+│                    cloudpeers MCP Layer                         │
 │  - Service discovery                                            │
 │  - Webhook routing                                              │
 │  - Metrics collection                                           │
@@ -114,7 +114,7 @@ gallery/
 │   │   │   │   ├── send-magic-link/route.ts
 │   │   │   │   └── callback/route.ts
 │   │   │   └── webhooks/
-│   │   │       └── mcp/route.ts          # CloudPeers webhook handler
+│   │   │       └── mcp/route.ts          # cloudpeers webhook handler
 │   │   ├── login/page.tsx
 │   │   ├── a/[albumId]/page.tsx         # Album viewer
 │   │   └── admin/
@@ -193,7 +193,7 @@ const ROUTE_PREFIX = '/gallery';
    └─ Return event URL
 
 5. Service → Record metrics
-   └─ POST to CloudPeers observability API
+   └─ POST to cloudpeers observability API
 ```
 
 ### Registration Flow
@@ -265,8 +265,8 @@ const ROUTE_PREFIX = '/gallery';
 - **CDN**: Cloudflare
 
 ### Infrastructure
-- **Orchestration**: CloudPeers MCP
-- **Monitoring**: CloudPeers Observability API
+- **Orchestration**: cloudpeers MCP
+- **Monitoring**: cloudpeers Observability API
 - **Secrets**: Google Cloud Secret Manager
 
 ## Environment Variables
@@ -287,13 +287,13 @@ NEXT_PUBLIC_CF_IMAGES_HASH=...
 NEXT_PUBLIC_APP_URL=https://events.redheli.com/gallery
 JWT_SECRET=...
 
-# CloudPeers Integration
+# cloudpeers Integration
 CLOUDPEERS_WEBHOOK_SECRET=...
 CLOUDPEERS_SERVICE_ID=...
 CLOUDPEERS_API_KEY=...
 ```
 
-## CloudPeers Integration Points
+## cloudpeers Integration Points
 
 ### 1. Webhook Handler
 
@@ -352,7 +352,7 @@ await recordMetric('gallery_photos_stored', photoCount, { albumId });
 2. **Set up Gallery authentication** - Implement magic link flow
 3. **Configure Cloudflare Images** - Set up photo storage
 4. **Deploy to Cloud Run** - Containerize and deploy
-5. **Configure CloudPeers webhooks** - Test MCP integration
+5. **Configure cloudpeers webhooks** - Test MCP integration
 
 Continue to:
 - **03_EVENT_TEMPLATE_ENGINE.md** - Template system details

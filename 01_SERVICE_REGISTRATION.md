@@ -1,8 +1,8 @@
-# Event Management Service - CloudPeers Registration
+# Event Management Service - cloudpeers Registration
 
 ## Service Overview
 
-**Service Name**: CloudPeers Events
+**Service Name**: cloudpeers Events
 **Agent ID**: `cloudpeers-events-platform-001`
 **Version**: 1.0.0
 **Pricing Model**: Token-based (per event created)
@@ -18,7 +18,7 @@ curl -X POST https://services.cloudpeers.com/api/registry/register \
   -H "Content-Type: application/json" \
   -d '{
     "agent_id": "cloudpeers-events-platform-001",
-    "name": "CloudPeers Events",
+    "name": "cloudpeers Events",
     "version": "1.0.0",
     "description": "White-label event management platform with landing pages, registration system, and private photo galleries for community events, conferences, and workshops",
     "webhook_url": "https://events-api.cloudpeers.com/api/webhooks/mcp",
@@ -206,7 +206,7 @@ curl -X POST https://services.cloudpeers.com/api/registry/register \
   "service": {
     "id": "uuid-here",
     "agent_id": "cloudpeers-events-platform-001",
-    "name": "CloudPeers Events",
+    "name": "cloudpeers Events",
     "version": "1.0.0",
     "status": "active",
     "created_at": "2025-12-19T00:00:00.000Z"
@@ -225,7 +225,7 @@ curl -X POST https://services.cloudpeers.com/api/registry/register \
 1. **Save webhook secret** - Store securely in environment variables
 2. **Configure webhook endpoint** - Implement MCP webhook handler at `/api/webhooks/mcp`
 3. **Set pricing details** - Configure token pricing in admin dashboard
-4. **Publish service** - Make discoverable in CloudPeers marketplace
+4. **Publish service** - Make discoverable in cloudpeers marketplace
 5. **Test capabilities** - Verify each capability works end-to-end
 
 ## Next Steps

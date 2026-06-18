@@ -12,21 +12,21 @@ export default function OptionalFeaturesForm({ form }: { form: UseFormReturn<Eve
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-slate-900 mb-4">Optional Features</h2>
-        <p className="text-slate-600">Add special features to make your event unique!</p>
+        <h2 className="text-2xl font-bold text-white mb-4">Optional Features</h2>
+        <p className="text-paradigm-muted">Add special features to make your event unique!</p>
       </div>
 
       {/* Potluck */}
-      <div className="p-6 bg-gradient-to-br from-orange-50 to-yellow-50 rounded-lg border-2 border-orange-200">
+      <div className="p-6 bg-gradient-to-br from-paradigm-coral/10 to-paradigm-gold/10 rounded-lg border-2 border-paradigm-coral/30">
         <div className="flex items-start gap-3 mb-4">
           <input
             {...register('potluck.enabled')}
             type="checkbox"
-            className="mt-1 w-6 h-6 text-orange-600 rounded focus:ring-orange-500"
+            className="mt-1 w-6 h-6 text-paradigm-coral rounded focus:ring-paradigm-coral"
           />
           <div className="flex-1">
-            <h3 className="text-lg font-bold text-slate-900">🍕 Potluck Food Tracking</h3>
-            <p className="text-sm text-slate-600 mt-1">
+            <h3 className="text-lg font-bold text-white">Potluck Food Tracking</h3>
+            <p className="text-sm text-paradigm-muted mt-1">
               Coordinate who brings what food - perfect for community gatherings!
             </p>
           </div>
@@ -35,13 +35,13 @@ export default function OptionalFeaturesForm({ form }: { form: UseFormReturn<Eve
         {potluckEnabled && (
           <div className="mt-4 ml-9 space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
+              <label className="block text-sm font-medium text-paradigm-text mb-2">
                 Food Categories
               </label>
               <div className="grid grid-cols-2 gap-2">
                 {foodCategories.map((category) => (
                   <label key={category} className="flex items-center gap-2 text-sm">
-                    <input type="checkbox" defaultChecked className="w-4 h-4 text-orange-600 rounded" />
+                    <input type="checkbox" defaultChecked className="w-4 h-4 text-paradigm-coral rounded" />
                     {category}
                   </label>
                 ))}
@@ -49,17 +49,17 @@ export default function OptionalFeaturesForm({ form }: { form: UseFormReturn<Eve
             </div>
 
             <label className="flex items-center gap-2">
-              <input {...register('potluck.showWhatOthersBring')} type="checkbox" className="w-4 h-4 text-orange-600 rounded" />
+              <input {...register('potluck.showWhatOthersBring')} type="checkbox" className="w-4 h-4 text-paradigm-coral rounded" />
               <span className="text-sm">Show what others are bringing (avoids duplicates)</span>
             </label>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Instructions for Guests</label>
+              <label className="block text-sm font-medium text-paradigm-text mb-2">Instructions for Guests</label>
               <input
                 {...register('potluck.instructions')}
                 type="text"
                 placeholder="Please bring a dish to serve 8-10 people!"
-                className="w-full px-4 py-2 border border-orange-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+                className="w-full px-4 py-2 border border-paradigm-coral/40 rounded-lg focus:ring-2 focus:ring-paradigm-coral"
               />
             </div>
           </div>
@@ -67,16 +67,16 @@ export default function OptionalFeaturesForm({ form }: { form: UseFormReturn<Eve
       </div>
 
       {/* Music Contributions */}
-      <div className="p-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg border-2 border-purple-200">
+      <div className="p-6 bg-gradient-to-br from-purple-50 to-paradigm-coral/10 rounded-lg border-2 border-white/10">
         <div className="flex items-start gap-3 mb-4">
           <input
             {...register('music.enabled')}
             type="checkbox"
-            className="mt-1 w-6 h-6 text-purple-600 rounded focus:ring-purple-500"
+            className="mt-1 w-6 h-6 text-paradigm-purple-light rounded focus:ring-purple-500"
           />
           <div className="flex-1">
-            <h3 className="text-lg font-bold text-slate-900">🎵 Music Contributions</h3>
-            <p className="text-sm text-slate-600 mt-1">
+            <h3 className="text-lg font-bold text-white">Music Contributions</h3>
+            <p className="text-sm text-paradigm-muted mt-1">
               Let guests request songs OR create custom AI-generated songs!
             </p>
           </div>
@@ -85,8 +85,8 @@ export default function OptionalFeaturesForm({ form }: { form: UseFormReturn<Eve
         {musicEnabled && (
           <div className="mt-4 ml-9 space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Contribution Type</label>
-              <select {...register('music.type')} className="w-full px-4 py-2 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+              <label className="block text-sm font-medium text-paradigm-text mb-2">Contribution Type</label>
+              <select {...register('music.type')} className="w-full px-4 py-2 border border-paradigm-purple/40 rounded-lg focus:ring-2 focus:ring-purple-500">
                 <option value="both">Song requests OR AI-generated (let guests choose)</option>
                 <option value="song_request">Song requests only</option>
                 <option value="custom_song">AI-generated songs only</option>
@@ -94,8 +94,8 @@ export default function OptionalFeaturesForm({ form }: { form: UseFormReturn<Eve
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">AI Music Service</label>
-              <select {...register('music.service')} className="w-full px-4 py-2 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+              <label className="block text-sm font-medium text-paradigm-text mb-2">AI Music Service</label>
+              <select {...register('music.service')} className="w-full px-4 py-2 border border-paradigm-purple/40 rounded-lg focus:ring-2 focus:ring-purple-500">
                 <option value="suno">Suno AI</option>
                 <option value="udio">Udio</option>
                 <option value="custom">Custom API</option>
@@ -103,17 +103,17 @@ export default function OptionalFeaturesForm({ form }: { form: UseFormReturn<Eve
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Max songs per guest</label>
-              <input {...register('music.maxSongsPerGuest', { valueAsNumber: true })} type="number" min="1" max="5" defaultValue={1} className="w-full px-4 py-2 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500" />
+              <label className="block text-sm font-medium text-paradigm-text mb-2">Max songs per guest</label>
+              <input {...register('music.maxSongsPerGuest', { valueAsNumber: true })} type="number" min="1" max="5" defaultValue={1} className="w-full px-4 py-2 border border-paradigm-purple/40 rounded-lg focus:ring-2 focus:ring-purple-500" />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Instructions for Guests</label>
+              <label className="block text-sm font-medium text-paradigm-text mb-2">Instructions for Guests</label>
               <input
                 {...register('music.instructions')}
                 type="text"
                 placeholder="Request a song OR write a prompt for a custom AI song!"
-                className="w-full px-4 py-2 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-2 border border-paradigm-purple/40 rounded-lg focus:ring-2 focus:ring-purple-500"
               />
             </div>
           </div>
@@ -123,7 +123,7 @@ export default function OptionalFeaturesForm({ form }: { form: UseFormReturn<Eve
       {(potluckEnabled || musicEnabled) && (
         <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
           <p className="text-sm text-green-800">
-            ✨ <strong>Amazing!</strong> You've enabled {potluckEnabled && musicEnabled ? 'both potluck and music features' : potluckEnabled ? 'potluck tracking' : 'music contributions'}. Your event will be extra special!
+            <strong>Amazing!</strong> You've enabled {potluckEnabled && musicEnabled ? 'both potluck and music features' : potluckEnabled ? 'potluck tracking' : 'music contributions'}. Your event will be extra special!
           </p>
         </div>
       )}

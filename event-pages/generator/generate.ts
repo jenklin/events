@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 /**
- * CloudPeers Events - Event Page Generator
+ * cloudpeers Events - Event Page Generator
  *
- * Generates customized event landing pages from templates with CloudPeers branding
+ * Generates customized event landing pages from templates with cloudpeers branding
  *
  * Usage: tsx generate.ts <config.json>
  * Example: tsx generate.ts ../../configs/tech-meetup-dec2025.json
@@ -29,7 +29,7 @@ function log(message: string, color: keyof typeof colors = 'reset') {
 
 function generateScheduleHTML(schedule: EventConfig['schedule']): string {
   return schedule.map(item => `
-    <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+    <div class="bg-paradigm-panel rounded-xl p-6 shadow-sm border border-white/10 hover:shadow-md transition-shadow">
       <div class="flex items-start gap-4">
         <div class="flex-shrink-0">
           <div class="w-20 h-20 rounded-lg bg-gradient-to-br from-maroon to-tan flex items-center justify-center">
@@ -38,21 +38,19 @@ function generateScheduleHTML(schedule: EventConfig['schedule']): string {
         </div>
         <div class="flex-1">
           <div class="flex items-start justify-between">
-            <h4 class="text-lg font-semibold text-slate-900">${item.title}</h4>
+            <h4 class="text-lg font-semibold text-white">${item.title}</h4>
             <span class="inline-block px-3 py-1 bg-tan-light text-maroon text-xs font-semibold rounded-full">
               ${item.type}
             </span>
           </div>
-          ${item.description ? `<p class="text-slate-600 mt-2">${item.description}</p>` : ''}
+          ${item.description ? `<p class="text-paradigm-muted mt-2">${item.description}</p>` : ''}
           ${item.speaker ? `
-            <div class="flex items-center gap-2 mt-3 text-sm text-slate-500">
-              <i data-lucide="user" class="w-4 h-4"></i>
+            <div class="flex items-center gap-2 mt-3 text-sm text-paradigm-muted">
               <span>${item.speaker}</span>
             </div>
           ` : ''}
           ${item.duration ? `
-            <div class="flex items-center gap-2 mt-2 text-sm text-slate-500">
-              <i data-lucide="clock" class="w-4 h-4"></i>
+            <div class="flex items-center gap-2 mt-2 text-sm text-paradigm-muted">
               <span>${item.duration} minutes</span>
             </div>
           ` : ''}
@@ -66,7 +64,7 @@ function generateSpeakerCards(speakers: EventConfig['speakers']): string {
   if (!speakers || speakers.length === 0) return '';
 
   return speakers.map(speaker => `
-    <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+    <div class="bg-paradigm-panel rounded-xl p-6 shadow-sm border border-white/10 hover:shadow-md transition-shadow">
       <div class="flex items-start gap-4">
         ${speaker.photo ? `
           <img src="${speaker.photo}" alt="${speaker.name}" class="w-20 h-20 rounded-full object-cover">
@@ -76,23 +74,23 @@ function generateSpeakerCards(speakers: EventConfig['speakers']): string {
           </div>
         `}
         <div class="flex-1">
-          <h4 class="text-xl font-bold text-slate-900">${speaker.name}</h4>
+          <h4 class="text-xl font-bold text-white">${speaker.name}</h4>
           <p class="text-sm text-maroon font-medium mb-2">${speaker.title}</p>
-          <p class="text-slate-600 text-sm mb-3">${speaker.bio}</p>
+          <p class="text-paradigm-muted text-sm mb-3">${speaker.bio}</p>
           <div class="flex items-center gap-3">
             ${speaker.linkedin ? `
-              <a href="${speaker.linkedin}" target="_blank" class="text-slate-400 hover:text-maroon transition-colors">
-                <i data-lucide="linkedin" class="w-5 h-5"></i>
+              <a href="${speaker.linkedin}" target="_blank" class="text-paradigm-muted hover:text-maroon transition-colors">
+                LinkedIn
               </a>
             ` : ''}
             ${speaker.twitter ? `
-              <a href="${speaker.twitter}" target="_blank" class="text-slate-400 hover:text-maroon transition-colors">
-                <i data-lucide="twitter" class="w-5 h-5"></i>
+              <a href="${speaker.twitter}" target="_blank" class="text-paradigm-muted hover:text-maroon transition-colors">
+                Twitter
               </a>
             ` : ''}
             ${speaker.website ? `
-              <a href="${speaker.website}" target="_blank" class="text-slate-400 hover:text-maroon transition-colors">
-                <i data-lucide="globe" class="w-5 h-5"></i>
+              <a href="${speaker.website}" target="_blank" class="text-paradigm-muted hover:text-maroon transition-colors">
+                Website
               </a>
             ` : ''}
           </div>
@@ -110,14 +108,14 @@ function generateCustomFields(customFields?: EventConfig['registration']['custom
       case 'text':
         return `
           <div>
-            <label class="block text-sm font-medium text-slate-700 mb-2">
+            <label class="block text-sm font-medium text-paradigm-text mb-2">
               ${field.label}${field.required ? ' *' : ''}
             </label>
             <input
               type="text"
               x-model="registration.custom.${field.id}"
               ${field.required ? 'required' : ''}
-              class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-maroon focus:border-transparent"
+              class="w-full px-4 py-3 border border-white/10 rounded-lg focus:ring-2 focus:ring-maroon focus:border-transparent"
               placeholder="${field.placeholder || ''}"
             >
           </div>
@@ -126,14 +124,14 @@ function generateCustomFields(customFields?: EventConfig['registration']['custom
       case 'textarea':
         return `
           <div>
-            <label class="block text-sm font-medium text-slate-700 mb-2">
+            <label class="block text-sm font-medium text-paradigm-text mb-2">
               ${field.label}${field.required ? ' *' : ''}
             </label>
             <textarea
               x-model="registration.custom.${field.id}"
               ${field.required ? 'required' : ''}
               rows="3"
-              class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-maroon focus:border-transparent"
+              class="w-full px-4 py-3 border border-white/10 rounded-lg focus:ring-2 focus:ring-maroon focus:border-transparent"
               placeholder="${field.placeholder || ''}"
             ></textarea>
           </div>
@@ -142,13 +140,13 @@ function generateCustomFields(customFields?: EventConfig['registration']['custom
       case 'select':
         return `
           <div>
-            <label class="block text-sm font-medium text-slate-700 mb-2">
+            <label class="block text-sm font-medium text-paradigm-text mb-2">
               ${field.label}${field.required ? ' *' : ''}
             </label>
             <select
               x-model="registration.custom.${field.id}"
               ${field.required ? 'required' : ''}
-              class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-maroon focus:border-transparent"
+              class="w-full px-4 py-3 border border-white/10 rounded-lg focus:ring-2 focus:ring-maroon focus:border-transparent"
             >
               <option value="">Select...</option>
               ${field.options?.map(opt => `<option value="${opt}">${opt}</option>`).join('\n')}
@@ -163,28 +161,28 @@ function generateCustomFields(customFields?: EventConfig['registration']['custom
 }
 
 async function generateEvent(configPath: string): Promise<void> {
-  log('🚀 CloudPeers Event Generator', 'cyan');
+  log('cloudpeers Event Generator', 'cyan');
   log('─'.repeat(50), 'cyan');
 
   // Check if config file exists
   if (!fs.existsSync(configPath)) {
-    log(`❌ Config file not found: ${configPath}`, 'red');
+    log(`Config file not found: ${configPath}`, 'red');
     process.exit(1);
   }
 
-  log(`📄 Loading config: ${configPath}`, 'blue');
+  log(`Loading config: ${configPath}`, 'blue');
 
   // Load configuration
   const configContent = fs.readFileSync(configPath, 'utf8');
   const config: EventConfig = JSON.parse(configContent);
 
-  log(`✓ Config loaded: ${config.event.title}`, 'green');
+  log(`Config loaded: ${config.event.title}`, 'green');
 
   // Read template
   const templatePath = path.join(__dirname, '../templates/default.html');
   let template = fs.readFileSync(templatePath, 'utf8');
 
-  log(`📝 Generating event page...`, 'blue');
+  log(`Generating event page...`, 'blue');
 
   // Generate dynamic content
   const scheduleHTML = generateScheduleHTML(config.schedule);
@@ -231,14 +229,14 @@ async function generateEvent(configPath: string): Promise<void> {
   fs.writeFileSync(outputPath, template, 'utf8');
 
   log('─'.repeat(50), 'cyan');
-  log(`✅ Event page generated successfully!`, 'green');
-  log(`📍 Output: ${outputPath}`, 'blue');
-  log(`🌐 Event: ${config.event.title}`, 'blue');
-  log(`📅 Date: ${config.event.date} at ${config.event.time}`, 'blue');
-  log(`📊 Schedule items: ${config.schedule.length}`, 'blue');
-  log(`👥 Speakers: ${config.speakers?.length || 0}`, 'blue');
+  log(`Event page generated successfully!`, 'green');
+  log(`Output: ${outputPath}`, 'blue');
+  log(`Event: ${config.event.title}`, 'blue');
+  log(`Date: ${config.event.date} at ${config.event.time}`, 'blue');
+  log(`Schedule items: ${config.schedule.length}`, 'blue');
+  log(`Speakers: ${config.speakers?.length || 0}`, 'blue');
   log('─'.repeat(50), 'cyan');
-  log(`\n💡 Next steps:`, 'yellow');
+  log(`\nNext steps:`, 'yellow');
   log(`   1. Review the generated page: ${outputPath}`, 'yellow');
   log(`   2. Deploy to your hosting platform`, 'yellow');
   log(`   3. Test registration flow`, 'yellow');
@@ -249,13 +247,13 @@ async function generateEvent(configPath: string): Promise<void> {
 const configPath = process.argv[2];
 
 if (!configPath) {
-  log('❌ Usage: tsx generate.ts <config.json>', 'red');
-  log('📖 Example: tsx generate.ts ../../configs/tech-meetup-dec2025.json', 'yellow');
+  log('Usage: tsx generate.ts <config.json>', 'red');
+  log('Example: tsx generate.ts ../../configs/tech-meetup-dec2025.json', 'yellow');
   process.exit(1);
 }
 
 generateEvent(configPath).catch(error => {
-  log(`❌ Error: ${error.message}`, 'red');
+  log(`Error: ${error.message}`, 'red');
   console.error(error);
   process.exit(1);
 });

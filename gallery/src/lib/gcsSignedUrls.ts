@@ -27,7 +27,7 @@ function getStorage(): Storage {
   } else {
     // Workload Identity / Application Default Credentials
     // This works in Cloud Run, GKE, and other GCP compute environments
-    console.log('📝 Using Application Default Credentials (Workload Identity)');
+    console.log('Using Application Default Credentials (Workload Identity)');
     storage = new Storage();
   }
 

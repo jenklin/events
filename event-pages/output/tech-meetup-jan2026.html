@@ -6,8 +6,14 @@
     <title>Tech Innovation Meetup | January 15, 2026</title>
     <meta name="description" content="An engaging evening of tech talks, networking, and hands-on demos from leading innovators.">
 
-    <!-- CloudPeers Branding -->
-    <meta name="theme-color" content="#7B1E1E">
+    <!-- cloudpeers Branding -->
+    <meta name="theme-color" content="#8b5cf6">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+    <!-- Brand fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
 
     <!-- Cache Control -->
     <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
@@ -20,24 +26,44 @@
     <!-- Alpine.js for interactivity -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-
     <!-- QRCode.js for QR Code generation -->
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
     <style>
-        /* CloudPeers Brand Colors */
+        /* cloudpeers Brand Colors (Brand Guidelines v4) — dark mode, mirrors cloudpeers.com.
+           Legacy maroon/tan token names are repointed to the cloudpeers palette so existing
+           utility classes render on-brand. */
         :root {
-            --maroon: #7B1E1E;
-            --maroon-dark: #5A1616;
-            --maroon-light: #9B2E2E;
-            --tan: #D4A574;
-            --tan-dark: #B08A5C;
-            --tan-light: #E4C5A4;
+            --maroon: #8b5cf6;        /* Paradigm Purple — primary */
+            --maroon-dark: #7c3aed;
+            --maroon-light: #a78bfa;
+            --tan: #14b8a6;           /* Paradigm Teal — accent */
+            --tan-dark: #0d9488;
+            --tan-light: #5eead4;
+            --paradigm-deep-black: #050505;
+            --paradigm-panel: #151518;
+            --paradigm-text: #e2e8f0;
+            --paradigm-muted: #94a3b8;
             --grey-dark: #374151;
             --grey-medium: #6B7280;
             --grey-light: #F3F4F6;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--paradigm-deep-black);
+            color: var(--paradigm-text);
+        }
+
+        h1, h2, h3, h4, h5, h6 { color: #ffffff; }
+        .font-display { font-family: 'Playfair Display', serif; }
+
+        /* Frosted dark panel — matches cloudpeers.com .glass-panel */
+        .glass-panel {
+            background: rgba(21, 21, 24, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .gradient-cloudpeers {
@@ -45,7 +71,7 @@
         }
 
         .gradient-cloudpeers-soft {
-            background: linear-gradient(135deg, rgba(123, 30, 30, 0.1) 0%, rgba(212, 165, 116, 0.1) 100%);
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.12) 0%, rgba(20, 184, 166, 0.12) 100%);
         }
 
         .text-maroon { color: var(--maroon); }
@@ -75,40 +101,41 @@
             animation: pulse-subtle 3s ease-in-out infinite;
         }
 
-        /* Form styling */
+        /* Form styling — dark fields */
         input[type="text"],
         input[type="email"],
         input[type="tel"],
-        textarea {
-            color: #1a1a2e !important;
-            -webkit-text-fill-color: #1a1a2e !important;
-            background-color: #ffffff !important;
+        textarea,
+        select {
+            color: var(--paradigm-text) !important;
+            -webkit-text-fill-color: var(--paradigm-text) !important;
+            background-color: var(--paradigm-deep-black) !important;
             caret-color: var(--maroon) !important;
         }
 
         input::placeholder,
         textarea::placeholder {
-            color: #9ca3af !important;
-            -webkit-text-fill-color: #9ca3af !important;
+            color: #6b7280 !important;
+            -webkit-text-fill-color: #6b7280 !important;
             opacity: 1;
         }
 
         /* Custom scrollbar */
         ::-webkit-scrollbar {
-            width: 10px;
+            width: 8px;
         }
 
         ::-webkit-scrollbar-track {
-            background: var(--grey-light);
+            background: #0a0a0c;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: var(--maroon);
-            border-radius: 5px;
+            background: #334155;
+            border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--maroon-dark);
+            background: #475569;
         }
     </style>
 
@@ -117,17 +144,33 @@
         tailwind.config = {
             theme: {
                 extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
                     colors: {
+                        // Legacy token names repointed to the cloudpeers palette
                         maroon: {
-                            DEFAULT: '#7B1E1E',
-                            dark: '#5A1616',
-                            light: '#9B2E2E',
+                            DEFAULT: '#8b5cf6',
+                            dark: '#7c3aed',
+                            light: '#a78bfa',
                         },
                         tan: {
-                            DEFAULT: '#D4A574',
-                            dark: '#B08A5C',
-                            light: '#E4C5A4',
-                        }
+                            DEFAULT: '#14b8a6',
+                            dark: '#0d9488',
+                            light: '#5eead4',
+                        },
+                        paradigm: {
+                            'deep-black': '#050505',
+                            dark: '#0a0a0c',
+                            panel: '#151518',
+                            purple: '#8b5cf6',
+                            teal: '#14b8a6',
+                            coral: '#e85d75',
+                            text: '#e2e8f0',
+                            muted: '#94a3b8',
+                        },
                     }
                 }
             }
@@ -137,10 +180,10 @@
     <!-- Supabase Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-gradient-to-br from-slate-50 via-white to-tan-50" x-data="eventApp()">
+<body class="bg-paradigm-deep-black bg-gradient-to-br from-paradigm-deep-black via-[#0b0a14] to-paradigm-deep-black" x-data="eventApp()">
 
     <!-- Header -->
-    <header class="bg-white/90 backdrop-blur-sm border-b border-slate-200 sticky top-0 z-50">
+    <header class="bg-paradigm-panel/90 backdrop-blur-sm border-b border-white/10 sticky top-0 z-50">
         <div class="container mx-auto px-4 py-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
@@ -149,11 +192,10 @@
                     </div>
                     <div>
                         <h1 class="text-xl font-bold text-maroon">Tech Innovation Meetup</h1>
-                        <p class="text-sm text-slate-600">January 15, 2026 • 6:00 PM - 9:00 PM</p>
+                        <p class="text-sm text-paradigm-muted">January 15, 2026 • 6:00 PM - 9:00 PM</p>
                     </div>
                 </div>
                 <button @click="showQR = true" class="flex items-center gap-2 px-4 py-2 bg-maroon text-white rounded-lg hover:bg-maroon-dark transition-colors">
-                    <i data-lucide="qr-code" class="w-4 h-4"></i>
                     <span class="hidden sm:inline">Share</span>
                 </button>
             </div>
@@ -164,32 +206,29 @@
     <section class="py-16 px-4">
         <div class="container mx-auto max-w-4xl">
             <div class="text-center animate-fadeIn">
-                <div class="inline-block px-4 py-2 bg-tan-light text-maroon rounded-full text-sm font-semibold mb-6">
+                <div class="inline-block px-4 py-2 bg-paradigm-purple/15 text-paradigm-purple border border-paradigm-purple/30 rounded-full text-sm font-semibold mb-6">
                     Technology & Networking
                 </div>
-                <h2 class="text-5xl font-bold text-slate-900 mb-6">
+                <h2 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6">
                     Tech Innovation Meetup
                 </h2>
-                <p class="text-xl text-slate-600 mb-8 max-w-2xl mx-auto">
+                <p class="text-lg sm:text-xl text-paradigm-muted mb-8 max-w-2xl mx-auto">
                     Join us for an evening of innovation, networking, and collaboration with tech leaders from across the Bay Area.
                 </p>
 
                 <!-- Event Details Grid -->
                 <div class="grid md:grid-cols-3 gap-6 mb-8">
-                    <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
-                        <i data-lucide="calendar" class="w-8 h-8 text-maroon mx-auto mb-3"></i>
-                        <div class="text-sm text-slate-500">Date</div>
-                        <div class="font-semibold text-slate-900">January 15, 2026</div>
+                    <div class="bg-paradigm-panel rounded-xl p-6 shadow-sm border border-white/10">
+                        <div class="text-sm text-paradigm-muted">Date</div>
+                        <div class="font-semibold text-white">January 15, 2026</div>
                     </div>
-                    <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
-                        <i data-lucide="clock" class="w-8 h-8 text-maroon mx-auto mb-3"></i>
-                        <div class="text-sm text-slate-500">Time</div>
-                        <div class="font-semibold text-slate-900">6:00 PM - 9:00 PM</div>
+                    <div class="bg-paradigm-panel rounded-xl p-6 shadow-sm border border-white/10">
+                        <div class="text-sm text-paradigm-muted">Time</div>
+                        <div class="font-semibold text-white">6:00 PM - 9:00 PM</div>
                     </div>
-                    <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
-                        <i data-lucide="map-pin" class="w-8 h-8 text-maroon mx-auto mb-3"></i>
-                        <div class="text-sm text-slate-500">Location</div>
-                        <div class="font-semibold text-slate-900">CloudPeers HQ, San Francisco</div>
+                    <div class="bg-paradigm-panel rounded-xl p-6 shadow-sm border border-white/10">
+                        <div class="text-sm text-paradigm-muted">Location</div>
+                        <div class="font-semibold text-white">cloudpeers HQ, San Francisco</div>
                     </div>
                 </div>
 
@@ -201,7 +240,7 @@
                     Register Now - Free
                 </button>
 
-                <p class="mt-4 text-sm text-slate-500">
+                <p class="mt-4 text-sm text-paradigm-muted">
                     <span x-text="registrationCount"></span> people registered
                 </p>
             </div>
@@ -209,10 +248,10 @@
     </section>
 
     <!-- What to Expect -->
-    <section class="py-16 px-4 bg-white">
+    <section class="py-16 px-4 bg-paradigm-panel">
         <div class="container mx-auto max-w-4xl">
-            <h3 class="text-3xl font-bold text-slate-900 mb-8 text-center">What to Expect</h3>
-            <div class="prose prose-lg mx-auto text-slate-600">
+            <h3 class="text-2xl sm:text-3xl font-bold text-white mb-8 text-center">What to Expect</h3>
+            <div class="prose prose-invert prose-lg mx-auto text-paradigm-muted">
                 <p>This meetup brings together developers, designers, and entrepreneurs to share ideas and build connections.</p><p>You'll have the opportunity to:</p><ul class='list-disc list-inside space-y-2'><li>Learn from industry experts</li><li>Network with fellow tech professionals</li><li>Participate in hands-on workshops</li><li>Enjoy refreshments and socialize</li></ul>
             </div>
         </div>
@@ -221,10 +260,10 @@
     <!-- Schedule -->
     <section class="py-16 px-4">
         <div class="container mx-auto max-w-4xl">
-            <h3 class="text-3xl font-bold text-slate-900 mb-8 text-center">Agenda</h3>
+            <h3 class="text-2xl sm:text-3xl font-bold text-white mb-8 text-center">Agenda</h3>
             <div class="space-y-4">
                 
-    <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+    <div class="bg-paradigm-panel rounded-xl p-6 shadow-sm border border-white/10 hover:shadow-md transition-shadow">
       <div class="flex items-start gap-4">
         <div class="flex-shrink-0">
           <div class="w-20 h-20 rounded-lg bg-gradient-to-br from-maroon to-tan flex items-center justify-center">
@@ -233,16 +272,15 @@
         </div>
         <div class="flex-1">
           <div class="flex items-start justify-between">
-            <h4 class="text-lg font-semibold text-slate-900">Registration & Networking</h4>
+            <h4 class="text-lg font-semibold text-white">Registration & Networking</h4>
             <span class="inline-block px-3 py-1 bg-tan-light text-maroon text-xs font-semibold rounded-full">
               networking
             </span>
           </div>
-          <p class="text-slate-600 mt-2">Check in, grab refreshments, and meet fellow attendees</p>
+          <p class="text-paradigm-muted mt-2">Check in, grab refreshments, and meet fellow attendees</p>
           
           
-            <div class="flex items-center gap-2 mt-2 text-sm text-slate-500">
-              <i data-lucide="clock" class="w-4 h-4"></i>
+            <div class="flex items-center gap-2 mt-2 text-sm text-paradigm-muted">
               <span>30 minutes</span>
             </div>
           
@@ -251,7 +289,7 @@
     </div>
   
 
-    <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+    <div class="bg-paradigm-panel rounded-xl p-6 shadow-sm border border-white/10 hover:shadow-md transition-shadow">
       <div class="flex items-start gap-4">
         <div class="flex-shrink-0">
           <div class="w-20 h-20 rounded-lg bg-gradient-to-br from-maroon to-tan flex items-center justify-center">
@@ -260,21 +298,19 @@
         </div>
         <div class="flex-1">
           <div class="flex items-start justify-between">
-            <h4 class="text-lg font-semibold text-slate-900">Welcome & Opening Remarks</h4>
+            <h4 class="text-lg font-semibold text-white">Welcome & Opening Remarks</h4>
             <span class="inline-block px-3 py-1 bg-tan-light text-maroon text-xs font-semibold rounded-full">
               session
             </span>
           </div>
-          <p class="text-slate-600 mt-2">Introduction to CloudPeers and tonight's agenda</p>
+          <p class="text-paradigm-muted mt-2">Introduction to cloudpeers and tonight's agenda</p>
           
-            <div class="flex items-center gap-2 mt-3 text-sm text-slate-500">
-              <i data-lucide="user" class="w-4 h-4"></i>
-              <span>Jennifer Lin, CEO CloudPeers</span>
+            <div class="flex items-center gap-2 mt-3 text-sm text-paradigm-muted">
+              <span>Jennifer Lin, CEO cloudpeers</span>
             </div>
           
           
-            <div class="flex items-center gap-2 mt-2 text-sm text-slate-500">
-              <i data-lucide="clock" class="w-4 h-4"></i>
+            <div class="flex items-center gap-2 mt-2 text-sm text-paradigm-muted">
               <span>15 minutes</span>
             </div>
           
@@ -283,7 +319,7 @@
     </div>
   
 
-    <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+    <div class="bg-paradigm-panel rounded-xl p-6 shadow-sm border border-white/10 hover:shadow-md transition-shadow">
       <div class="flex items-start gap-4">
         <div class="flex-shrink-0">
           <div class="w-20 h-20 rounded-lg bg-gradient-to-br from-maroon to-tan flex items-center justify-center">
@@ -292,21 +328,19 @@
         </div>
         <div class="flex-1">
           <div class="flex items-start justify-between">
-            <h4 class="text-lg font-semibold text-slate-900">Keynote: The Future of AI-Native Applications</h4>
+            <h4 class="text-lg font-semibold text-white">Keynote: The Future of AI-Native Applications</h4>
             <span class="inline-block px-3 py-1 bg-tan-light text-maroon text-xs font-semibold rounded-full">
               session
             </span>
           </div>
-          <p class="text-slate-600 mt-2">Exploring how AI is transforming software development</p>
+          <p class="text-paradigm-muted mt-2">Exploring how AI is transforming software development</p>
           
-            <div class="flex items-center gap-2 mt-3 text-sm text-slate-500">
-              <i data-lucide="user" class="w-4 h-4"></i>
+            <div class="flex items-center gap-2 mt-3 text-sm text-paradigm-muted">
               <span>Dr. Sarah Chen, AI Research Lead</span>
             </div>
           
           
-            <div class="flex items-center gap-2 mt-2 text-sm text-slate-500">
-              <i data-lucide="clock" class="w-4 h-4"></i>
+            <div class="flex items-center gap-2 mt-2 text-sm text-paradigm-muted">
               <span>30 minutes</span>
             </div>
           
@@ -315,7 +349,7 @@
     </div>
   
 
-    <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+    <div class="bg-paradigm-panel rounded-xl p-6 shadow-sm border border-white/10 hover:shadow-md transition-shadow">
       <div class="flex items-start gap-4">
         <div class="flex-shrink-0">
           <div class="w-20 h-20 rounded-lg bg-gradient-to-br from-maroon to-tan flex items-center justify-center">
@@ -324,16 +358,15 @@
         </div>
         <div class="flex-1">
           <div class="flex items-start justify-between">
-            <h4 class="text-lg font-semibold text-slate-900">Panel Discussion: Building Scalable Systems</h4>
+            <h4 class="text-lg font-semibold text-white">Panel Discussion: Building Scalable Systems</h4>
             <span class="inline-block px-3 py-1 bg-tan-light text-maroon text-xs font-semibold rounded-full">
               session
             </span>
           </div>
-          <p class="text-slate-600 mt-2">Best practices from engineers at leading tech companies</p>
+          <p class="text-paradigm-muted mt-2">Best practices from engineers at leading tech companies</p>
           
           
-            <div class="flex items-center gap-2 mt-2 text-sm text-slate-500">
-              <i data-lucide="clock" class="w-4 h-4"></i>
+            <div class="flex items-center gap-2 mt-2 text-sm text-paradigm-muted">
               <span>45 minutes</span>
             </div>
           
@@ -342,7 +375,7 @@
     </div>
   
 
-    <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+    <div class="bg-paradigm-panel rounded-xl p-6 shadow-sm border border-white/10 hover:shadow-md transition-shadow">
       <div class="flex items-start gap-4">
         <div class="flex-shrink-0">
           <div class="w-20 h-20 rounded-lg bg-gradient-to-br from-maroon to-tan flex items-center justify-center">
@@ -351,16 +384,15 @@
         </div>
         <div class="flex-1">
           <div class="flex items-start justify-between">
-            <h4 class="text-lg font-semibold text-slate-900">Networking & Demo Booths</h4>
+            <h4 class="text-lg font-semibold text-white">Networking & Demo Booths</h4>
             <span class="inline-block px-3 py-1 bg-tan-light text-maroon text-xs font-semibold rounded-full">
               networking
             </span>
           </div>
-          <p class="text-slate-600 mt-2">Explore demos, connect with speakers, and enjoy refreshments</p>
+          <p class="text-paradigm-muted mt-2">Explore demos, connect with speakers, and enjoy refreshments</p>
           
           
-            <div class="flex items-center gap-2 mt-2 text-sm text-slate-500">
-              <i data-lucide="clock" class="w-4 h-4"></i>
+            <div class="flex items-center gap-2 mt-2 text-sm text-paradigm-muted">
               <span>60 minutes</span>
             </div>
           
@@ -373,29 +405,29 @@
     </section>
 
     <!-- Speakers -->
-    <section class="py-16 px-4 bg-white" x-show="hasSpeakers">
+    <section class="py-16 px-4 bg-paradigm-panel" x-show="hasSpeakers">
         <div class="container mx-auto max-w-4xl">
-            <h3 class="text-3xl font-bold text-slate-900 mb-8 text-center">Featured Speakers</h3>
+            <h3 class="text-2xl sm:text-3xl font-bold text-white mb-8 text-center">Featured Speakers</h3>
             <div class="grid md:grid-cols-2 gap-8">
                 
-    <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+    <div class="bg-paradigm-panel rounded-xl p-6 shadow-sm border border-white/10 hover:shadow-md transition-shadow">
       <div class="flex items-start gap-4">
         
           <img src="https://example.com/speakers/sarah-chen.jpg" alt="Dr. Sarah Chen" class="w-20 h-20 rounded-full object-cover">
         
         <div class="flex-1">
-          <h4 class="text-xl font-bold text-slate-900">Dr. Sarah Chen</h4>
+          <h4 class="text-xl font-bold text-white">Dr. Sarah Chen</h4>
           <p class="text-sm text-maroon font-medium mb-2">AI Research Lead at TechCorp</p>
-          <p class="text-slate-600 text-sm mb-3">Sarah leads AI research at TechCorp with a focus on natural language processing and machine learning systems. She holds a PhD in Computer Science from Stanford.</p>
+          <p class="text-paradigm-muted text-sm mb-3">Sarah leads AI research at TechCorp with a focus on natural language processing and machine learning systems. She holds a PhD in Computer Science from Stanford.</p>
           <div class="flex items-center gap-3">
             
-              <a href="https://linkedin.com/in/sarahchen" target="_blank" class="text-slate-400 hover:text-maroon transition-colors">
-                <i data-lucide="linkedin" class="w-5 h-5"></i>
+              <a href="https://linkedin.com/in/sarahchen" target="_blank" class="text-paradigm-muted hover:text-maroon transition-colors">
+                LinkedIn
               </a>
             
             
-              <a href="https://twitter.com/sarahchen" target="_blank" class="text-slate-400 hover:text-maroon transition-colors">
-                <i data-lucide="twitter" class="w-5 h-5"></i>
+              <a href="https://twitter.com/sarahchen" target="_blank" class="text-paradigm-muted hover:text-maroon transition-colors">
+                Twitter
               </a>
             
             
@@ -405,25 +437,25 @@
     </div>
   
 
-    <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+    <div class="bg-paradigm-panel rounded-xl p-6 shadow-sm border border-white/10 hover:shadow-md transition-shadow">
       <div class="flex items-start gap-4">
         
           <img src="https://example.com/speakers/marcus-rodriguez.jpg" alt="Marcus Rodriguez" class="w-20 h-20 rounded-full object-cover">
         
         <div class="flex-1">
-          <h4 class="text-xl font-bold text-slate-900">Marcus Rodriguez</h4>
+          <h4 class="text-xl font-bold text-white">Marcus Rodriguez</h4>
           <p class="text-sm text-maroon font-medium mb-2">Principal Engineer at CloudScale</p>
-          <p class="text-slate-600 text-sm mb-3">Marcus has 15 years of experience building distributed systems. He's passionate about developer tools and open source software.</p>
+          <p class="text-paradigm-muted text-sm mb-3">Marcus has 15 years of experience building distributed systems. He's passionate about developer tools and open source software.</p>
           <div class="flex items-center gap-3">
             
-              <a href="https://linkedin.com/in/marcusrodriguez" target="_blank" class="text-slate-400 hover:text-maroon transition-colors">
-                <i data-lucide="linkedin" class="w-5 h-5"></i>
+              <a href="https://linkedin.com/in/marcusrodriguez" target="_blank" class="text-paradigm-muted hover:text-maroon transition-colors">
+                LinkedIn
               </a>
             
             
             
-              <a href="https://marcusrodriguez.dev" target="_blank" class="text-slate-400 hover:text-maroon transition-colors">
-                <i data-lucide="globe" class="w-5 h-5"></i>
+              <a href="https://marcusrodriguez.dev" target="_blank" class="text-paradigm-muted hover:text-maroon transition-colors">
+                Website
               </a>
             
           </div>
@@ -432,7 +464,7 @@
     </div>
   
 
-    <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+    <div class="bg-paradigm-panel rounded-xl p-6 shadow-sm border border-white/10 hover:shadow-md transition-shadow">
       <div class="flex items-start gap-4">
         
           <div class="w-20 h-20 rounded-full bg-gradient-to-br from-maroon to-tan flex items-center justify-center">
@@ -440,13 +472,13 @@
           </div>
         
         <div class="flex-1">
-          <h4 class="text-xl font-bold text-slate-900">Emma Thompson</h4>
+          <h4 class="text-xl font-bold text-white">Emma Thompson</h4>
           <p class="text-sm text-maroon font-medium mb-2">VP of Engineering at StartupXYZ</p>
-          <p class="text-slate-600 text-sm mb-3">Emma leads engineering teams and has scaled startups from seed to Series B. She's an advocate for engineering culture and mentorship.</p>
+          <p class="text-paradigm-muted text-sm mb-3">Emma leads engineering teams and has scaled startups from seed to Series B. She's an advocate for engineering culture and mentorship.</p>
           <div class="flex items-center gap-3">
             
-              <a href="https://linkedin.com/in/emmathompson" target="_blank" class="text-slate-400 hover:text-maroon transition-colors">
-                <i data-lucide="linkedin" class="w-5 h-5"></i>
+              <a href="https://linkedin.com/in/emmathompson" target="_blank" class="text-paradigm-muted hover:text-maroon transition-colors">
+                LinkedIn
               </a>
             
             
@@ -460,6 +492,28 @@
         </div>
     </section>
 
+    <!-- Photo Gallery -->
+    <section class="py-16 px-4" x-show="hasGallery">
+        <div class="container mx-auto max-w-4xl text-center">
+            <div class="mb-8">
+                <h3 class="text-2xl sm:text-3xl font-bold text-white mb-4">Event Photos</h3>
+                <p class="text-lg text-paradigm-muted mb-8">View and share photos from this event</p>
+            </div>
+
+            <a
+                href="#"
+                target="_blank"
+                class="inline-flex items-center gap-2 px-8 py-4 bg-paradigm-teal text-white font-semibold rounded-xl hover:bg-paradigm-teal/80 transition-all shadow-lg hover:shadow-xl"
+            >
+                View Photo Gallery
+            </a>
+
+            <p class="mt-6 text-sm text-paradigm-muted">
+                No login required • Magic link access • Download and share
+            </p>
+        </div>
+    </section>
+
     <!-- Registration Modal -->
     <div
         x-show="showRegistration"
@@ -467,70 +521,70 @@
         x-transition
         class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
     >
-        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8" @click.stop>
+        <div class="bg-paradigm-panel rounded-2xl shadow-2xl max-w-md w-full p-8" @click.stop>
             <div class="flex items-center justify-between mb-6">
-                <h3 class="text-2xl font-bold text-slate-900">Register for Event</h3>
-                <button @click="showRegistration = false" class="text-slate-400 hover:text-slate-600">
-                    <i data-lucide="x" class="w-6 h-6"></i>
+                <h3 class="text-2xl font-bold text-white">Register for Event</h3>
+                <button @click="showRegistration = false" class="text-paradigm-muted hover:text-paradigm-muted">
+                    <span class="text-2xl leading-none">&times;</span>
                 </button>
             </div>
 
             <form @submit.prevent="handleRegistration" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-2">Full Name *</label>
+                    <label class="block text-sm font-medium text-paradigm-text mb-2">Full Name *</label>
                     <input
                         type="text"
                         x-model="registration.name"
                         required
-                        class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-maroon focus:border-transparent"
+                        class="w-full px-4 py-3 border border-white/10 rounded-lg focus:ring-2 focus:ring-maroon focus:border-transparent"
                         placeholder="John Doe"
                     >
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-2">Email *</label>
+                    <label class="block text-sm font-medium text-paradigm-text mb-2">Email *</label>
                     <input
                         type="email"
                         x-model="registration.email"
                         required
-                        class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-maroon focus:border-transparent"
+                        class="w-full px-4 py-3 border border-white/10 rounded-lg focus:ring-2 focus:ring-maroon focus:border-transparent"
                         placeholder="john@example.com"
                     >
                 </div>
 
                 <div x-show="true">
-                    <label class="block text-sm font-medium text-slate-700 mb-2">Phone (Optional)</label>
+                    <label class="block text-sm font-medium text-paradigm-text mb-2">Phone (Optional)</label>
                     <input
                         type="tel"
                         x-model="registration.phone"
-                        class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-maroon focus:border-transparent"
+                        class="w-full px-4 py-3 border border-white/10 rounded-lg focus:ring-2 focus:ring-maroon focus:border-transparent"
                         placeholder="+1 (555) 123-4567"
                     >
                 </div>
 
                 
           <div>
-            <label class="block text-sm font-medium text-slate-700 mb-2">
+            <label class="block text-sm font-medium text-paradigm-text mb-2">
               Company/Organization
             </label>
             <input
               type="text"
               x-model="registration.custom.company"
               
-              class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-maroon focus:border-transparent"
+              class="w-full px-4 py-3 border border-white/10 rounded-lg focus:ring-2 focus:ring-maroon focus:border-transparent"
               placeholder="Acme Inc."
             >
           </div>
         
 
           <div>
-            <label class="block text-sm font-medium text-slate-700 mb-2">
+            <label class="block text-sm font-medium text-paradigm-text mb-2">
               Your Role *
             </label>
             <select
               x-model="registration.custom.role"
               required
-              class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-maroon focus:border-transparent"
+              class="w-full px-4 py-3 border border-white/10 rounded-lg focus:ring-2 focus:ring-maroon focus:border-transparent"
             >
               <option value="">Select...</option>
               <option value="Software Engineer">Software Engineer</option>
@@ -544,14 +598,14 @@
         
 
           <div>
-            <label class="block text-sm font-medium text-slate-700 mb-2">
+            <label class="block text-sm font-medium text-paradigm-text mb-2">
               What brings you to this event?
             </label>
             <textarea
               x-model="registration.custom.interests"
               
               rows="3"
-              class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-maroon focus:border-transparent"
+              class="w-full px-4 py-3 border border-white/10 rounded-lg focus:ring-2 focus:ring-maroon focus:border-transparent"
               placeholder="Tell us what you're hoping to learn or who you'd like to meet..."
             ></textarea>
           </div>
@@ -567,7 +621,7 @@
                 </button>
             </form>
 
-            <p class="mt-4 text-xs text-slate-500 text-center">
+            <p class="mt-4 text-xs text-paradigm-muted text-center">
                 By registering, you agree to receive event updates via email.
             </p>
         </div>
@@ -580,13 +634,13 @@
         x-transition
         class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
     >
-        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-8 text-center" @click.stop>
-            <h3 class="text-2xl font-bold text-slate-900 mb-4">Share Event</h3>
-            <p class="text-slate-600 mb-6">Scan to register</p>
+        <div class="bg-paradigm-panel rounded-2xl shadow-2xl max-w-sm w-full p-8 text-center" @click.stop>
+            <h3 class="text-2xl font-bold text-white mb-4">Share Event</h3>
+            <p class="text-paradigm-muted mb-6">Scan to register</p>
             <div id="qrcode" class="flex justify-center mb-6"></div>
             <button
                 @click="showQR = false"
-                class="px-6 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors"
+                class="px-6 py-2 bg-white/10 text-paradigm-text rounded-lg hover:bg-white/20 transition-colors"
             >
                 Close
             </button>
@@ -600,16 +654,15 @@
         class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg z-50"
     >
         <div class="flex items-center gap-3">
-            <i data-lucide="check-circle" class="w-5 h-5"></i>
             <span class="font-semibold">Registration confirmed! Check your email.</span>
         </div>
     </div>
 
     <!-- Footer -->
-    <footer class="py-8 px-4 bg-slate-900 text-white">
+    <footer class="py-8 px-4 bg-paradigm-dark text-white">
         <div class="container mx-auto max-w-4xl text-center">
-            <p class="text-sm text-slate-400">
-                Powered by <span class="text-tan">CloudPeers Events</span>
+            <p class="text-sm text-paradigm-muted">
+                Powered by <span class="text-tan">cloudpeers Events</span>
             </p>
         </div>
     </footer>
@@ -630,6 +683,7 @@
                 isSubmitting: false,
                 registrationCount: 0,
                 hasSpeakers: true,
+                hasGallery: false,
                 registration: {
                     name: '',
                     email: '',
@@ -637,8 +691,6 @@
                 },
 
                 async init() {
-                    // Initialize Lucide icons
-                    lucide.createIcons();
 
                     // Generate QR code
                     this.generateQR();
@@ -654,7 +706,7 @@
                             text: window.location.href,
                             width: 200,
                             height: 200,
-                            colorDark: '#7B1E1E',
+                            colorDark: '#8b5cf6',
                             colorLight: '#ffffff',
                         });
                     }

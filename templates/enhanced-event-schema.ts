@@ -251,7 +251,7 @@ export interface Modern Event PlatformsEnhancedTemplate {
     source?: string;
 
     // Integration endpoints
-    webhookUrl?: string;                   // CloudPeers webhook
+    webhookUrl?: string;                   // cloudpeers webhook
     confirmationRedirect?: string;         // Where to redirect after RSVP
   };
 
@@ -349,10 +349,10 @@ export interface Modern Event PlatformsEnhancedTemplate {
  */
 export const exampleModern Event PlatformsEvent: Modern Event PlatformsEnhancedTemplate = {
   branding: {
-    organizationName: "CloudPeers Events",
+    organizationName: "cloudpeers Events",
     logo: {
       url: "https://cdn.cloudpeers.com/logo.png",
-      alt: "CloudPeers",
+      alt: "cloudpeers",
       height: 48
     },
     colors: {

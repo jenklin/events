@@ -1,14 +1,14 @@
-# CloudPeers Integration Guide
+# cloudpeers Integration Guide
 
 ## Overview
 
-Complete guide for integrating the Events Platform with CloudPeers MCP (Model Context Protocol), enabling AI-to-AI service orchestration and discovery.
+Complete guide for integrating the Events Platform with cloudpeers MCP (Model Context Protocol), enabling AI-to-AI service orchestration and discovery.
 
 ## Integration Architecture
 
 ```
 ┌────────────────────────────────────────────────────────────┐
-│                  CloudPeers Platform                       │
+│                  cloudpeers Platform                       │
 │  https://services.cloudpeers.com                          │
 │                                                            │
 │  ┌──────────────┐  ┌──────────────┐  ┌─────────────────┐ │
@@ -56,7 +56,7 @@ import { handleMetricThreshold } from '@/lib/mcp/metric-handler';
 import { recordMetric } from '@/lib/mcp/metrics';
 
 /**
- * Verify webhook signature from CloudPeers
+ * Verify webhook signature from cloudpeers
  */
 function verifyWebhookSignature(
   body: string,
@@ -82,7 +82,7 @@ function verifyWebhookSignature(
 
 /**
  * MCP Webhook Handler
- * Receives events from CloudPeers platform
+ * Receives events from cloudpeers platform
  */
 export async function POST(req: NextRequest) {
   try {
@@ -196,7 +196,7 @@ export interface AgentInvocationPayload {
 }
 
 /**
- * Handle agent invocation from CloudPeers
+ * Handle agent invocation from cloudpeers
  */
 export async function handleAgentInvocation(
   payload: AgentInvocationPayload
@@ -336,7 +336,7 @@ export interface MetricData {
 }
 
 /**
- * Record metric to CloudPeers observability API
+ * Record metric to cloudpeers observability API
  */
 export async function recordMetric(
   metricType: string,
@@ -347,7 +347,7 @@ export async function recordMetric(
   const apiKey = process.env.CLOUDPEERS_API_KEY;
 
   if (!serviceId || !apiKey) {
-    console.warn('[Metrics] CloudPeers credentials not configured');
+    console.warn('[Metrics] cloudpeers credentials not configured');
     return;
   }
 
@@ -471,7 +471,7 @@ export const createEvent = withMetrics(
 ```json
 {
   "agent_id": "cloudpeers-events-platform-001",
-  "name": "CloudPeers Events",
+  "name": "cloudpeers Events",
   "version": "1.0.0",
   "description": "Event management platform with landing pages, registration system, and private photo galleries",
   "capabilities": [
@@ -613,14 +613,14 @@ curl https://services.cloudpeers.com/api/observability/services/$SERVICE_ID/inte
 
 ### Dashboards
 
-Access CloudPeers dashboards:
+Access cloudpeers dashboards:
 - **Service Dashboard**: `https://services.cloudpeers.com/admin/services/$SERVICE_ID`
 - **Metrics**: `https://services.cloudpeers.com/api/observability/services/$SERVICE_ID/metrics`
 - **Marketplace**: `https://services.cloudpeers.com/marketplace`
 
 ## Next Steps
 
-1. Register service with CloudPeers
+1. Register service with cloudpeers
 2. Implement webhook handler
 3. Set up metrics reporting
 4. Test agent invocations

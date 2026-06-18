@@ -1,7 +1,7 @@
 {
   "name": "cloudpeers-events",
   "version": "2.0.0",
-  "description": "CloudPeers Events Platform - Multi-tenant event management with creator portal, event pages, and photo galleries",
+  "description": "cloudpeers Events Platform - Multi-tenant event management with creator portal, event pages, and photo galleries",
   "private": true,
   "workspaces": [
     "creator-portal",

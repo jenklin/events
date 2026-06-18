@@ -174,7 +174,7 @@ export async function generateMetadata({ params }: PageProps) {
   }
 
   return {
-    title: `${event.title} - CloudPeers Events`,
+    title: `${event.title} - cloudpeers Events`,
     description: event.description || `Join us for ${event.title}`,
     openGraph: {
       title: event.title,

@@ -1,5 +1,5 @@
 /**
- * CloudPeers Events Platform - Event Type Definitions
+ * cloudpeers Events Platform - Event Type Definitions
  */
 
 export interface EventConfig {
@@ -88,8 +88,8 @@ export interface CustomField {
 }
 
 export interface BrandingSettings {
-  primaryColor?: string; // defaults to CloudPeers maroon
-  secondaryColor?: string; // defaults to CloudPeers tan
+  primaryColor?: string; // defaults to cloudpeers maroon
+  secondaryColor?: string; // defaults to cloudpeers tan
   logo?: string;
   favicon?: string;
   customCSS?: string;

@@ -2,27 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * cloudpeers brand — dark mode (Brand Guidelines v4)
+ * Mirrors cloudpeers.com (~/dev/cloudpeers-github/src/index.css).
+ * shadcn/ui tokens expressed as HSL triples for Tailwind v3 `hsl(var(--x))`.
+ */
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 262.1 83.3% 57.8%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 262.1 83.3% 57.8%;
+    --background: 220 13% 2%;      /* Deep black #050505 */
+    --foreground: 210 40% 91%;     /* Light text  #e2e8f0 */
+    --card: 224 11% 9%;            /* Panel       #151518 */
+    --card-foreground: 210 40% 91%;
+    --popover: 224 11% 9%;
+    --popover-foreground: 210 40% 91%;
+    --primary: 258 90% 66%;        /* Paradigm Purple #8b5cf6 — Narrator */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 217 91% 60%;      /* Paradigm Blue   #3b82f6 — Strategist */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 215 16% 47%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 177 78% 40%;         /* Paradigm Teal   #14b8a6 — Connector */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 216 12% 15%;
+    --input: 216 12% 15%;
+    --ring: 258 90% 66%;
     --radius: 0.5rem;
   }
 }
@@ -31,7 +36,33 @@
   * {
     @apply border-border;
   }
+  html {
+    color-scheme: dark;
+  }
   body {
     @apply bg-background text-foreground;
+    background-color: #050505;
+    color: #e2e8f0;
+    font-size: 16px;
+    line-height: 1.6;
   }
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-white font-semibold;
+    line-height: 1.2;
+  }
+  h1 { line-height: 1.1; }
 }
+
+/* Glass panel effect (matches cloudpeers.com) */
+.glass-panel {
+  background: rgba(21, 21, 24, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #0a0a0c; }
+::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #475569; }

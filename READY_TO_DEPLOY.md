@@ -1,4 +1,4 @@
-# ✅ CloudPeers Custom Events - Ready to Deploy!
+# ✅ cloudpeers Custom Events - Ready to Deploy!
 
 ## 🎉 Status: Fully Configured and Tested
 
@@ -175,7 +175,7 @@ npm run deploy:events:prod
 ### Supabase (Shared with cloudpeers-mcp)
 ```
 URL: https://efpspxzgvbsqfyelbkdw.supabase.co
-Project: CloudPeers MCP
+Project: cloudpeers MCP
 ```
 
 ### Google Cloud Run

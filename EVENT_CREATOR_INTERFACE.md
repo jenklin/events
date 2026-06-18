@@ -216,7 +216,7 @@ A user-friendly form at **cloudpeers.com/events** where anyone can create, custo
 │                                                      │
 │  Organization Name                                   │
 │  ┌────────────────────────────────────────────────┐ │
-│  │ CloudPeers Events                              │ │
+│  │ cloudpeers Events                              │ │
 │  └────────────────────────────────────────────────┘ │
 │                                                      │
 │  Logo                                                │

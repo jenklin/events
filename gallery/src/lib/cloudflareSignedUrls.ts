@@ -29,7 +29,7 @@ export function generateSignedImageUrl(options: SignedUrlOptions): string {
 
   // If signing is not configured, return unsigned URL
   if (!SIGNING_KEY_ID || !SIGNING_KEY_SECRET) {
-    console.warn('⚠️  Cloudflare signing keys not configured - returning unsigned URL');
+    console.warn(' Cloudflare signing keys not configured - returning unsigned URL');
     return `https://imagedelivery.net/${IMAGES_HASH}/${imageId}/${variant}`;
   }
 

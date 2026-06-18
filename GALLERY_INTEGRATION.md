@@ -2,7 +2,7 @@
 
 ## What Was Done
 
-The photo gallery from seoul-events-site has been successfully migrated to CloudPeers Events with full integration.
+The photo gallery from seoul-events-site has been successfully migrated to cloudpeers Events with full integration.
 
 ## Gallery Migration Summary
 
@@ -18,8 +18,8 @@ The photo gallery from seoul-events-site has been successfully migrated to Cloud
 - Cloudflare Images integration
 
 **Branding updated**:
-- CSS variables updated to CloudPeers colors (maroon #7B1E1E, tan #D4A574)
-- Tailwind config with CloudPeers palette
+- CSS variables updated to cloudpeers colors (maroon #7B1E1E, tan #D4A574)
+- Tailwind config with cloudpeers palette
 - Package.json renamed to "cloudpeers-gallery"
 - Metadata updated
 
@@ -29,7 +29,7 @@ The photo gallery from seoul-events-site has been successfully migrated to Cloud
 
 **Changes**:
 - Added Photo Gallery section (lines 241-264)
-- CloudPeers tan button to open gallery
+- cloudpeers tan button to open gallery
 - "No login required • Magic link access" messaging
 - Conditional display with `x-show="hasGallery"`
 - Template placeholders: `{{GALLERY_URL}}`, `{{HAS_GALLERY}}`
@@ -92,7 +92,7 @@ cloudpeers-mcp/events/
 │   │   ├── lib/                      ✅ Supabase + Cloudflare
 │   │   └── middleware.ts
 │   ├── package.json                  ✅ Updated to cloudpeers-gallery
-│   ├── tailwind.config.js            ✅ CloudPeers colors
+│   ├── tailwind.config.js            ✅ cloudpeers colors
 │   └── README.md                     ✅ Gallery documentation
 │
 ├── event-pages/
@@ -174,14 +174,14 @@ When creating an event with gallery enabled, the JSON looks like:
    - Upload generated HTML to hosting
    - Event now has working "View Photo Gallery" button!
 
-## CloudPeers Branding
+## cloudpeers Branding
 
 ### Gallery App Colors
 
 ```css
 /* CSS Variables */
---brand-color: #7B1E1E;        /* CloudPeers Maroon */
---brand-accent: #D4A574;       /* CloudPeers Tan */
+--brand-color: #7B1E1E;        /* cloudpeers Maroon */
+--brand-accent: #D4A574;       /* cloudpeers Tan */
 --brand-dark: #5A1616;         /* Maroon Dark */
 --brand-light: #E4C5A4;        /* Tan Light */
 ```
@@ -280,7 +280,7 @@ CLOUDFLARE_IMAGES_HASH=your-images-hash
 ### ✅ Completed
 
 - ✅ Gallery app migrated
-- ✅ CloudPeers branding applied
+- ✅ cloudpeers branding applied
 - ✅ Event template updated
 - ✅ Generator updated
 - ✅ Creator form updated (index.html)

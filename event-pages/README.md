@@ -1,6 +1,6 @@
-# CloudPeers Event Pages
+# cloudpeers Event Pages
 
-Create beautiful event landing pages with CloudPeers branding.
+Create beautiful event landing pages with cloudpeers branding.
 
 ## Quick Start for Users
 
@@ -42,7 +42,7 @@ Create beautiful event landing pages with CloudPeers branding.
 ## Features
 
 ### Event Page Features
-- ✅ Beautiful CloudPeers branding (maroon #7B1E1E, tan #D4A574)
+- ✅ Beautiful cloudpeers branding (maroon #7B1E1E, tan #D4A574)
 - ✅ Event registration with Supabase
 - ✅ QR code generation
 - ✅ Speaker profiles with social links
@@ -239,7 +239,7 @@ The template (`templates/default.html`) uses placeholders:
 
 ## Branding
 
-All event pages use CloudPeers brand colors:
+All event pages use cloudpeers brand colors:
 
 ### Color Palette
 
@@ -261,7 +261,7 @@ All event pages use CloudPeers brand colors:
 ### Visual Elements
 
 - Gradient headers (maroon to tan)
-- CloudPeers "CP" logo
+- cloudpeers "CP" logo
 - Rounded corners (8px-16px)
 - Soft shadows
 - Mobile-first responsive design
@@ -403,11 +403,11 @@ Event with AI-powered custom songs:
 - **Documentation Issues**: Check other .md files in this directory
 - **Configuration Help**: See `example-config.json`
 - **Type Definitions**: See `../shared/types/event.ts`
-- **Technical Support**: Contact CloudPeers team
+- **Technical Support**: Contact cloudpeers team
 
 ---
 
-**Built with CloudPeers Events Platform**
+**Built with cloudpeers Events Platform**
 
 Simple, powerful, beautiful event management.
 

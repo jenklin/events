@@ -1,4 +1,4 @@
-# CloudPeers Events - User Guide
+# cloudpeers Events - User Guide
 
 ## How to Create Your Event (No Technical Skills Required!)
 
@@ -176,7 +176,7 @@ When you download your config, it's a JSON file that looks like:
 **A:** They visit your event page and fill in the registration form. Responses go to your Supabase database.
 
 ### Q: Can I customize the look?
-**A:** The current version uses CloudPeers branding. Custom branding is coming soon!
+**A:** The current version uses cloudpeers branding. Custom branding is coming soon!
 
 ### Q: What about recurring events?
 **A:** Create a separate event for each occurrence, or duplicate your JSON and change the dates.

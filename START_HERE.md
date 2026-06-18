@@ -1,13 +1,13 @@
-# CloudPeers Events Platform - Start Here! 🚀
+# cloudpeers Events Platform - Start Here! 🚀
 
 ## What is This?
 
-Complete implementation guides for launching **CloudPeers Events** - a white-label event management platform with:
+Complete implementation guides for launching **cloudpeers Events** - a white-label event management platform with:
 - 📅 Event landing pages
 - ✉️ Registration system
 - 📸 Private photo galleries
 - 🎨 Full branding customization
-- 🔗 CloudPeers MCP integration
+- 🔗 cloudpeers MCP integration
 
 ---
 
@@ -37,7 +37,7 @@ Complete implementation guides for launching **CloudPeers Events** - a white-lab
    - Set up Supabase
    - Build minimal gallery app
    - Test locally
-   - Register with CloudPeers
+   - Register with cloudpeers
 
 **Perfect for**: Developers who want to dive in
 
@@ -64,13 +64,13 @@ Complete implementation guides for launching **CloudPeers Events** - a white-lab
 **Goal**: Build the complete platform
 
 Follow guides in order:
-1. **[01_SERVICE_REGISTRATION.md](./01_SERVICE_REGISTRATION.md)** - Register with CloudPeers
+1. **[01_SERVICE_REGISTRATION.md](./01_SERVICE_REGISTRATION.md)** - Register with cloudpeers
 2. **[02_SERVICE_ARCHITECTURE.md](./02_SERVICE_ARCHITECTURE.md)** - Understand the system
 3. **[03_EVENT_TEMPLATE_ENGINE.md](./03_EVENT_TEMPLATE_ENGINE.md)** - Build event generator
 4. **[04_GALLERY_SYSTEM.md](./04_GALLERY_SYSTEM.md)** - Build photo galleries
 5. **[05_DATABASE_SCHEMA.md](./05_DATABASE_SCHEMA.md)** - Set up database
 6. **[06_DEPLOYMENT_WORKFLOW.md](./06_DEPLOYMENT_WORKFLOW.md)** - Deploy to production
-7. **[07_INTEGRATION_GUIDE.md](./07_INTEGRATION_GUIDE.md)** - CloudPeers integration
+7. **[07_INTEGRATION_GUIDE.md](./07_INTEGRATION_GUIDE.md)** - cloudpeers integration
 
 **Timeline**: 3-4 weeks
 **Team**: 2-3 developers
@@ -115,7 +115,7 @@ Follow guides in order:
 ✅ Automated confirmation emails
 ✅ Event capacity limits
 
-### CloudPeers Integration
+### cloudpeers Integration
 ✅ MCP webhook handler
 ✅ Agent-to-agent invocations
 ✅ Metrics reporting
@@ -130,7 +130,7 @@ Follow guides in order:
 - 🗄️ Supabase (free tier OK)
 - 📸 Cloudflare ($5-20/mo)
 - 🔧 GitHub (free)
-- 🤖 CloudPeers (TBD)
+- 🤖 cloudpeers (TBD)
 
 ### Team Requirements
 - 👨‍💻 Backend Developer: 40-50 hours
@@ -156,7 +156,7 @@ Follow guides in order:
 1. Deploy gallery to Cloud Run
 2. Deploy Cloudflare Worker
 3. Run database migrations
-4. Register with CloudPeers
+4. Register with cloudpeers
 5. Publish to marketplace
 
 See **[LAUNCH_CHECKLIST.md](./LAUNCH_CHECKLIST.md)** for detailed steps.
@@ -171,7 +171,7 @@ See **[LAUNCH_CHECKLIST.md](./LAUNCH_CHECKLIST.md)** for detailed steps.
 - **Checklist**: `LAUNCH_CHECKLIST.md`
 
 ### External Resources
-- CloudPeers: https://services.cloudpeers.com
+- cloudpeers: https://services.cloudpeers.com
 - Supabase: https://supabase.com/docs
 - Next.js: https://nextjs.org/docs
 - Cloudflare: https://developers.cloudflare.com

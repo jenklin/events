@@ -1,17 +1,17 @@
-# CloudPeers Gallery
+# cloudpeers Gallery
 
-Private photo gallery for CloudPeers events with magic link authentication.
+Private photo gallery for cloudpeers events with magic link authentication.
 
 ## Overview
 
-The CloudPeers Gallery allows event organizers to share photos with attendees using secure, invite-only access. No accounts required - just magic links!
+The cloudpeers Gallery allows event organizers to share photos with attendees using secure, invite-only access. No accounts required - just magic links!
 
 ## Features
 
 ### For Event Organizers
 - 📸 Upload high-quality photos (.jpg) and videos (.mp4)
 - 🔐 Private albums with magic link access control
-- 🎨 CloudPeers branding (maroon #7B1E1E, tan #D4A574)
+- 🎨 cloudpeers branding (maroon #7B1E1E, tan #D4A574)
 - 📊 View engagement analytics
 - 💬 Moderate comments
 
@@ -110,9 +110,9 @@ When creating an event with `index.html`:
 
 5. Regenerate the event page - it will now include a gallery link!
 
-## CloudPeers Branding
+## cloudpeers Branding
 
-The gallery uses CloudPeers brand colors:
+The gallery uses cloudpeers brand colors:
 
 ### Color Palette
 
@@ -151,7 +151,7 @@ gallery/
 │       ├── supabase/       # Database client
 │       └── cloudflare.ts   # Image upload
 ├── package.json
-├── tailwind.config.js      # CloudPeers colors
+├── tailwind.config.js      # cloudpeers colors
 └── .env.local             # Credentials (not committed)
 ```
 
@@ -217,7 +217,7 @@ The gallery uses magic links for authentication:
 - **Editor**: Can upload photos to specific albums
 - **Viewer**: Can view and comment on photos
 
-## Integration with CloudPeers Events
+## Integration with cloudpeers Events
 
 ### In Event Pages
 
@@ -295,7 +295,7 @@ For help:
 
 ---
 
-**CloudPeers Gallery**
+**cloudpeers Gallery**
 
 Share beautiful event memories with magic link simplicity.
 

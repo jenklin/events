@@ -1,11 +1,11 @@
-# CloudPeers Events - MCP Service Registration
+# cloudpeers Events - MCP Service Registration
 
 ## Service Overview
 
-**Service Name**: CloudPeers Events
+**Service Name**: cloudpeers Events
 **Service ID**: `cloudpeers-events`
 **Version**: 1.0.0
-**Provider**: CloudPeers
+**Provider**: cloudpeers
 **Category**: Event Management
 **Marketplace URL**: https://services.cloudpeers.com/cloudpeers-events
 
@@ -445,7 +445,7 @@ Response:
 
 ### Event Notifications
 
-The service can send webhooks to CloudPeers for event tracking:
+The service can send webhooks to cloudpeers for event tracking:
 
 ```json
 {
@@ -626,16 +626,16 @@ Response: Complete breakdown by category
 
 ## 🔗 Service Registration
 
-### CloudPeers Marketplace Entry
+### cloudpeers Marketplace Entry
 
 ```json
 {
   "serviceId": "cloudpeers-events",
-  "name": "CloudPeers Events",
+  "name": "cloudpeers Events",
   "tagline": "Beautiful event pages with RSVP, potluck, and AI music",
   "description": "Create and manage stunning event pages in minutes...",
   "category": "Event Management",
-  "provider": "CloudPeers",
+  "provider": "cloudpeers",
   "version": "1.0.0",
   "pricing": {
     "free": true,
@@ -688,5 +688,5 @@ Response: Complete breakdown by category
 **Next Steps:**
 1. Implement API endpoints
 2. Set up MCP server
-3. Submit to CloudPeers marketplace
+3. Submit to cloudpeers marketplace
 4. Launch! 🚀

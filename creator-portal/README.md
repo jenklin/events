@@ -1,4 +1,4 @@
-# CloudPeers Events - Creator Portal
+# cloudpeers Events - Creator Portal
 
 Modern event creation and management dashboard built with Next.js 14.
 
@@ -208,4 +208,4 @@ npm run dev -- -p 3002
 
 ## License
 
-Copyright © 2025 CloudPeers. All rights reserved.
+Copyright © 2025 cloudpeers. All rights reserved.

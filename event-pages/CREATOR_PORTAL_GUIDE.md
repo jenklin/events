@@ -1,11 +1,11 @@
-# CloudPeers Event Creator Portal Guide
+# cloudpeers Event Creator Portal Guide
 
 ## Overview
 
 The **creator-portal.html** is a comprehensive, standalone HTML event management interface that combines:
 
 - **Design patterns** from gui-norae-creator.html (tabbed interface, preview, deployment)
-- **CloudPeers branding** (maroon #7B1E1E, tan #D4A574, grey slate tones)
+- **cloudpeers branding** (maroon #7B1E1E, tan #D4A574, grey slate tones)
 - **Advanced features** (potluck coordination, music/playlist requests, guest management)
 - **Simple tech stack** (HTML + Tailwind CSS CDN + Alpine.js + Lucide Icons)
 
@@ -138,7 +138,7 @@ Follow the **Deploy** tab instructions:
 
 4. **Test live site** - Verify all features work
 
-## CloudPeers Branding
+## cloudpeers Branding
 
 ### Color Scheme
 
@@ -156,7 +156,7 @@ Follow the **Deploy** tab instructions:
 - Gradient headers (maroon to tan)
 - Status badges (green for enabled, grey for disabled)
 - Soft gradient backgrounds
-- CloudPeers "CP" logo badge
+- cloudpeers "CP" logo badge
 
 ## Customization
 
@@ -174,7 +174,7 @@ Follow the **Deploy** tab instructions:
 To customize colors, edit the CSS section (lines 11-101):
 
 ```css
-/* CloudPeers Brand Colors */
+/* cloudpeers Brand Colors */
 .text-maroon { color: #7B1E1E; }      /* Change to your primary color */
 .text-tan { color: #D4A574; }          /* Change to your secondary color */
 ```
@@ -279,9 +279,9 @@ downloadConfig() {
 
 ## Comparison to GUI Norae Creator
 
-| Feature | GUI Norae Creator | CloudPeers Creator Portal |
+| Feature | GUI Norae Creator | cloudpeers Creator Portal |
 |---------|-------------------|---------------------------|
-| Branding | Red Helicopter | CloudPeers (Maroon/Tan) |
+| Branding | Red Helicopter | cloudpeers (Maroon/Tan) |
 | Tabs | 3 (Preview, Config, Deploy) | 7 (Overview, Preview, Config, Potluck, Music, Guests, Deploy) |
 | Potluck | ✅ Basic | ✅ Advanced with categories |
 | Music | ✅ Basic | ✅ Advanced with AI services |
@@ -313,7 +313,7 @@ downloadConfig() {
 
 ### Full Feature Parity
 
-All CloudPeers Events features:
+All cloudpeers Events features:
 - ✅ Event registration
 - ✅ QR code generation
 - ✅ Potluck coordination
@@ -338,11 +338,11 @@ For help with:
 - **Technical issues**: Check `README.md` and `MIGRATION_COMPLETE.md`
 - **Configuration**: See `example-config.json` for all options
 - **Type definitions**: See `shared/types/event.ts` for TypeScript types
-- **CloudPeers team**: Contact for feature requests
+- **cloudpeers team**: Contact for feature requests
 
 ---
 
-**Built with CloudPeers Events Platform**
+**Built with cloudpeers Events Platform**
 - Simple, powerful, beautiful event management
 - No build process, no complexity
 - Just HTML, CSS, and JavaScript

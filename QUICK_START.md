@@ -2,7 +2,7 @@
 
 ## Goal
 
-Get the Events Platform service running locally and registered with CloudPeers in **under 2 hours**.
+Get the Events Platform service running locally and registered with cloudpeers in **under 2 hours**.
 
 ## Prerequisites
 
@@ -10,7 +10,7 @@ Get the Events Platform service running locally and registered with CloudPeers i
 - Docker Desktop running
 - Supabase account (free tier OK)
 - Cloudflare account (free tier OK)
-- CloudPeers account
+- cloudpeers account
 - Google Cloud account (with billing enabled)
 
 ## Step 1: Clone & Setup (15 minutes)
@@ -281,7 +281,7 @@ curl http://localhost:3000/api/health
 # {"status":"healthy","timestamp":"...","service":"events-gallery"}
 ```
 
-## Step 7: Register with CloudPeers (15 minutes)
+## Step 7: Register with cloudpeers (15 minutes)
 
 ```bash
 # Register service
@@ -453,7 +453,7 @@ open output/sample-event.html
 - [ ] Gallery runs at http://localhost:3000
 - [ ] Health endpoint returns 200
 - [ ] Supabase connection works
-- [ ] Registered with CloudPeers
+- [ ] Registered with cloudpeers
 - [ ] MCP webhook responds
 - [ ] Event template generates
 
@@ -464,7 +464,7 @@ Now that you have a working foundation:
 1. **Add Authentication**: Implement magic link auth (see `04_GALLERY_SYSTEM.md`)
 2. **Add Event API**: Create REST endpoints for event management
 3. **Deploy to Cloud Run**: Follow `06_DEPLOYMENT_WORKFLOW.md`
-4. **Add Metrics**: Implement CloudPeers observability (see `07_INTEGRATION_GUIDE.md`)
+4. **Add Metrics**: Implement cloudpeers observability (see `07_INTEGRATION_GUIDE.md`)
 
 ## Troubleshooting
 
@@ -482,12 +482,12 @@ lsof -ti:3000 | xargs kill -9
 ### Webhook registration fails
 - Ensure webhook URL is accessible (use ngrok for local testing)
 - Verify JSON syntax
-- Check CloudPeers service status
+- Check cloudpeers service status
 
 ## Resources
 
 - Full docs: See `README.md` in this directory
-- CloudPeers: https://services.cloudpeers.com
+- cloudpeers: https://services.cloudpeers.com
 - Supabase: https://supabase.com/docs
 - Next.js: https://nextjs.org/docs
 

@@ -1,7 +1,7 @@
 {
   "name": "cloudpeers-events-creator",
   "version": "1.0.0",
-  "description": "Event creator form for CloudPeers Events",
+  "description": "Event creator form for cloudpeers Events",
   "scripts": {
     "dev": "next dev -p 3001",
     "build": "next build",

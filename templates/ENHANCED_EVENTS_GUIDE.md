@@ -2,7 +2,7 @@
 
 ## Overview
 
-This template system provides **comprehensive event management features** inspired by modern event platforms. All existing CloudPeers Events features are retained including QR codes, photo galleries, and white-label branding.
+This template system provides **comprehensive event management features** inspired by modern event platforms. All existing cloudpeers Events features are retained including QR codes, photo galleries, and white-label branding.
 
 ## 🎯 Key Features
 
@@ -28,7 +28,7 @@ This template system provides **comprehensive event management features** inspir
 
 ## 📋 Complete Feature Comparison
 
-| Feature | Modern Event Platforms | CloudPeers Enhanced | Notes |
+| Feature | Modern Event Platforms | cloudpeers Enhanced | Notes |
 |---------|----------|---------------------|-------|
 | **Event Details** |
 | Event title | ✅ | ✅ | Required |
@@ -60,7 +60,7 @@ This template system provides **comprehensive event management features** inspir
 | Potluck tracking | ❌ | ✅ | OPTIONAL: Food assignments |
 | Music contributions | ❌ | ✅ | OPTIONAL: Songs or AI-generated |
 | White-label branding | ❌ | ✅ | Full customization |
-| CloudPeers MCP | ❌ | ✅ | A2A integration |
+| cloudpeers MCP | ❌ | ✅ | A2A integration |
 
 ---
 
@@ -406,7 +406,7 @@ branding: {
 - [ ] Calendar (.ics) generation
 - [ ] Gallery magic links
 - [ ] AI music service (Suno/Udio)
-- [ ] CloudPeers MCP webhooks
+- [ ] cloudpeers MCP webhooks
 
 ---
 
