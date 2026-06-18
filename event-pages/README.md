@@ -1,5 +1,23 @@
 # cloudpeers Event Pages
 
+> ## ⚠️ Canonical pages are now the Next.js app — read this first
+>
+> The **canonical attendee event page is `/e/[eventId]`** and the **canonical event
+> creator is `/creator`**, both in `../creator-portal/` (the live
+> `events.cloudpeers.com` app, cloudpeers dark `paradigm-*` brand). They read/write
+> the Supabase `events` table directly.
+>
+> What this `event-pages/` directory is **still** for: generating **standalone static
+> microsites** (e.g. `*.redheli.com`) via the **generator** (`generator/generate.ts`)
+> + **template** (`templates/default.html`). Those two are live — **do not remove them.**
+>
+> **Archived (`_archived/`):** the old standalone static creators
+> `index.html`, `creator-portal.html`, and `event-creator.html` (old maroon/tan brand)
+> have been **superseded by `/creator`** and moved to `event-pages/_archived/`. They are
+> kept for reference only — do not use or deploy them. Most of the user-facing
+> instructions below predate the Next.js migration and describe those archived files;
+> for current event creation, use `/creator` instead.
+
 Create beautiful event landing pages with cloudpeers branding.
 
 ## Quick Start for Users

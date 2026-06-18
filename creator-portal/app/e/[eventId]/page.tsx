@@ -61,6 +61,60 @@ export default async function PublicEventPage({ params }: PageProps) {
     event.max_guests &&
     rsvpStats.totalGuests >= event.max_guests;
 
+  // ---------------------------------------------------------------------------
+  // Schedule / agenda — read defensively. The /creator form stores the agenda at
+  // config.additional.schedule (array of { time, title, description? }). A future
+  // top-level `agenda` JSONB column (see 05_DATABASE_SCHEMA.md) is also honored.
+  // ---------------------------------------------------------------------------
+  const config = event.config || {};
+  const schedule: Array<{ time?: string; title?: string; description?: string }> =
+    (Array.isArray(event.agenda) && event.agenda.length > 0
+      ? event.agenda
+      : config?.additional?.schedule || config?.schedule || []) ?? [];
+
+  // ---------------------------------------------------------------------------
+  // What to expect — honor a top-level `what_to_expect` JSONB column
+  // ({ intro, items[] }) or a config.whatToExpect fallback. Omitted when absent.
+  // ---------------------------------------------------------------------------
+  const wte = event.what_to_expect || config?.whatToExpect || null;
+  const whatToExpect =
+    wte && (wte.intro || (Array.isArray(wte.items) && wte.items.length > 0))
+      ? { intro: wte.intro || '', items: Array.isArray(wte.items) ? wte.items : [] }
+      : null;
+
+  // ---------------------------------------------------------------------------
+  // Gallery album link. Resolution order:
+  //   1. config.galleryAlbumId (set explicitly by a creator flow)
+  //   2. albums.event_id lookup (the `albums.event_id` column is being added in
+  //      gallery/migrations/add-event-id-to-albums.sql; the /creator flow sets
+  //      albums.event_id = events.id when an event gallery is created).
+  // The album page is served at /gallery/a/<albumId> (gallery service proxied
+  // under /gallery). Only rendered when an album is actually found.
+  // ---------------------------------------------------------------------------
+  let galleryAlbumId: string | null = config?.galleryAlbumId || null;
+  if (!galleryAlbumId) {
+    // TODO(albums.event_id): once the `albums.event_id` migration is applied in
+    // efps, this lookup resolves the linked album. It fails open (no gallery link)
+    // if the column does not yet exist.
+    try {
+      const { data: album } = await supabase
+        .from('albums')
+        .select('id')
+        .eq('event_id', event.id)
+        .limit(1)
+        .maybeSingle();
+      galleryAlbumId = album?.id || null;
+    } catch {
+      galleryAlbumId = null;
+    }
+  }
+
+  // Public URL used for the QR code + share link. Mirrors the QR API logic.
+  const eventUrl =
+    event.custom_subdomain && event.subdomain_provider
+      ? `https://${event.custom_subdomain}.${event.subdomain_provider}`
+      : `https://events.cloudpeers.com/e/${event.event_id}`;
+
   // Format event data
   const eventData = {
     id: event.event_id,
@@ -151,6 +205,15 @@ export default async function PublicEventPage({ params }: PageProps) {
 
     // Stats
     stats: rsvpStats,
+
+    // Attendee-page extras (feature parity with the gui-norae landing page)
+    schedule,
+    whatToExpect,
+    galleryAlbumId,
+    eventUrl,
+    // Build-free QR: the existing GET /api/events/[id]/qr returns a PNG of eventUrl.
+    // No new dependency, no client QR lib — just an <img>.
+    qrImageUrl: `/api/events/${event.event_id}/qr`,
   };
 
   return <EventPage event={eventData} />;
