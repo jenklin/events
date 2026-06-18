@@ -166,14 +166,39 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Create the gallery album when enabled. The real schema is the `albums` table
+    // (title/description/is_private/settings) — NOT the aspirational `gallery_albums`
+    // from the design docs, which does not exist in efps (that insert silently failed).
+    // Link it to the event via the new albums.event_id so /e/[id] can surface a
+    // "View Gallery" link and it renders at events.cloudpeers.com/gallery/a/<albumId>.
+    let galleryAlbumId: string | null = null;
+    if (validatedData.additional.enablePhotoGallery) {
+      const { data: album, error: albumError } = await supabase
+        .from('albums')
+        .insert({
+          event_id: event.id,
+          title: `${validatedData.eventBasics.title} - Photos`,
+          description: 'Event photo gallery',
+          is_private: true,
+          settings: { theme: validatedData.urlBranding.branding || {} },
+        })
+        .select('id')
+        .single();
+      if (albumError) {
+        console.error('Gallery album creation failed:', albumError);
+      } else {
+        galleryAlbumId = album?.id ?? null;
+      }
+    }
+
     // Generate event URLs
     const eventUrl = getEventUrl(
       validatedData.urlBranding.customSlug,
       validatedData.urlBranding.customSubdomain
     );
     const qrCodeUrl = `${eventUrl}/qr.png`;
-    const galleryUrl = validatedData.additional.enablePhotoGallery
-      ? `${eventUrl}/gallery`
+    const galleryUrl = galleryAlbumId
+      ? `https://events.cloudpeers.com/gallery/a/${galleryAlbumId}`
       : null;
 
     // Generate QR code
@@ -185,25 +210,6 @@ export async function POST(req: NextRequest) {
         light: '#FFFFFF',
       },
     });
-
-    // Create gallery album if enabled
-    let galleryAlbumId = null;
-    if (validatedData.additional.enablePhotoGallery) {
-      const { data: album } = await supabase
-        .from('gallery_albums')
-        .insert({
-          event_id: event.id,
-          album_name: `${validatedData.eventBasics.title} - Photos`,
-          album_description: 'Event photo gallery',
-          branding: validatedData.urlBranding.branding || {},
-          is_public: false,
-          download_enabled: true,
-        })
-        .select()
-        .single();
-
-      galleryAlbumId = album?.id;
-    }
 
     // Record metrics
     await supabase.from('event_metrics').insert({
