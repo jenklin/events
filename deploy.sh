@@ -114,6 +114,16 @@ if [ -z "$NEXT_PUBLIC_SUPABASE_URL" ] || [ -z "$NEXT_PUBLIC_SUPABASE_ANON_KEY" ]
 fi
 echo -e "${GREEN}✓ Public config fetched${NC}"
 
+# Gallery proxy origin: the events-flavored gallery service (cloudpeers-gallery-events,
+# built with GALLERY_BASE_PATH=/gallery). Empty => /gallery proxy disabled (rewrites()
+# no-ops). Must be a BUILD arg — Next bakes rewrites() into the routes manifest.
+GALLERY_ORIGIN=$(gcloud run services describe cloudpeers-gallery-events --region="${REGION}" --project="${PROJECT_ID}" --format='value(status.url)' 2>/dev/null || true)
+if [ -n "$GALLERY_ORIGIN" ]; then
+  echo -e "${GREEN}✓ Gallery proxy origin: ${GALLERY_ORIGIN}${NC}"
+else
+  echo -e "${YELLOW}⚠ cloudpeers-gallery-events not found — /gallery proxy disabled this build${NC}"
+fi
+
 # Pre-flight: the runtime SA must read every secret the revision mounts, or it fails
 # with "Permission denied on secret" (mirrors geojourney/deploy.sh).
 for SECRET in SUPABASE_SERVICE_ROLE_KEY EVENTS_CLOUDPEERS_WEBHOOK_SECRET; do
@@ -132,7 +142,7 @@ echo -e "${GREEN}✓ Runtime SA can read all mounted secrets${NC}"
 # Submit build to Cloud Build (using Secret Manager)
 gcloud builds submit \
   --config=cloudbuild.yaml \
-  --substitutions="_IMAGE_URI=${IMAGE_URI},_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL},_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY},_SUPABASE_SERVICE_KEY=" \
+  --substitutions="_IMAGE_URI=${IMAGE_URI},_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL},_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY},_SUPABASE_SERVICE_KEY=,_GALLERY_ORIGIN=${GALLERY_ORIGIN}" \
   --project="${PROJECT_ID}" \
   --timeout=20m
 
@@ -152,7 +162,7 @@ gcloud run deploy "${SERVICE_NAME}" \
   --concurrency="${CONCURRENCY}" \
   --port=8080 \
   --allow-unauthenticated \
-  --set-env-vars="NODE_ENV=production,NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL},NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}" \
+  --set-env-vars="NODE_ENV=production,NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL},NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY},GALLERY_ORIGIN=${GALLERY_ORIGIN}" \
   --update-secrets="SUPABASE_SERVICE_ROLE_KEY=SUPABASE_SERVICE_ROLE_KEY:latest,CLOUDPEERS_WEBHOOK_SECRET=EVENTS_CLOUDPEERS_WEBHOOK_SECRET:latest" \
   --timeout=540 \
   --no-cpu-throttling \
