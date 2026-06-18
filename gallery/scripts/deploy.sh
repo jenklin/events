@@ -15,8 +15,10 @@ set -e
 
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; NC='\033[0m'
 
-# Run from the repo root (npm workspaces + build context).
-REPO_ROOT=$(git rev-parse --show-toplevel)
+# Resolve repo root from THIS script's location (gallery/scripts/deploy.sh) so it
+# works regardless of the invoking cwd. (Don't use `git rev-parse` from cwd.)
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+REPO_ROOT=$(cd "$SCRIPT_DIR/../.." && pwd)
 cd "$REPO_ROOT"
 
 # --- Config (same project/SA/secrets as the events service) ---
@@ -82,7 +84,7 @@ if ! gcloud secrets get-iam-policy "SUPABASE_SERVICE_ROLE_KEY" --project="${PROJ
 fi
 
 echo -e "${GREEN}Step 1: Building with Cloud Build (${IMAGE_URI})${NC}"
-gcloud builds submit \
+gcloud builds submit . \
   --config=gallery/cloudbuild.yaml \
   --substitutions="_IMAGE_URI=${IMAGE_URI},_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL},_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY},_CF_IMAGES_HASH=${CF_IMAGES_HASH},_GALLERY_BASE_PATH=${GALLERY_BASE_PATH}" \
   --project="${PROJECT_ID}" \
