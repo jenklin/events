@@ -4,9 +4,12 @@ import { getAssetUrl, getThumbUrl } from '@/lib/photoUrl'
 
 export async function GET(_: Request, { params }: { params: { albumId: string } }) {
   const { data, error } = await supabaseAdmin.from('assets')
-    // `provider` is optional/backward-compatible (defaults to cloudflare-images
-    // in photoUrl when null). See migrations/add-provider-column.sql.
-    .select('id,type,provider,provider_id,width,height,metadata,created_at')
+    // Select '*' so this works whether or not the optional `provider` column
+    // exists yet: when absent, photoUrl defaults to cloudflare-images; once
+    // migrations/add-provider-column.sql is applied (for GCS albums), '*'
+    // picks the column up automatically. Selecting `provider` explicitly would
+    // 500 with "column assets.provider does not exist" until the migration runs.
+    .select('*')
     .eq('album_id', params.albumId)
     .order('created_at', { ascending: false })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
