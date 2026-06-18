@@ -8,7 +8,12 @@ import { Footer } from './Footer'
 type Asset = {
   id: string
   type: 'image'|'video'
+  provider?: string|null
   provider_id: string
+  // Server-resolved, provider-agnostic URLs (see lib/photoUrl.ts). Optional so
+  // older API responses still work via the cloudflare fallback below.
+  url?: string|null
+  thumbUrl?: string|null
   width: number|null
   height: number|null
   uploader: string|null
@@ -16,6 +21,12 @@ type Asset = {
   uploadSource: string
   isUserUpload: boolean
   created_at: string
+}
+
+// Fallback only — server now provides a.url / a.thumbUrl. Kept so the gallery
+// keeps rendering Cloudflare assets if it talks to an older API revision.
+function cfFallback(a: Asset): string {
+  return `https://imagedelivery.net/${process.env.NEXT_PUBLIC_CF_IMAGES_HASH}/${a.provider_id}/public`
 }
 type Album = { id: string; title: string; description: string|null; settings: any }
 
@@ -262,7 +273,7 @@ export default function AlbumViewer({ albumId }: { albumId: string }) {
           <button key={a.id} onClick={() => setSelected(a)} className="group relative overflow-hidden rounded-xl bg-paradigm-panel shadow-sm">
             {a.type === 'image' ? (
               <img className="h-48 w-full object-cover transition group-hover:scale-105"
-                   src={`https://imagedelivery.net/${process.env.NEXT_PUBLIC_CF_IMAGES_HASH}/${a.provider_id}/public`}
+                   src={a.thumbUrl || a.url || cfFallback(a)}
                    alt="" />
             ) : (
               <div className="h-48 w-full grid place-items-center text-sm text-paradigm-muted">Video</div>
@@ -331,7 +342,7 @@ export default function AlbumViewer({ albumId }: { albumId: string }) {
 
           <div className="w-full max-w-5xl rounded-2xl bg-paradigm-panel p-4" onClick={e => e.stopPropagation()}>
             {selected.type === 'image' ? (
-              <img className="w-full h-auto rounded-xl" src={`https://imagedelivery.net/${process.env.NEXT_PUBLIC_CF_IMAGES_HASH}/${selected.provider_id}/public`} alt="" />
+              <img className="w-full h-auto rounded-xl" src={selected.url || cfFallback(selected)} alt="" />
             ) : (
               <video id="player" className="w-full h-auto rounded-xl" controls src={`${window.location.pathname.split('/a/')[0]}/api/stream/${selected.provider_id}`} />
             )}

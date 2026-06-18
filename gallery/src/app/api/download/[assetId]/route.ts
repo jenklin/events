@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 import { requireViewer } from '@/lib/authz'
-import { CF_IMAGES_ACCOUNT_HASH } from '@/lib/cf'
+import { getAssetUrl } from '@/lib/photoUrl'
 
 export async function GET(_: Request, { params }: { params: { assetId: string } }) {
-  const { data: asset, error } = await supabaseAdmin.from('assets').select('id,album_id,type,provider_id').eq('id', params.assetId).single()
+  const { data: asset, error } = await supabaseAdmin.from('assets').select('id,album_id,type,provider,provider_id').eq('id', params.assetId).single()
   if (error || !asset) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
   const claims = await requireViewer(asset.album_id)
@@ -12,13 +12,15 @@ export async function GET(_: Request, { params }: { params: { assetId: string } 
     return NextResponse.json({ error: 'Download not permitted' }, { status: 403 })
   }
 
-  if (asset.type === 'image') {
-    // deliver original/public variant; for stricter security proxy bytes in production
-    const url = `https://imagedelivery.net/${CF_IMAGES_ACCOUNT_HASH}/${asset.provider_id}/public?download=true`
-    return NextResponse.redirect(url)
-  } else {
-    // For Stream, route to HLS; for true "file" download, configure Stream signed MP4 downloads
-    const url = `https://videodelivery.net/${asset.provider_id}/manifest/video.m3u8`
-    return NextResponse.redirect(url)
+  // Provider-agnostic: resolves Cloudflare Images, Cloudflare Stream, or a
+  // signed GCS URL based on asset.provider (defaults to cloudflare-images).
+  let url = await getAssetUrl(asset)
+
+  // For Cloudflare Images add the download hint so the browser saves the file.
+  const provider = asset.provider || 'cloudflare-images'
+  if (provider === 'cloudflare-images') {
+    url += (url.includes('?') ? '&' : '?') + 'download=true'
   }
+
+  return NextResponse.redirect(url)
 }
