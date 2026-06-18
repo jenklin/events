@@ -1,5 +1,11 @@
 # Events Platform Migration - Complete Index
 
+> 📸 **Gallery — read this first:** the numbered docs (`04_GALLERY_SYSTEM.md`,
+> `05_DATABASE_SCHEMA.md`) describe an earlier *aspirational* design. For how the photo gallery
+> actually works and deploys **today**, see **[GALLERY.md](./GALLERY.md)** — as-built dual-deploy
+> (events.cloudpeers.com/gallery default, gallery.cloudpeers.com opt-in), provider-agnostic photo
+> URLs, efps `albums`/`assets`, and the reused deploy pipeline.
+
 ## 📚 Document Map
 
 ```

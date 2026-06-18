@@ -1,0 +1,38 @@
+# CloudPeers Gallery — Cloud Build (mirrors the root cloudbuild.yaml).
+# Builds the `gallery` workspace via gallery/Dockerfile. Build context = repo ROOT.
+# Substitutions are supplied by gallery/scripts/deploy.sh.
+steps:
+  # Step 1: Build Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - '${_IMAGE_URI}'
+      - '-f'
+      - 'gallery/Dockerfile'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_SUPABASE_URL=${_SUPABASE_URL}'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_SUPABASE_ANON_KEY=${_SUPABASE_ANON_KEY}'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_CF_IMAGES_HASH=${_CF_IMAGES_HASH}'
+      - '--build-arg'
+      - 'GALLERY_BASE_PATH=${_GALLERY_BASE_PATH}'
+      - '.'
+    timeout: '1200s'
+
+  # Step 2: Push image to GCR
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', '${_IMAGE_URI}']
+    timeout: '600s'
+
+options:
+  machineType: 'N1_HIGHCPU_8'
+  logging: CLOUD_LOGGING_ONLY
+
+timeout: '1200s'
+
+images:
+  - '${_IMAGE_URI}'
+
+# _GALLERY_BASE_PATH may be empty (root build) — empty substitution values are allowed.
