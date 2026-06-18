@@ -32,7 +32,7 @@ export default function EventsPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-paradigm-deep-black via-[#0b0a14] to-paradigm-deep-black flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin w-12 h-12 border-4 border-red-900 border-t-transparent rounded-full mx-auto mb-4"></div>
+          <div className="animate-spin w-12 h-12 border-4 border-paradigm-purple border-t-transparent rounded-full mx-auto mb-4"></div>
           <p className="text-paradigm-muted">Loading events...</p>
         </div>
       </div>
@@ -46,8 +46,8 @@ export default function EventsPage() {
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Link href="/" className="w-10 h-10 rounded-lg bg-gradient-to-br from-red-900 to-paradigm-gold/40 flex items-center justify-center hover:scale-105 transition-transform">
-                <span className="text-white font-bold text-lg">CP</span>
+              <Link href="/" className="flex items-center hover:scale-105 transition-transform">
+                <img src="/logo-purple.svg" alt="cloudpeers" className="h-10 w-auto" />
               </Link>
               <div>
                 <h1 className="text-xl font-bold text-white">My Events</h1>
@@ -55,8 +55,8 @@ export default function EventsPage() {
               </div>
             </div>
             <Link
-              href="/create"
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-900 to-paradigm-gold/40 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
+              href="/creator"
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-paradigm-purple to-paradigm-teal text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-paradigm-purple/20 transition-all"
             >
               <Plus className="w-5 h-5" />
               Create Event
@@ -70,16 +70,16 @@ export default function EventsPage() {
         {events.length === 0 ? (
           // Empty State
           <div className="text-center py-16">
-            <div className="w-24 h-24 bg-gradient-to-br from-red-900/10 to-paradigm-gold/40/10 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Calendar className="w-12 h-12 text-red-900" />
+            <div className="w-24 h-24 bg-gradient-to-br from-paradigm-purple/15 to-paradigm-teal/15 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Calendar className="w-12 h-12 text-paradigm-purple" />
             </div>
             <h2 className="text-2xl font-bold text-white mb-2">No Events Yet</h2>
             <p className="text-paradigm-muted mb-8 max-w-md mx-auto">
               Create your first event to get started with cloudpeers Events
             </p>
             <Link
-              href="/create"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-red-900 to-paradigm-gold/40 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
+              href="/creator"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-paradigm-purple to-paradigm-teal text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-paradigm-purple/20 transition-all"
             >
               <Plus className="w-5 h-5" />
               Create Your First Event
@@ -93,7 +93,7 @@ export default function EventsPage() {
                 {events.length} {events.length === 1 ? 'Event' : 'Events'}
               </h2>
               <div className="flex gap-2">
-                <button className="px-4 py-2 text-sm font-semibold text-red-900 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
+                <button className="px-4 py-2 text-sm font-semibold text-paradigm-purple-light bg-paradigm-purple/15 rounded-lg hover:bg-paradigm-purple/25 transition-colors">
                   Upcoming
                 </button>
                 <button className="px-4 py-2 text-sm font-semibold text-paradigm-muted hover:bg-paradigm-panel rounded-lg transition-colors">
@@ -107,17 +107,17 @@ export default function EventsPage() {
                 <Link
                   key={event.id}
                   href={`/e/${event.id}`}
-                  className="group bg-paradigm-panel rounded-xl p-6 border border-white/10 shadow-sm hover:shadow-lg hover:border-red-900/30 transition-all"
+                  className="group bg-paradigm-panel rounded-xl p-6 border border-white/10 shadow-sm hover:shadow-lg hover:border-paradigm-purple/30 transition-all"
                 >
                   {/* Event Title */}
-                  <h3 className="text-lg font-bold text-white mb-3 group-hover:text-red-900 transition-colors">
+                  <h3 className="text-lg font-bold text-white mb-3 group-hover:text-paradigm-purple-light transition-colors">
                     {event.title}
                   </h3>
 
                   {/* Event Details */}
                   <div className="space-y-2 mb-4">
                     <div className="flex items-center gap-2 text-sm text-paradigm-muted">
-                      <Calendar className="w-4 h-4 text-red-900" />
+                      <Calendar className="w-4 h-4 text-paradigm-purple" />
                       <span>{new Date(event.date).toLocaleDateString('en-US', {
                         weekday: 'long',
                         year: 'numeric',
@@ -127,13 +127,13 @@ export default function EventsPage() {
                     </div>
 
                     <div className="flex items-center gap-2 text-sm text-paradigm-muted">
-                      <MapPin className="w-4 h-4 text-red-900" />
+                      <MapPin className="w-4 h-4 text-paradigm-purple" />
                       <span>{event.location.venueName}</span>
                     </div>
 
                     {event.capacity && (
                       <div className="flex items-center gap-2 text-sm text-paradigm-muted">
-                        <Users className="w-4 h-4 text-red-900" />
+                        <Users className="w-4 h-4 text-paradigm-purple" />
                         <span>
                           {event.guestCount || 0} / {event.capacity} guests
                         </span>
@@ -142,7 +142,7 @@ export default function EventsPage() {
                   </div>
 
                   {/* View Button */}
-                  <div className="flex items-center gap-2 text-sm font-semibold text-red-900 group-hover:underline">
+                  <div className="flex items-center gap-2 text-sm font-semibold text-paradigm-purple-light group-hover:underline">
                     <Eye className="w-4 h-4" />
                     View Event
                   </div>

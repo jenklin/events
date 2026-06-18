@@ -42,7 +42,7 @@ export default function Home() {
           <div className="grid md:grid-cols-3 gap-6">
 
             {/* Create New Event */}
-            <Link href="/create">
+            <Link href="/creator">
               <div className="group p-8 bg-paradigm-panel/70 backdrop-blur rounded-2xl border border-paradigm-purple/30 hover:border-paradigm-purple transition-all cursor-pointer hover:scale-105 hover:shadow-2xl hover:shadow-paradigm-purple/10">
                 <h3 className="text-2xl font-semibold text-white mb-2 group-hover:text-paradigm-purple-light transition-colors">
                   Create New Event
