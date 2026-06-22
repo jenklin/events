@@ -18,6 +18,8 @@ steps:
       - 'NEXT_PUBLIC_CF_IMAGES_HASH=${_CF_IMAGES_HASH}'
       - '--build-arg'
       - 'GALLERY_BASE_PATH=${_GALLERY_BASE_PATH}'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_APP_URL=${_APP_URL}'
       - '.'
     timeout: '1200s'
 

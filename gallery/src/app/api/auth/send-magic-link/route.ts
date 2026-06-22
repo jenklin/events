@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js'
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://seoul.redheli.com/gallery'
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://events.cloudpeers.com/gallery'
 
 export async function POST(req: Request) {
   const cookieStore = cookies()
