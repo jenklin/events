@@ -1,0 +1,18 @@
+# TypeScript incremental build info (generated)
+*.tsbuildinfo
+
+# Next.js build output
+.next/
+out/
+
+# Dependencies
+node_modules/
+
+# Env / secrets
+.env
+.env.local
+.env*.local
+
+# Logs / OS
+*.log
+.DS_Store
