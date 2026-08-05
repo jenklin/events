@@ -5,7 +5,12 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase';
+import { getPublicEventUrl } from '@/lib/eventSchema';
 import QRCode from 'qrcode';
+
+// The QR encodes the event's current public URL (which can change when a
+// custom domain is attached) — always resolve it fresh.
+export const dynamic = 'force-dynamic';
 
 export async function POST(
   req: NextRequest,
@@ -20,7 +25,7 @@ export async function POST(
     // Get event
     const { data: event, error } = await supabase
       .from('events')
-      .select('id, event_id, custom_subdomain, subdomain_provider')
+      .select('id, event_id, custom_subdomain, subdomain_provider, config')
       .eq('event_id', eventId)
       .single();
 
@@ -28,13 +33,7 @@ export async function POST(
       return NextResponse.json({ error: 'Event not found' }, { status: 404 });
     }
 
-    // Generate event URL
-    let eventUrl: string;
-    if (event.custom_subdomain && event.subdomain_provider) {
-      eventUrl = `https://${event.custom_subdomain}.${event.subdomain_provider}`;
-    } else {
-      eventUrl = `https://events.cloudpeers.com/e/${event.event_id}`;
-    }
+    const eventUrl = getPublicEventUrl(event);
 
     // Generate QR code
     const qrCodeDataUrl = await QRCode.toDataURL(eventUrl, {
@@ -80,7 +79,7 @@ export async function GET(
     // Get event
     const { data: event } = await supabase
       .from('events')
-      .select('id, event_id, custom_subdomain, subdomain_provider')
+      .select('id, event_id, custom_subdomain, subdomain_provider, config')
       .eq('event_id', eventId)
       .single();
 
@@ -88,13 +87,7 @@ export async function GET(
       return NextResponse.json({ error: 'Event not found' }, { status: 404 });
     }
 
-    // Generate event URL
-    let eventUrl: string;
-    if (event.custom_subdomain && event.subdomain_provider) {
-      eventUrl = `https://${event.custom_subdomain}.${event.subdomain_provider}`;
-    } else {
-      eventUrl = `https://events.cloudpeers.com/e/${event.event_id}`;
-    }
+    const eventUrl = getPublicEventUrl(event);
 
     // Generate QR code as PNG buffer
     const qrCodeBuffer = await QRCode.toBuffer(eventUrl, {
@@ -106,7 +99,8 @@ export async function GET(
     return new NextResponse(new Uint8Array(qrCodeBuffer), {
       headers: {
         'Content-Type': 'image/png',
-        'Cache-Control': 'public, max-age=31536000, immutable',
+        // Not immutable: the encoded URL changes when a custom domain is attached
+        'Cache-Control': 'public, max-age=3600',
       },
     });
   } catch (error: any) {

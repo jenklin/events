@@ -189,6 +189,27 @@ export function generateSlug(title: string): string {
     .slice(0, 50);
 }
 
+// Resolve the public URL for an event DB row. Full custom domains (e.g.
+// sunnymax.live) live at config.customDomain — subdomain_provider has a check
+// constraint limiting it to legacy providers, so arbitrary domains go through
+// config until the custom_domain column migration is applied. Falls back to
+// legacy <subdomain>.<provider>, then the canonical /e/<slug> URL.
+export function getPublicEventUrl(event: {
+  event_id: string;
+  custom_subdomain?: string | null;
+  subdomain_provider?: string | null;
+  config?: any;
+}): string {
+  const customDomain = event.config?.customDomain;
+  if (typeof customDomain === 'string' && customDomain.length > 0) {
+    return `https://${customDomain}`;
+  }
+  if (event.custom_subdomain && event.subdomain_provider) {
+    return `https://${event.custom_subdomain}.${event.subdomain_provider}`;
+  }
+  return `https://events.cloudpeers.com/e/${event.event_id}`;
+}
+
 // Helper to get event URL
 export function getEventUrl(
   slug: string,
