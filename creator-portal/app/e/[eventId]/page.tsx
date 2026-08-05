@@ -14,7 +14,13 @@
 
 import { notFound } from 'next/navigation';
 import { getSupabaseAdmin } from '@/lib/supabase';
+import { getPublicEventUrl } from '@/lib/eventSchema';
 import EventPage from './EventPage';
+
+// Event details, RSVP counts, and gallery links must always reflect the live
+// database — without this, Next's data cache serves stale event content after
+// an organizer edits the event.
+export const dynamic = 'force-dynamic';
 
 interface PageProps {
   params: {
@@ -110,10 +116,7 @@ export default async function PublicEventPage({ params }: PageProps) {
   }
 
   // Public URL used for the QR code + share link. Mirrors the QR API logic.
-  const eventUrl =
-    event.custom_subdomain && event.subdomain_provider
-      ? `https://${event.custom_subdomain}.${event.subdomain_provider}`
-      : `https://events.cloudpeers.com/e/${event.event_id}`;
+  const eventUrl = getPublicEventUrl(event);
 
   // Format event data
   const eventData = {
@@ -210,6 +213,13 @@ export default async function PublicEventPage({ params }: PageProps) {
     schedule,
     whatToExpect,
     galleryAlbumId,
+
+    // White-label branding (template-engine contract): colors, org name/logo,
+    // and hidePlatformBranding all come from the event's `branding` JSONB.
+    branding: event.branding || {},
+    // Key locations for the "Getting Around" map section — data-driven from
+    // config.mapPoints: [{ name, label, address, note, query, queryKo, embed }]
+    mapPoints: Array.isArray(config?.mapPoints) ? config.mapPoints : [],
     eventUrl,
     // Build-free QR: the existing GET /api/events/[id]/qr returns a PNG of eventUrl.
     // No new dependency, no client QR lib — just an <img>.

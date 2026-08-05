@@ -14,13 +14,28 @@ interface EventPageProps {
   event: any; // Event data from server component
 }
 
+interface PlusOneContact {
+  name: string;
+  phone: string;
+  kakao: string;
+}
+
+// Map links for a location query. In Korea, Kakao/Naver are the maps guests
+// actually navigate with; Google is the fallback for visitors.
+const mapLinksFor = (query: string, queryKo?: string) => [
+  { label: 'Kakao Map', href: `https://map.kakao.com/?q=${encodeURIComponent(queryKo || query)}` },
+  { label: 'Naver Map', href: `https://map.naver.com/p/search/${encodeURIComponent(queryKo || query)}` },
+  { label: 'Google Maps', href: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}` },
+];
+
 export default function EventPage({ event }: EventPageProps) {
   const [selectedStatus, setSelectedStatus] = useState<'going' | 'maybe' | 'not_going' | null>(null);
   const [guestName, setGuestName] = useState('');
   const [guestEmail, setGuestEmail] = useState('');
   const [guestPhone, setGuestPhone] = useState('');
+  const [guestKakao, setGuestKakao] = useState('');
   const [plusOnes, setPlusOnes] = useState(0);
-  const [plusOneNames, setPlusOneNames] = useState<string[]>([]);
+  const [plusOneContacts, setPlusOneContacts] = useState<PlusOneContact[]>([]);
   const [bringingFood, setBringingFood] = useState(false);
   const [foodItems, setFoodItems] = useState<any[]>([]);
   const [songRequests, setSongRequests] = useState<any[]>([]);
@@ -40,8 +55,15 @@ export default function EventPage({ event }: EventPageProps) {
         setHasRsvp(true);
         setSelectedStatus(data.rsvp.status);
         setGuestName(data.rsvp.guestName);
-        setPlusOnes(data.rsvp.plusOnes || 0);
-        setPlusOneNames(data.rsvp.plusOneNames || []);
+        setGuestPhone(data.rsvp.guestPhone || '');
+        setGuestKakao(data.rsvp.customResponses?.kakaoId || '');
+        const count = data.rsvp.plusOnes || 0;
+        setPlusOnes(count);
+        const savedContacts: PlusOneContact[] = data.rsvp.customResponses?.plusOneContacts
+          || (data.rsvp.plusOneNames || []).map((name: string) => ({ name, phone: '', kakao: '' }));
+        setPlusOneContacts(
+          Array.from({ length: count }, (_, i) => savedContacts[i] || { name: '', phone: '', kakao: '' })
+        );
         setBringingFood(data.rsvp.bringingFood || false);
         setFoodItems(data.rsvp.foodItems || []);
         setSongRequests(data.rsvp.musicContribution?.songRequests || []);
@@ -76,7 +98,11 @@ export default function EventPage({ event }: EventPageProps) {
           guestPhone,
           status: selectedStatus,
           plusOnes,
-          plusOneNames,
+          plusOneNames: plusOneContacts.map((c) => c.name).filter(Boolean),
+          customResponses: {
+            ...(guestKakao ? { kakaoId: guestKakao } : {}),
+            ...(plusOnes > 0 ? { plusOneContacts } : {}),
+          },
           bringingFood,
           foodItems,
           musicContribution: {
@@ -130,6 +156,9 @@ export default function EventPage({ event }: EventPageProps) {
 
   const formatTime = (time: string) => {
     if (!time) return '';
+    // Only convert plain 24h "HH:MM" values; pass through anything already
+    // human-formatted ("5:30 PM", "Midnight") untouched.
+    if (!/^\d{1,2}:\d{2}$/.test(time)) return time;
     const [hours, minutes] = time.split(':');
     const hour = parseInt(hours);
     const ampm = hour >= 12 ? 'PM' : 'AM';
@@ -142,20 +171,51 @@ export default function EventPage({ event }: EventPageProps) {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // White-label branding (template-engine contract). Events may re-theme the
+  // page via branding.colors and replace/hide platform branding entirely.
+  const branding = event.branding || {};
+  const hidePlatform = branding.hidePlatformBranding === true;
+  const brandVars = branding.colors?.primary
+    ? ({
+        '--brand-primary': branding.colors.primary,
+        '--brand-primary-light': `color-mix(in srgb, ${branding.colors.primary} 55%, white)`,
+        ...(branding.colors.secondary
+          ? {
+              '--brand-secondary': branding.colors.secondary,
+              '--brand-secondary-light': `color-mix(in srgb, ${branding.colors.secondary} 45%, white)`,
+            }
+          : {}),
+      } as React.CSSProperties)
+    : undefined;
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-paradigm-deep-black via-[#0b0a14] to-paradigm-deep-black text-paradigm-text">
+    <div
+      style={brandVars}
+      className="min-h-screen bg-gradient-to-br from-paradigm-deep-black via-[#0b0a14] to-paradigm-deep-black text-paradigm-text"
+    >
       {/* Header / Nav */}
       <header className="sticky top-0 z-50 bg-paradigm-panel/80 backdrop-blur-lg border-b border-white/10">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-          <a href="/" className="flex items-center hover:scale-105 transition-transform">
-            <img src="/logo-purple.svg" alt="cloudpeers" className="h-8 w-auto" />
-          </a>
+          {branding.logoUrl ? (
+            <img src={branding.logoUrl} alt={branding.organizationName || event.title} className="h-8 w-auto" />
+          ) : branding.organizationName ? (
+            <span className="font-semibold text-white">{branding.organizationName}</span>
+          ) : hidePlatform ? (
+            <span aria-hidden className="h-8" />
+          ) : (
+            <a href="/" className="flex items-center hover:scale-105 transition-transform">
+              <img src="/logo-purple.svg" alt="cloudpeers" className="h-8 w-auto" />
+            </a>
+          )}
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-paradigm-muted">
             <a href="#details" onClick={scrollTo('details')} className="hover:text-paradigm-purple-light transition-colors">Details</a>
             {event.schedule?.length > 0 && (
               <a href="#schedule" onClick={scrollTo('schedule')} className="hover:text-paradigm-purple-light transition-colors">Schedule</a>
             )}
             <a href="#venue" onClick={scrollTo('venue')} className="hover:text-paradigm-purple-light transition-colors">Venue</a>
+            {event.mapPoints?.length > 0 && (
+              <a href="#map" onClick={scrollTo('map')} className="hover:text-paradigm-purple-light transition-colors">Map</a>
+            )}
             {event.rsvp.enabled && (
               <a href="#rsvp" onClick={scrollTo('rsvp')} className="hover:text-paradigm-purple-light transition-colors">RSVP</a>
             )}
@@ -177,7 +237,7 @@ export default function EventPage({ event }: EventPageProps) {
         <div className="text-center mb-10">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">{event.title}</h1>
           {event.description && (
-            <p className="text-lg text-paradigm-muted max-w-2xl mx-auto">{event.description}</p>
+            <p className="text-lg text-paradigm-muted max-w-2xl mx-auto whitespace-pre-line">{event.description}</p>
           )}
 
           {/* Quick facts */}
@@ -338,11 +398,79 @@ export default function EventPage({ event }: EventPageProps) {
                   <div className="flex-1 relative pl-4 border-l-2 border-paradigm-purple/30">
                     {item.title && <div className="font-semibold text-white">{item.title}</div>}
                     {item.description && (
-                      <div className="text-sm text-paradigm-muted mt-1">{item.description}</div>
+                      <div className="text-sm text-paradigm-muted mt-1 whitespace-pre-line">{item.description}</div>
                     )}
                   </div>
                 </div>
               ))}
+            </div>
+          </Card>
+        )}
+
+        {/* Getting Around — key locations with maps (data-driven via config.mapPoints) */}
+        {event.mapPoints?.length > 0 && (
+          <Card id="map" className="p-6 mb-6 scroll-mt-24">
+            <h2 className="text-2xl font-bold text-white mb-2">Getting Around</h2>
+            <p className="text-sm text-paradigm-muted mb-6">
+              Tap a location to open it in your maps app.
+            </p>
+            <div className="space-y-8">
+              {event.mapPoints.map(
+                (
+                  point: {
+                    name?: string;
+                    label?: string;
+                    address?: string;
+                    note?: string;
+                    query?: string;
+                    queryKo?: string;
+                    embed?: boolean;
+                  },
+                  i: number
+                ) => (
+                  <div key={i}>
+                    {point.label && (
+                      <div className="text-sm text-paradigm-purple-light font-bold">{point.label}</div>
+                    )}
+                    {point.name && <div className="font-semibold text-white text-lg">{point.name}</div>}
+                    {point.address && (
+                      <div className="text-sm text-paradigm-muted mt-1 whitespace-pre-line">{point.address}</div>
+                    )}
+                    {point.note && (
+                      <div className="text-sm text-paradigm-muted italic mt-1">{point.note}</div>
+                    )}
+                    {point.query && (
+                      <>
+                        <div className="flex flex-wrap gap-2 mt-3">
+                          {mapLinksFor(point.query, point.queryKo).map((link) => (
+                            <a
+                              key={link.label}
+                              href={link.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-paradigm-teal/15 text-paradigm-teal-light hover:bg-paradigm-teal/25 transition-colors text-sm font-semibold"
+                            >
+                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 21s-7-5.5-7-11a7 7 0 1114 0c0 5.5-7 11-7 11z" /><circle cx="12" cy="10" r="2.5" /></svg>
+                              {link.label}
+                            </a>
+                          ))}
+                        </div>
+                        {point.embed !== false && (
+                          <div className="mt-3 rounded-xl overflow-hidden border border-white/10">
+                            <iframe
+                              src={`https://maps.google.com/maps?q=${encodeURIComponent(point.query)}&output=embed&hl=en`}
+                              className="w-full h-56 md:h-72 border-0"
+                              loading="lazy"
+                              title={`Map: ${point.name || point.query}`}
+                              referrerPolicy="no-referrer-when-downgrade"
+                            />
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                )
+              )}
             </div>
           </Card>
         )}
@@ -409,6 +537,26 @@ export default function EventPage({ event }: EventPageProps) {
                     className="w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors"
                   />
                 </div>
+                <div>
+                  <label className="block text-sm font-medium text-paradigm-text mb-2">Phone *</label>
+                  <input
+                    type="tel"
+                    value={guestPhone}
+                    onChange={(e) => setGuestPhone(e.target.value)}
+                    required
+                    placeholder="+82 10-0000-0000"
+                    className="w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-paradigm-text mb-2">KakaoTalk ID (optional)</label>
+                  <input
+                    type="text"
+                    value={guestKakao}
+                    onChange={(e) => setGuestKakao(e.target.value)}
+                    className="w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors"
+                  />
+                </div>
               </div>
 
               {/* Plus Ones */}
@@ -420,11 +568,53 @@ export default function EventPage({ event }: EventPageProps) {
                   <input
                     type="number"
                     value={plusOnes}
-                    onChange={(e) => setPlusOnes(Math.max(0, Math.min(event.rsvp.maxPlusOnes, parseInt(e.target.value) || 0)))}
+                    onChange={(e) => {
+                      const next = Math.max(0, Math.min(event.rsvp.maxPlusOnes, parseInt(e.target.value) || 0));
+                      setPlusOnes(next);
+                      setPlusOneContacts((prev) =>
+                        Array.from({ length: next }, (_, i) => prev[i] || { name: '', phone: '', kakao: '' })
+                      );
+                    }}
                     min="0"
                     max={event.rsvp.maxPlusOnes}
                     className="w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors"
                   />
+
+                  {/* One row per plus-one: name, phone, kakao */}
+                  {plusOneContacts.map((contact, i) => (
+                    <div key={i} className="mt-3 p-3 rounded-lg border border-white/10 bg-paradigm-deep-black/20">
+                      <div className="text-xs font-semibold text-paradigm-muted mb-2">Guest {i + 2}</div>
+                      <div className="grid sm:grid-cols-3 gap-3">
+                        <input
+                          type="text"
+                          value={contact.name}
+                          onChange={(e) =>
+                            setPlusOneContacts((prev) => prev.map((c, j) => (j === i ? { ...c, name: e.target.value } : c)))
+                          }
+                          placeholder="Name"
+                          className="w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors"
+                        />
+                        <input
+                          type="tel"
+                          value={contact.phone}
+                          onChange={(e) =>
+                            setPlusOneContacts((prev) => prev.map((c, j) => (j === i ? { ...c, phone: e.target.value } : c)))
+                          }
+                          placeholder="Phone (optional)"
+                          className="w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors"
+                        />
+                        <input
+                          type="text"
+                          value={contact.kakao}
+                          onChange={(e) =>
+                            setPlusOneContacts((prev) => prev.map((c, j) => (j === i ? { ...c, kakao: e.target.value } : c)))
+                          }
+                          placeholder="KakaoTalk ID (optional)"
+                          className="w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors"
+                        />
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
 
@@ -514,18 +704,20 @@ export default function EventPage({ event }: EventPageProps) {
         </Card>
       </div>
 
-      {/* Footer */}
-      <footer className="mt-12 border-t border-white/10 bg-paradigm-panel/40">
-        <div className="max-w-4xl mx-auto px-4 py-8 flex flex-col items-center gap-4">
-          <img src="/logo-purple.svg" alt="cloudpeers" className="h-8 w-auto opacity-80" />
-          <p className="text-sm text-paradigm-muted">
-            Hosted on{' '}
-            <a href="https://events.cloudpeers.com" className="text-paradigm-purple-light hover:underline">
-              cloudpeers Events
-            </a>
-          </p>
-        </div>
-      </footer>
+      {/* Footer — omitted for white-label events */}
+      {!hidePlatform && (
+        <footer className="mt-12 border-t border-white/10 bg-paradigm-panel/40">
+          <div className="max-w-4xl mx-auto px-4 py-8 flex flex-col items-center gap-4">
+            <img src="/logo-purple.svg" alt="cloudpeers" className="h-8 w-auto opacity-80" />
+            <p className="text-sm text-paradigm-muted">
+              Hosted on{' '}
+              <a href="https://events.cloudpeers.com" className="text-paradigm-purple-light hover:underline">
+                cloudpeers Events
+              </a>
+            </p>
+          </div>
+        </footer>
+      )}
     </div>
   );
 }

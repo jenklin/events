@@ -17,12 +17,14 @@ module.exports = {
           'deep-black': '#050505',
           dark: '#0a0a0c',
           panel: '#151518',
-          purple: '#8b5cf6',
-          'purple-light': '#a78bfa',
+          // Brand-color slots overridable per event via CSS vars (white-label
+          // branding from the events template engine); defaults = cloudpeers.
+          purple: 'var(--brand-primary, #8b5cf6)',
+          'purple-light': 'var(--brand-primary-light, #a78bfa)',
           accent: '#3b82f6',
           'accent-light': '#60a5fa',
-          teal: '#14b8a6',
-          'teal-light': '#5eead4',
+          teal: 'var(--brand-secondary, #14b8a6)',
+          'teal-light': 'var(--brand-secondary-light, #5eead4)',
           coral: '#e85d75',
           'coral-light': '#f08da0',
           olive: '#6b7556',

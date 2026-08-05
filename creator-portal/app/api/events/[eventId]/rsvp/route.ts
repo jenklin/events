@@ -343,6 +343,7 @@ export async function GET(
         id: rsvp.id,
         status: rsvp.status,
         guestName: rsvp.guest_name,
+        guestPhone: rsvp.guest_phone,
         plusOnes: rsvp.plus_ones,
         plusOneNames: rsvp.plus_one_names,
         bringingFood: rsvp.bringing_food,
