@@ -180,17 +180,22 @@ export default function AlbumViewer({ albumId }: { albumId: string }) {
 
   return (
     <div>
-      {/* Back navigation button */}
+      {/* Back navigation button. Event-linked albums set settings.backUrl (and
+          optionally settings.backButtonText) so "back" returns to the event
+          page; the legacy /login destination is only the fallback. */}
       <div className="mb-4">
         <a
-          href={`${typeof window !== 'undefined' ? window.location.pathname.split('/a/')[0] : ''}/login`}
+          href={
+            album?.settings?.backUrl ||
+            `${typeof window !== 'undefined' ? window.location.pathname.split('/a/')[0] : ''}/login`
+          }
           className="inline-flex items-center gap-2 px-3 py-2 text-sm text-paradigm-muted hover:text-white transition-colors rounded-lg hover:bg-paradigm-panel"
-          aria-label="Back to event registration"
+          aria-label="Back to event"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
-          <span>{content.backButtonText}</span>
+          <span>{album?.settings?.backButtonText || content.backButtonText}</span>
         </a>
       </div>
 
