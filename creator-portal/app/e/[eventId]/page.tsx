@@ -13,9 +13,12 @@
  */
 
 import { notFound } from 'next/navigation';
+import { cookies } from 'next/headers';
 import { getSupabaseAdmin } from '@/lib/supabase';
 import { getPublicEventUrl } from '@/lib/eventSchema';
+import { accessCookieName, verifyAccessToken } from '@/lib/eventAccess';
 import EventPage from './EventPage';
+import AccessGate from './AccessGate';
 
 // Event details, RSVP counts, and gallery links must always reflect the live
 // database — without this, Next's data cache serves stale event content after
@@ -42,6 +45,24 @@ export default async function PublicEventPage({ params }: PageProps) {
 
   if (error || !event) {
     notFound();
+  }
+
+  // Private events (config.access.required): show the sign-in gate unless a
+  // valid access cookie for this event is present. Admin pre-populates
+  // config.access.allowedEmails; Google sign-in must also resolve to one.
+  let verifiedEmail: string | null = null;
+  if (event.config?.access?.required === true) {
+    const token = cookies().get(accessCookieName(event.event_id))?.value;
+    verifiedEmail = token ? verifyAccessToken(token, event.event_id) : null;
+    if (!verifiedEmail) {
+      return (
+        <AccessGate
+          eventId={event.event_id}
+          title={event.title}
+          branding={event.branding || {}}
+        />
+      );
+    }
   }
 
   // Fetch RSVP summary
@@ -217,6 +238,8 @@ export default async function PublicEventPage({ params }: PageProps) {
     // White-label branding (template-engine contract): colors, org name/logo,
     // and hidePlatformBranding all come from the event's `branding` JSONB.
     branding: event.branding || {},
+    // Email verified by the access gate — prefills the RSVP form
+    verifiedEmail,
     // Key locations for the "Getting Around" map section — data-driven from
     // config.mapPoints: [{ name, label, address, note, query, queryKo, embed }]
     mapPoints: Array.isArray(config?.mapPoints) ? config.mapPoints : [],

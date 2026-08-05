@@ -31,7 +31,7 @@ const mapLinksFor = (query: string, queryKo?: string) => [
 export default function EventPage({ event }: EventPageProps) {
   const [selectedStatus, setSelectedStatus] = useState<'going' | 'maybe' | 'not_going' | null>(null);
   const [guestName, setGuestName] = useState('');
-  const [guestEmail, setGuestEmail] = useState('');
+  const [guestEmail, setGuestEmail] = useState(event.verifiedEmail || '');
   const [guestPhone, setGuestPhone] = useState('');
   const [guestKakao, setGuestKakao] = useState('');
   const [plusOnes, setPlusOnes] = useState(0);
@@ -235,7 +235,7 @@ export default function EventPage({ event }: EventPageProps) {
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Hero */}
         <div className="text-center mb-10">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">{event.title}</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 whitespace-pre-line">{event.title}</h1>
           {event.description && (
             <p className="text-lg text-paradigm-muted max-w-2xl mx-auto whitespace-pre-line">{event.description}</p>
           )}
