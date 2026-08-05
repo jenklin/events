@@ -41,6 +41,15 @@ export function verifyAccessToken(token: string, eventId: string): string | null
   }
 }
 
+/** Marker stored in the access token when entry was via the shared event
+ * password rather than an identified email. Never a real address. */
+export const PASSWORD_GUEST = 'password-guest';
+
+/** SHA-256 hex — matches the hashing used by /api/events/create. */
+export function hashEventPassword(password: string): string {
+  return crypto.createHash('sha256').update(password).digest('hex');
+}
+
 /** Case-insensitive allowlist check. The host's email is always allowed. */
 export function isEmailAllowed(
   email: string,

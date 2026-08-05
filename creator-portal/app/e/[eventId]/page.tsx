@@ -238,8 +238,9 @@ export default async function PublicEventPage({ params }: PageProps) {
     // White-label branding (template-engine contract): colors, org name/logo,
     // and hidePlatformBranding all come from the event's `branding` JSONB.
     branding: event.branding || {},
-    // Email verified by the access gate — prefills the RSVP form
-    verifiedEmail,
+    // Email verified by the access gate — prefills the RSVP form. Password
+    // entries carry a marker, not an address; don't prefill those.
+    verifiedEmail: verifiedEmail && verifiedEmail.includes('@') ? verifiedEmail : null,
     // Key locations for the "Getting Around" map section — data-driven from
     // config.mapPoints: [{ name, label, address, note, query, queryKo, embed }]
     mapPoints: Array.isArray(config?.mapPoints) ? config.mapPoints : [],

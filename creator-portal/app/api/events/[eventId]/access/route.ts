@@ -10,7 +10,13 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase';
-import { accessCookieName, isEmailAllowed, signAccessToken } from '@/lib/eventAccess';
+import {
+  accessCookieName,
+  hashEventPassword,
+  isEmailAllowed,
+  PASSWORD_GUEST,
+  signAccessToken,
+} from '@/lib/eventAccess';
 
 export const dynamic = 'force-dynamic';
 
@@ -25,12 +31,26 @@ export async function POST(
 
     const { data: event } = await supabase
       .from('events')
-      .select('event_id, host_email, config')
+      .select('event_id, host_email, config, password_hash')
       .eq('event_id', eventId)
       .single();
 
     if (!event) {
       return NextResponse.json({ error: 'Event not found' }, { status: 404 });
+    }
+
+    // Shared event password path — grants access without identifying an email.
+    if (typeof body.password === 'string' && body.password) {
+      if (event.password_hash && hashEventPassword(body.password) === event.password_hash) {
+        const response = NextResponse.json({ ok: true });
+        response.cookies.set(
+          accessCookieName(event.event_id),
+          signAccessToken(PASSWORD_GUEST, event.event_id),
+          { httpOnly: true, secure: true, sameSite: 'lax', path: '/', maxAge: 60 * 60 * 24 * 180 }
+        );
+        return response;
+      }
+      return NextResponse.json({ error: 'Incorrect event password.' }, { status: 403 });
     }
 
     let email: string | null = null;

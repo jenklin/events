@@ -30,10 +30,15 @@ function getSupabaseBrowser() {
 
 export default function AccessGate({ eventId, title, branding }: AccessGateProps) {
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const grantAccess = async (payload: { email?: string; supabaseAccessToken?: string }) => {
+  const grantAccess = async (payload: {
+    email?: string;
+    password?: string;
+    supabaseAccessToken?: string;
+  }) => {
     setIsSubmitting(true);
     setError(null);
     try {
@@ -100,8 +105,9 @@ export default function AccessGate({ eventId, title, branding }: AccessGateProps
         )}
         <h1 className="text-2xl font-bold text-white mb-2 whitespace-pre-line">{title}</h1>
         <p className="text-paradigm-muted mb-6">
-          This is a private event. Enter the email your invitation was sent to, or sign in with
-          Google.
+          This is a private event. Enter the email your invitation was sent to, the event
+          password, or sign in with Google. First time here? Use the event password, then RSVP
+          to register.
         </p>
 
         <form
@@ -121,6 +127,31 @@ export default function AccessGate({ eventId, title, branding }: AccessGateProps
           />
           <Button type="submit" disabled={isSubmitting || !email} className="w-full">
             {isSubmitting ? 'Checking…' : 'Continue'}
+          </Button>
+        </form>
+
+        <div className="flex items-center gap-3 my-5">
+          <div className="flex-1 border-t border-white/10" />
+          <span className="text-xs text-paradigm-muted">or</span>
+          <div className="flex-1 border-t border-white/10" />
+        </div>
+
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (password) grantAccess({ password });
+          }}
+          className="space-y-3"
+        >
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Event password"
+            className="w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors text-center"
+          />
+          <Button type="submit" variant="outline" disabled={isSubmitting || !password} className="w-full">
+            {isSubmitting ? 'Checking…' : 'Enter with password'}
           </Button>
         </form>
 

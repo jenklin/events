@@ -13,6 +13,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase';
+import { accessCookieName, isEmailAllowed, signAccessToken } from '@/lib/eventAccess';
 import { z } from 'zod';
 
 // RSVP request schema
@@ -267,7 +268,35 @@ export async function POST(
       });
     }
 
-    return NextResponse.json(response);
+    const jsonResponse = NextResponse.json(response);
+
+    // Private events: RSVPing registers the guest. Guests who entered via the
+    // shared password self-register here — their email is appended to the
+    // allowlist so they can sign in by email next time, and this device's
+    // access cookie is upgraded from the password marker to their identity.
+    if (event.config?.access?.required === true) {
+      const guestEmail = validatedData.guestEmail.trim().toLowerCase();
+      if (!isEmailAllowed(guestEmail, event)) {
+        const access = event.config.access || {};
+        const allowedEmails = Array.isArray(access.allowedEmails) ? access.allowedEmails : [];
+        await supabase
+          .from('events')
+          .update({
+            config: {
+              ...event.config,
+              access: { ...access, allowedEmails: [...allowedEmails, guestEmail] },
+            },
+          })
+          .eq('id', event.id);
+      }
+      jsonResponse.cookies.set(
+        accessCookieName(event.event_id),
+        signAccessToken(guestEmail, event.event_id),
+        { httpOnly: true, secure: true, sameSite: 'lax', path: '/', maxAge: 60 * 60 * 24 * 180 }
+      );
+    }
+
+    return jsonResponse;
   } catch (error: any) {
     console.error('Error processing RSVP:', error);
 
