@@ -95,7 +95,7 @@ export default function AccessGate({ eventId, title, branding }: AccessGateProps
   return (
     <div
       style={brandVars}
-      className="min-h-screen bg-gradient-to-br from-paradigm-deep-black via-[#0b0a14] to-paradigm-deep-black text-paradigm-text flex items-center justify-center px-4"
+      className="min-h-screen supports-[height:100dvh]:min-h-[100dvh] bg-gradient-to-br from-paradigm-deep-black via-[#0b0a14] to-paradigm-deep-black text-paradigm-text flex items-center justify-center px-4 py-8 pb-[max(2rem,env(safe-area-inset-bottom))]"
     >
       <Card className="p-8 max-w-md w-full text-center">
         {branding?.organizationName && (
@@ -122,10 +122,12 @@ export default function AccessGate({ eventId, title, branding }: AccessGateProps
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            autoComplete="email"
+            inputMode="email"
             placeholder="you@example.com"
             className="w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors text-center"
           />
-          <Button type="submit" disabled={isSubmitting || !email} className="w-full">
+          <Button type="submit" disabled={isSubmitting || !email} className="w-full h-12">
             {isSubmitting ? 'Checking…' : 'Continue'}
           </Button>
         </form>
@@ -150,7 +152,7 @@ export default function AccessGate({ eventId, title, branding }: AccessGateProps
             placeholder="Event password"
             className="w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors text-center"
           />
-          <Button type="submit" variant="outline" disabled={isSubmitting || !password} className="w-full">
+          <Button type="submit" variant="outline" disabled={isSubmitting || !password} className="w-full h-12">
             {isSubmitting ? 'Checking…' : 'Enter with password'}
           </Button>
         </form>
@@ -161,7 +163,7 @@ export default function AccessGate({ eventId, title, branding }: AccessGateProps
           <div className="flex-1 border-t border-white/10" />
         </div>
 
-        <Button type="button" variant="outline" onClick={signInWithGoogle} className="w-full">
+        <Button type="button" variant="outline" onClick={signInWithGoogle} className="w-full h-12">
           <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" aria-hidden>
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1z" />
             <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0012 23z" />

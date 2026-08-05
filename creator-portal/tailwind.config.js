@@ -7,7 +7,15 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['var(--font-inter)', 'Inter', 'sans-serif'],
+        // Inter has no CJK glyphs — Korean (Seoul) and Traditional Chinese
+        // (Taipei) guests need explicit fallbacks or WebViews pick low-quality
+        // or wrong-variant system fonts. Per-glyph fallback keeps Latin in Inter.
+        sans: [
+          'var(--font-inter)', 'Inter',
+          '"Apple SD Gothic Neo"', '"Noto Sans KR"', '"Malgun Gothic"',
+          '"PingFang TC"', '"Noto Sans TC"', '"Microsoft JhengHei"',
+          'sans-serif',
+        ],
         serif: ['var(--font-playfair)', 'Playfair Display', 'serif'],
         mono: ['var(--font-jetbrains)', 'JetBrains Mono', 'monospace'],
       },

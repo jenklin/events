@@ -146,12 +146,20 @@ export default function EventPage({ event }: EventPageProps) {
   };
 
   const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('en-US', {
+    const opts: Intl.DateTimeFormatOptions = {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
       day: 'numeric',
-    });
+    };
+    const d = new Date(date);
+    let out = d.toLocaleDateString(event.locale || 'en-US', opts);
+    // Bilingual audiences (e.g. Seoul family events) show the date in a second
+    // locale as well: "Friday, December 25, 2026 · 2026년 12월 25일 금요일"
+    if (event.secondaryLocale) {
+      out += ` · ${d.toLocaleDateString(event.secondaryLocale, opts)}`;
+    }
+    return out;
   };
 
   const formatTime = (time: string) => {
@@ -191,7 +199,8 @@ export default function EventPage({ event }: EventPageProps) {
   return (
     <div
       style={brandVars}
-      className="min-h-screen bg-gradient-to-br from-paradigm-deep-black via-[#0b0a14] to-paradigm-deep-black text-paradigm-text"
+      lang={event.locale ? event.locale.split('-')[0] : undefined}
+      className="min-h-screen supports-[height:100dvh]:min-h-[100dvh] bg-gradient-to-br from-paradigm-deep-black via-[#0b0a14] to-paradigm-deep-black text-paradigm-text"
     >
       {/* Header / Nav */}
       <header className="sticky top-0 z-50 bg-paradigm-panel/80 backdrop-blur-lg border-b border-white/10">
@@ -225,6 +234,29 @@ export default function EventPage({ event }: EventPageProps) {
             )}
           </nav>
         </div>
+        {/* Mobile anchor nav — horizontally scrollable pill bar */}
+        <nav className="md:hidden flex gap-2 overflow-x-auto px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {(
+            [
+              ['details', 'Details'],
+              ...(event.schedule?.length > 0 ? [['schedule', 'Schedule']] : []),
+              ['venue', 'Venue'],
+              ...(event.mapPoints?.length > 0 ? [['map', 'Map']] : []),
+              ...(event.rsvp.enabled ? [['rsvp', 'RSVP']] : []),
+              ['qr', 'QR'],
+              ...(event.galleryAlbumId ? [['gallery', 'Gallery']] : []),
+            ] as Array<[string, string]>
+          ).map(([id, label]) => (
+            <a
+              key={id}
+              href={id === 'gallery' && event.galleryAlbumId ? `/gallery/a/${event.galleryAlbumId}` : `#${id}`}
+              onClick={id === 'gallery' ? undefined : scrollTo(id)}
+              className="shrink-0 whitespace-nowrap px-3 py-2 min-h-[40px] inline-flex items-center rounded-full bg-white/5 border border-white/10 text-sm text-paradigm-text"
+            >
+              {label}
+            </a>
+          ))}
+        </nav>
       </header>
 
       {/* Cover Image */}
@@ -235,7 +267,7 @@ export default function EventPage({ event }: EventPageProps) {
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Hero */}
         <div className="text-center mb-10">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 whitespace-pre-line">{event.title}</h1>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 whitespace-pre-line [text-wrap:balance]">{event.title}</h1>
           {event.description && (
             <p className="text-lg text-paradigm-muted max-w-2xl mx-auto whitespace-pre-line">{event.description}</p>
           )}
@@ -243,20 +275,20 @@ export default function EventPage({ event }: EventPageProps) {
           {/* Quick facts */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 mt-6 text-paradigm-text">
             {event.date && (
-              <span className="inline-flex items-center gap-2">
-                <svg className="w-5 h-5 text-paradigm-purple" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></svg>
+              <span className="inline-flex items-start gap-2 text-left max-w-full">
+                <svg className="w-5 h-5 shrink-0 mt-0.5 text-paradigm-purple-light" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></svg>
                 {formatDate(event.date)}
               </span>
             )}
             {event.startTime && (
-              <span className="inline-flex items-center gap-2">
-                <svg className="w-5 h-5 text-paradigm-purple" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+              <span className="inline-flex items-start gap-2 text-left max-w-full">
+                <svg className="w-5 h-5 shrink-0 mt-0.5 text-paradigm-purple-light" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
                 {formatTime(event.startTime)}{event.endTime && ` – ${formatTime(event.endTime)}`}
               </span>
             )}
             {(event.location.name || event.location.address) && showLocationDetails && (
-              <span className="inline-flex items-center gap-2">
-                <svg className="w-5 h-5 text-paradigm-purple" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 21s-7-5.5-7-11a7 7 0 1114 0c0 5.5-7 11-7 11z" /><circle cx="12" cy="10" r="2.5" /></svg>
+              <span className="inline-flex items-start gap-2 text-left max-w-full">
+                <svg className="w-5 h-5 shrink-0 mt-0.5 text-paradigm-purple-light" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 21s-7-5.5-7-11a7 7 0 1114 0c0 5.5-7 11-7 11z" /><circle cx="12" cy="10" r="2.5" /></svg>
                 {event.location.name || event.location.address}
               </span>
             )}
@@ -264,13 +296,13 @@ export default function EventPage({ event }: EventPageProps) {
 
           {event.rsvp.enabled && (
             <div className="mt-8">
-              <Button type="button" onClick={scrollTo('rsvp')} className="px-8 py-6 text-lg">RSVP Now</Button>
+              <Button type="button" onClick={scrollTo('rsvp')} className="h-14 px-8 text-lg bg-paradigm-purple hover:opacity-90 text-white">RSVP Now</Button>
             </div>
           )}
         </div>
 
         {/* Event Details Card */}
-        <Card id="details" className="p-6 mb-6">
+        <Card id="details" className="p-6 mb-6 scroll-mt-24">
           <div className="space-y-4">
             {/* Date & Time */}
             <div>
@@ -305,7 +337,7 @@ export default function EventPage({ event }: EventPageProps) {
                       href={event.location.googleMapsLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 mt-3 px-4 py-2 rounded-lg bg-paradigm-teal/15 text-paradigm-teal-light hover:bg-paradigm-teal/25 transition-colors text-sm font-semibold"
+                      className="inline-flex items-center gap-2 mt-3 px-4 py-2.5 min-h-[44px] rounded-lg bg-paradigm-teal/15 text-paradigm-teal-light hover:bg-paradigm-teal/25 transition-colors text-sm font-semibold"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M14 3h7v7M10 14L21 3M21 14v5a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h5" /></svg>
                       View on Google Maps
@@ -448,7 +480,7 @@ export default function EventPage({ event }: EventPageProps) {
                               href={link.href}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-paradigm-teal/15 text-paradigm-teal-light hover:bg-paradigm-teal/25 transition-colors text-sm font-semibold"
+                              className="inline-flex items-center gap-1.5 px-4 py-2.5 min-h-[44px] rounded-lg bg-paradigm-teal/15 text-paradigm-teal-light hover:bg-paradigm-teal/25 transition-colors text-sm font-semibold"
                             >
                               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 21s-7-5.5-7-11a7 7 0 1114 0c0 5.5-7 11-7 11z" /><circle cx="12" cy="10" r="2.5" /></svg>
                               {link.label}
@@ -458,7 +490,7 @@ export default function EventPage({ event }: EventPageProps) {
                         {point.embed !== false && (
                           <div className="mt-3 rounded-xl overflow-hidden border border-white/10">
                             <iframe
-                              src={`https://maps.google.com/maps?q=${encodeURIComponent(point.query)}&output=embed&hl=en`}
+                              src={`https://maps.google.com/maps?q=${encodeURIComponent(point.query)}&output=embed&hl=${event.mapLang || 'ko'}`}
                               className="w-full h-56 md:h-72 border-0"
                               loading="lazy"
                               title={`Map: ${point.name || point.query}`}
@@ -486,12 +518,12 @@ export default function EventPage({ event }: EventPageProps) {
               {/* Status Selection */}
               <div>
                 <label className="block text-sm font-medium text-paradigm-text mb-3">Will you attend?</label>
-                <div className="flex gap-3">
+                <div className="grid grid-cols-3 gap-2 sm:gap-3">
                   <Button
                     type="button"
                     variant={selectedStatus === 'going' ? 'default' : 'outline'}
                     onClick={() => setSelectedStatus('going')}
-                    className="flex-1"
+                    className={`h-12 px-1 sm:px-4 ${selectedStatus === 'going' ? 'bg-paradigm-purple hover:opacity-90 text-white' : ''}`}
                   >
                     Going
                   </Button>
@@ -499,7 +531,7 @@ export default function EventPage({ event }: EventPageProps) {
                     type="button"
                     variant={selectedStatus === 'maybe' ? 'default' : 'outline'}
                     onClick={() => setSelectedStatus('maybe')}
-                    className="flex-1"
+                    className={`h-12 px-1 sm:px-4 ${selectedStatus === 'maybe' ? 'bg-paradigm-purple hover:opacity-90 text-white' : ''}`}
                   >
                     Maybe
                   </Button>
@@ -507,7 +539,7 @@ export default function EventPage({ event }: EventPageProps) {
                     type="button"
                     variant={selectedStatus === 'not_going' ? 'default' : 'outline'}
                     onClick={() => setSelectedStatus('not_going')}
-                    className="flex-1"
+                    className={`h-12 px-1 sm:px-4 ${selectedStatus === 'not_going' ? 'bg-paradigm-purple hover:opacity-90 text-white' : ''}`}
                   >
                     Can't Go
                   </Button>
@@ -523,6 +555,7 @@ export default function EventPage({ event }: EventPageProps) {
                     value={guestName}
                     onChange={(e) => setGuestName(e.target.value)}
                     required
+                    autoComplete="name"
                     className="w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors"
                   />
                 </div>
@@ -534,6 +567,8 @@ export default function EventPage({ event }: EventPageProps) {
                     onChange={(e) => setGuestEmail(e.target.value)}
                     onBlur={handleEmailBlur}
                     required
+                    autoComplete="email"
+                    inputMode="email"
                     className="w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors"
                   />
                 </div>
@@ -544,6 +579,8 @@ export default function EventPage({ event }: EventPageProps) {
                     value={guestPhone}
                     onChange={(e) => setGuestPhone(e.target.value)}
                     required
+                    autoComplete="tel"
+                    inputMode="tel"
                     placeholder="+82 10-0000-0000"
                     className="w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors"
                   />
@@ -577,6 +614,8 @@ export default function EventPage({ event }: EventPageProps) {
                     }}
                     min="0"
                     max={event.rsvp.maxPlusOnes}
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                     className="w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors"
                   />
 
@@ -625,7 +664,7 @@ export default function EventPage({ event }: EventPageProps) {
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   rows={3}
-                  className="w-full px-3 py-2 border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors"
                   placeholder="Any questions or dietary restrictions?"
                 />
               </div>
@@ -644,7 +683,7 @@ export default function EventPage({ event }: EventPageProps) {
               )}
 
               {/* Submit Button */}
-              <Button type="submit" disabled={!selectedStatus || isSubmitting} className="w-full">
+              <Button type="submit" disabled={!selectedStatus || isSubmitting} className="w-full h-12 bg-paradigm-purple hover:opacity-90 text-white">
                 {isSubmitting ? 'Submitting...' : hasRsvp ? 'Update RSVP' : 'Submit RSVP'}
               </Button>
 

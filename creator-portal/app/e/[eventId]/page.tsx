@@ -244,6 +244,12 @@ export default async function PublicEventPage({ params }: PageProps) {
     // Key locations for the "Getting Around" map section — data-driven from
     // config.mapPoints: [{ name, label, address, note, query, queryKo, embed }]
     mapPoints: Array.isArray(config?.mapPoints) ? config.mapPoints : [],
+
+    // Localization (data-driven): primary/secondary date locales for bilingual
+    // audiences, and the Google-embed tile language.
+    locale: config?.locale || null,
+    secondaryLocale: config?.secondaryLocale || null,
+    mapLang: config?.mapLang || null,
     eventUrl,
     // Build-free QR: the existing GET /api/events/[id]/qr returns a PNG of eventUrl.
     // No new dependency, no client QR lib — just an <img>.
