@@ -156,13 +156,15 @@ export default function EventPage({ event }: EventPageProps) {
     // toLocaleDateString then shifts to the viewer's zone, so anyone west of
     // UTC sees the previous day. Parse them as a local calendar date instead.
     const d = /^\d{4}-\d{2}-\d{2}$/.test(date) ? new Date(`${date}T00:00:00`) : new Date(date);
-    let out = d.toLocaleDateString(event.locale || 'en-US', opts);
     // Bilingual audiences (e.g. Seoul family events) show the date in a second
-    // locale as well: "Friday, December 25, 2026 · 2026년 12월 25일 금요일"
+    // locale as well, each on its own line so neither date wraps mid-phrase.
+    const lines = [d.toLocaleDateString(event.locale || 'en-US', opts)];
     if (event.secondaryLocale) {
-      out += ` · ${d.toLocaleDateString(event.secondaryLocale, opts)}`;
+      lines.push(d.toLocaleDateString(event.secondaryLocale, opts));
     }
-    return out;
+    return lines.map((line) => (
+      <span key={line} className="block">{line}</span>
+    ));
   };
 
   const formatTime = (time: string) => {
@@ -175,7 +177,8 @@ export default function EventPage({ event }: EventPageProps) {
     const hour = parseInt(hours);
     const ampm = hour >= 12 ? 'PM' : 'AM';
     const displayHour = hour % 12 || 12;
-    return `${displayHour}:${minutes} ${ampm}`;
+    // Non-breaking space so "11:59 PM" never wraps between number and meridiem
+    return `${displayHour}:${minutes} ${ampm}`;
   };
 
   const scrollTo = (id: string) => (e: React.MouseEvent) => {
@@ -281,13 +284,13 @@ export default function EventPage({ event }: EventPageProps) {
             {event.date && (
               <span className="inline-flex items-start gap-2 text-left max-w-full">
                 <svg className="w-5 h-5 shrink-0 mt-0.5 text-paradigm-purple-light" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></svg>
-                {formatDate(event.date)}
+                <span>{formatDate(event.date)}</span>
               </span>
             )}
             {event.startTime && (
               <span className="inline-flex items-start gap-2 text-left max-w-full">
                 <svg className="w-5 h-5 shrink-0 mt-0.5 text-paradigm-purple-light" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
-                {formatTime(event.startTime)}{event.endTime && ` – ${formatTime(event.endTime)}`}
+                <span className="whitespace-nowrap">{formatTime(event.startTime)}{event.endTime && ` – ${formatTime(event.endTime)}`}</span>
               </span>
             )}
             {(event.location.name || event.location.address) && showLocationDetails && (
@@ -313,9 +316,8 @@ export default function EventPage({ event }: EventPageProps) {
               <h3 className="font-semibold text-white mb-2">When</h3>
               <p className="text-paradigm-text">
                 {formatDate(event.date)}
-                <br />
                 {formatTime(event.startTime)}
-                {event.endTime && ` - ${formatTime(event.endTime)}`}
+                {event.endTime && ` – ${formatTime(event.endTime)}`}
                 <span className="text-sm text-paradigm-muted ml-2">({event.timezone})</span>
               </p>
             </div>
