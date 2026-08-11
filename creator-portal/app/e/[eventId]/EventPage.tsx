@@ -152,7 +152,10 @@ export default function EventPage({ event }: EventPageProps) {
       month: 'long',
       day: 'numeric',
     };
-    const d = new Date(date);
+    // Date-only values ("2026-12-25") must not hit the Date UTC parser:
+    // toLocaleDateString then shifts to the viewer's zone, so anyone west of
+    // UTC sees the previous day. Parse them as a local calendar date instead.
+    const d = /^\d{4}-\d{2}-\d{2}$/.test(date) ? new Date(`${date}T00:00:00`) : new Date(date);
     let out = d.toLocaleDateString(event.locale || 'en-US', opts);
     // Bilingual audiences (e.g. Seoul family events) show the date in a second
     // locale as well: "Friday, December 25, 2026 · 2026년 12월 25일 금요일"
@@ -164,9 +167,10 @@ export default function EventPage({ event }: EventPageProps) {
 
   const formatTime = (time: string) => {
     if (!time) return '';
-    // Only convert plain 24h "HH:MM" values; pass through anything already
+    // Only convert plain 24h "HH:MM" / "HH:MM:SS" values (Postgres time
+    // columns include seconds); pass through anything already
     // human-formatted ("5:30 PM", "Midnight") untouched.
-    if (!/^\d{1,2}:\d{2}$/.test(time)) return time;
+    if (!/^\d{1,2}:\d{2}(:\d{2})?$/.test(time)) return time;
     const [hours, minutes] = time.split(':');
     const hour = parseInt(hours);
     const ampm = hour >= 12 ? 'PM' : 'AM';

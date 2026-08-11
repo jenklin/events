@@ -98,7 +98,7 @@ export default function AccessGate({ eventId, title, branding }: AccessGateProps
       className="min-h-screen supports-[height:100dvh]:min-h-[100dvh] bg-gradient-to-br from-paradigm-deep-black via-[#0b0a14] to-paradigm-deep-black text-paradigm-text flex items-center justify-center px-4 py-8 pb-[max(2rem,env(safe-area-inset-bottom))]"
     >
       <Card className="p-8 max-w-md w-full text-center">
-        {branding?.organizationName && (
+        {branding?.organizationName && !title.startsWith(branding.organizationName) && (
           <div className="text-sm font-semibold text-paradigm-purple-light mb-2">
             {branding.organizationName}
           </div>
@@ -127,7 +127,11 @@ export default function AccessGate({ eventId, title, branding }: AccessGateProps
             placeholder="you@example.com"
             className="w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors text-center"
           />
-          <Button type="submit" disabled={isSubmitting || !email} className="w-full h-12">
+          <Button
+            type="submit"
+            disabled={isSubmitting || !email}
+            className="w-full h-12 bg-paradigm-purple hover:opacity-90 text-white"
+          >
             {isSubmitting ? 'Checking…' : 'Continue'}
           </Button>
         </form>
