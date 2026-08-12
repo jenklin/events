@@ -1,5 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
 
+// Next patches global fetch and can serve supabase-js REST reads from its Data
+// Cache even on force-dynamic routes, freezing event content at the first
+// render after a deploy. Opt every Supabase request out explicitly.
+const noStoreFetch: typeof fetch = (input, init) =>
+  fetch(input, { ...init, cache: 'no-store' });
+
 /**
  * Get Supabase admin client with service role key
  * Only call this at request time, not at module load time
@@ -17,6 +23,7 @@ export function getSupabaseAdmin() {
       persistSession: false,
       autoRefreshToken: false,
     },
+    global: { fetch: noStoreFetch },
   });
 }
 
@@ -31,5 +38,7 @@ export function getSupabaseClient() {
     throw new Error('Missing Supabase environment variables');
   }
 
-  return createClient(supabaseUrl, supabaseAnonKey);
+  return createClient(supabaseUrl, supabaseAnonKey, {
+    global: { fetch: noStoreFetch },
+  });
 }
