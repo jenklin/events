@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+import { noStoreFetch } from '@/lib/supabase'
 
 // User upload confirmation - creates asset record with uploader metadata
 export async function POST(req: Request) {
@@ -12,6 +13,7 @@ export async function POST(req: Request) {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      global: { fetch: noStoreFetch },
       cookies: {
         get(name: string) {
           return cookieStore.get(name)?.value

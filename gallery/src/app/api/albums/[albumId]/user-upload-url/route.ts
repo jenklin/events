@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { cfImagesCreateDirectUpload } from '@/lib/cf'
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+import { noStoreFetch } from '@/lib/supabase'
 
 // User upload endpoint - allows any authenticated user to upload
 export async function POST(req: Request, { params }: { params: { albumId: string } }) {
@@ -12,6 +13,7 @@ export async function POST(req: Request, { params }: { params: { albumId: string
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      global: { fetch: noStoreFetch },
       cookies: {
         get(name: string) {
           return cookieStore.get(name)?.value

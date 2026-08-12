@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers'
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
+import { noStoreFetch } from '@/lib/supabase'
 
 export type InviteClaims = { albumId: string; role: 'viewer'|'editor'; allowComments: boolean; download: boolean; email: string }
 
@@ -10,6 +11,7 @@ function createSupabaseClient() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      global: { fetch: noStoreFetch },
       cookies: {
         get(name: string) {
           return cookieStore.get(name)?.value

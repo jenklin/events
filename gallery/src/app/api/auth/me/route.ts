@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+import { noStoreFetch } from '@/lib/supabase'
 
 export async function GET() {
   const cookieStore = cookies()
@@ -10,6 +11,7 @@ export async function GET() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      global: { fetch: noStoreFetch },
       cookies: {
         get(name: string) {
           return cookieStore.get(name)?.value
