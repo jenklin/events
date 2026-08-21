@@ -1,7 +1,8 @@
 /**
  * The published projection of an event — what cloudpeers services, labs and governed agents may
  * read. Creator opt-in per event (config.dateLocation.publishToServices); address, password and
- * guest data are never part of it. `slug` = event_id (URL slug) or the event's custom domain.
+ * guest data are never part of it. `slug` = event_id (URL slug), the event's custom domain, or the
+ * row uuid (what the gallery's albums.event_id carries).
  * Post-event the story continues in the gallery, so galleryUrl is published too.
  */
 import { getSupabaseAdmin } from '@/lib/supabase';
@@ -15,7 +16,7 @@ export async function publishedEventBySlug(slug: string): Promise<PublishedEvent
   const { data: rows, error } = await supabase
     .from('events')
     .select('id, event_id, title, event_date, config, custom_subdomain, subdomain_provider, custom_domain, deleted_at')
-    .or(`event_id.eq.${key},custom_domain.eq.${key}`)
+    .or(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(key) ? `id.eq.${key},event_id.eq.${key},custom_domain.eq.${key}` : `event_id.eq.${key},custom_domain.eq.${key}`)
     .is('deleted_at', null)
     .limit(1);
   if (error || !rows || rows.length === 0) return null;

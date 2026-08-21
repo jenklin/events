@@ -28,10 +28,16 @@ type Asset = {
 function cfFallback(a: Asset): string {
   return `https://imagedelivery.net/${process.env.NEXT_PUBLIC_CF_IMAGES_HASH}/${a.provider_id}/public`
 }
-type Album = { id: string; title: string; description: string|null; settings: any }
+type Album = { id: string; title: string; description: string|null; settings: any; event_id?: string|null }
+// The event this album belongs to, IF its host published it to cloudpeers services (read-only projection;
+// never address/password/guests). Drives the "Compose a scene at this event" link-back — the story continues.
+type PublishedEvent = { slug: string; title: string; date?: string; venueName?: string; eventUrl?: string }
+const EVENTS_PUBLIC_BASE = process.env.NEXT_PUBLIC_EVENTS_PUBLIC_BASE || 'https://events.cloudpeers.com/api/events/public'
+const LAB_COMPOSE_URL = process.env.NEXT_PUBLIC_LAB_COMPOSE_URL || 'https://cloudpeers.com/labs/ai-human-spaces'
 
 export default function AlbumViewer({ albumId }: { albumId: string }) {
   const [album, setAlbum] = useState<Album|null>(null)
+  const [publishedEvent, setPublishedEvent] = useState<PublishedEvent|null>(null)
   const [assets, setAssets] = useState<Asset[]>([])
   const [filteredAssets, setFilteredAssets] = useState<Asset[]>([])
   const [selected, setSelected] = useState<Asset|null>(null)
@@ -106,6 +112,13 @@ export default function AlbumViewer({ albumId }: { albumId: string }) {
 
         // Check role from response metadata
         if (d?.userRole) setRole(d.userRole)
+        // Link-back to the lab only when the host published the event (404 otherwise — fail-closed).
+        if (d?.event_id) {
+          fetch(`${EVENTS_PUBLIC_BASE}/${encodeURIComponent(d.event_id)}`, { headers: { Accept: 'application/json' } })
+            .then(r => (r.ok ? r.json() : null))
+            .then(ev => { if (ev && ev.published === true && ev.slug) setPublishedEvent(ev) })
+            .catch(() => {})
+        }
       })
       .catch(err => console.error('Failed to load album:', err))
 
@@ -221,6 +234,22 @@ export default function AlbumViewer({ albumId }: { albumId: string }) {
           </div>
         </div>
       </header>
+
+      {/* Compose a scene at this event — only when the host published the event; the story continues after the date */}
+      {publishedEvent && (
+        <div className="mb-6 rounded-lg border border-white/10 px-4 py-3 text-sm" data-testid="compose-at-event">
+          <span className="text-paradigm-muted">The story continues — </span>
+          <a
+            href={`${LAB_COMPOSE_URL}?event=${encodeURIComponent(publishedEvent.slug)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2 hover:text-white"
+          >
+            compose a scene at {publishedEvent.title}
+          </a>
+          <span className="text-paradigm-muted"> — your moment anchors where it happened and joins what others shared.</span>
+        </div>
+      )}
 
       {/* Who Was There That Night - Community feature */}
       <AttendeeList eventName="Seoul Red Helicopter Event" />
