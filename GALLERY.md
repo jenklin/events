@@ -117,6 +117,8 @@ Gating is per-album, driven by `albums.is_private`:
 | `GCS_BUCKET_NAME` (+ creds) | gallery | only when serving `gcs`-provider assets |
 | `NEXT_PUBLIC_APP_URL` | gallery | public origin for auth callbacks — must match the surface (`https://gallery.cloudpeers.com` or `https://events.cloudpeers.com/gallery`) |
 | `GALLERY_ORIGIN` | **creator-portal** | URL of the event-context gallery Cloud Run service (target of the `/gallery/*` rewrite) |
+| `NEXT_PUBLIC_EVENTS_PUBLIC_BASE` | gallery (optional) | base of the Events published-projection route; default `https://events.cloudpeers.com/api/events/public` (link-back, §9) |
+| `NEXT_PUBLIC_LAB_COMPOSE_URL` | gallery (optional) | the lab the link-back points at; default `https://cloudpeers.com/labs/ai-human-spaces` (§9) |
 
 ---
 
@@ -159,8 +161,7 @@ The existing `bruno-gallery` service is the separate seoul/tzpd backend for `seo
 
 - [x] Gallery build pipeline authored (`gallery/Dockerfile`, `gallery/cloudbuild.yaml`,
       `gallery/scripts/deploy.sh`) reusing the events approach. **Needs first-build validation.**
-- [ ] Run `cd gallery && ./scripts/deploy.sh` (events), set `GALLERY_ORIGIN` on creator-portal and
-      redeploy it. (Opt-in only: `./scripts/deploy.sh root` + map `gallery.cloudpeers.com`.)
+- [x] Run `cd gallery && ./scripts/deploy.sh events` — **done 2026-08-21** (`cloudpeers-gallery-events-00006`); creator-portal's `deploy.sh` resolves `GALLERY_ORIGIN` from the live service at deploy time and was redeployed the same day (`cloudpeers-events-staging-00016`), so `events.cloudpeers.com/gallery/*` proxies here. (Opt-in only: `./scripts/deploy.sh root` + map `gallery.cloudpeers.com`.)
 - [ ] Run `gallery/migrations/add-provider-column.sql` on efps **when** the first non-Cloudflare
       (GCS) album is added (not required for seoul/Cloudflare).
 - [ ] **Auth across the rewrite:** `NEXT_PUBLIC_APP_URL` is set per surface by deploy.sh; validate
@@ -187,3 +188,13 @@ Branch `feat/gallery-dual-deploy`:
 - `gallery/next.config.mjs` — `experimental.outputFileTracingRoot` (workspace standalone nesting).
 - `gallery/Dockerfile`, `gallery/cloudbuild.yaml`, `gallery/scripts/deploy.sh` *(new)* — build/deploy
   pipeline reusing the events approach (default `events`, opt-in `root`).
+
+---
+
+## 9. Link-back to the lab — "the story continues" (2026-08-21)
+
+An album linked to an event (`albums.event_id` = `events.id`) shows, above the attendee list:
+
+> **The story continues —** compose a scene at *<event title>* — your moment anchors where it happened and joins what others shared.
+
+**Only when the host published the event.** `AlbumViewer` fetches `${NEXT_PUBLIC_EVENTS_PUBLIC_BASE}/${album.event_id}`; the Events service answers with the published projection (title · date · venue · coordinate · links; never address/password/guests) **only** if the host ticked *Publish this event to cloudpeers services* — otherwise 404 (indistinguishable from nonexistent), and the block is not rendered. The link goes to `${NEXT_PUBLIC_LAB_COMPOSE_URL}?event=<slug>`; the lab reads the same projection and offers "Compose at <event>" (Tesseract). Model: StoryCorps → Library of Congress — curated by the people who were there, credited to everyone in it, kept beyond the app. Contract: `08_PUBLISHING_TO_SERVICES.md`.

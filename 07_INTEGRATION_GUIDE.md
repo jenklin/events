@@ -182,6 +182,8 @@ export async function GET(req: NextRequest) {
 **File**: `/gallery/src/lib/mcp/agent-handler.ts`
 
 ```typescript
+> **As deployed (2026-08-21).** The live webhook is `creator-portal/app/api/webhook/route.ts` (canonical §3b HMAC signature; dispatch by `capability`): `create_event` (wired) and **`get_event`** — read-only, returns the host-published projection of an event (title · date/times · venue name · Plus Code coordinate · event URL · gallery URL; never address/password/guests; 404 unless the host published). The registry seed advertises `create_event`, `get_event`, `manage_registrations`. The `event.*` / `gallery.*` names below are the earlier design sketch. Publish contract: `08_PUBLISHING_TO_SERVICES.md`.
+
 import { createEvent } from '@/lib/events/create';
 import { registerUser } from '@/lib/events/register';
 import { createGallery } from '@/lib/gallery/create';

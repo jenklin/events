@@ -78,8 +78,19 @@ A user-friendly form at **cloudpeers.com/events** where anyone can create, custo
 │                                                      │
 │  ☐ Hide location until guests RSVP                  │
 │                                                      │
+│  Venue Plus Code (optional)                          │
+│  ┌────────────────────────────────────────────────┐ │
+│  │ 8Q98HXCR+2X                                    │ │
+│  └────────────────────────────────────────────────┘ │
+│  Google Maps → venue → Share → Plus code             │
+│                                                      │
+│  ☐ Publish this event to cloudpeers services         │
+│     (off by default — see note)                      │
+│                                                      │
 └─────────────────────────────────────────────────────┘
 ```
+
+**Added 2026-08-21 — Plus Code + publish to services.** The Plus Code is the venue's coordinate in a form that decodes offline (no geocoding API). **Publish this event to cloudpeers services** is the host's deliberate, reversible choice to contribute a read-only record of the event — title, date and times, venue name, the Plus Code coordinate, the event link and the gallery link — to cloudpeers labs and governed agents, so guests can compose scenes at the venue before, during and after the date and keep the story going in the gallery. **Off by default.** Address, password and guest list are never published. If *Hide location until guests RSVP* is on, the venue name and coordinate stay hidden from services too. Unpublished events are indistinguishable from nonexistent ones to services (404). Full contract: `08_PUBLISHING_TO_SERVICES.md`.
 
 ### Section 3: Guest Settings
 

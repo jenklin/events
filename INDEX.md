@@ -26,7 +26,8 @@ cloudpeers-migration/
 │
 └── Phase 3: Deployment & Integration (Week 3)
     ├── 06_DEPLOYMENT_WORKFLOW.md   # CI/CD & Cloud Run
-    └── 07_INTEGRATION_GUIDE.md     # cloudpeers MCP integration
+    ├── 07_INTEGRATION_GUIDE.md     # cloudpeers MCP integration
+    └── 08_PUBLISHING_TO_SERVICES.md # Host opt-in publish contract (get_event; 2026-08-21)
 ```
 
 ## 🎯 Choose Your Path
@@ -374,3 +375,6 @@ Copy this to track your progress:
 **Est. Implementation Time**: 2-3 weeks (1 developer)
 
 Happy building! 🎉
+
+### [08_PUBLISHING_TO_SERVICES.md](./08_PUBLISHING_TO_SERVICES.md)
+The publish contract (2026-08-21): off by default; what the host-published projection releases and never releases; hide-location rule; 404 = existence not confirmed; who reads it (Tesseract "Compose at <event>", the gallery link-back, governed agents via `get_event`); how a host publishes and withdraws.
