@@ -187,7 +187,7 @@ export default function DateLocationForm({ form }: DateLocationFormProps) {
               Publish this event to cloudpeers services
             </span>
             <span className="block text-sm text-paradigm-muted mt-1">
-              Read-only: title, date and times, venue name, the Plus Code coordinate, the event link and the gallery link — so guests can compose scenes at the venue and keep the story going in the gallery after the event. The address, password and guest list are never published.
+              Off by default. Read-only: title, date and times, venue name, the Plus Code coordinate, the event link and the gallery link — so guests can compose scenes at the venue and keep the story going in the gallery after the event. The address, password and guest list are never published, and if you hide the location until RSVP, the venue name and coordinate stay hidden from services too.
             </span>
           </div>
         </label>
