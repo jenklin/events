@@ -154,6 +154,45 @@ export default function DateLocationForm({ form }: DateLocationFormProps) {
         </p>
       </div>
 
+      {/* Venue Plus Code (offline-decodable coordinate; no geocoding) */}
+      <div>
+        <label className="block text-sm font-medium text-paradigm-text mb-2">
+          Venue Plus Code <span className="text-paradigm-muted font-normal">(optional)</span>
+        </label>
+        <input
+          {...register('dateLocation.plusCode')}
+          type="text"
+          placeholder="8Q98HXCR+2X"
+          autoComplete="off"
+          className="w-full px-4 py-3 border border-white/10 rounded-lg focus:ring-2 focus:ring-purple-500 font-mono"
+        />
+        <p className="mt-1 text-sm text-paradigm-muted">
+          Google Maps → the venue → Share → Plus code. Lets cloudpeers services and guests anchor scenes and moments at the venue — before, during, and after the event.
+        </p>
+        {errors.dateLocation?.plusCode && (
+          <p className="mt-1 text-sm text-red-600">{errors.dateLocation.plusCode.message as string}</p>
+        )}
+      </div>
+
+      {/* Publish venue to cloudpeers services */}
+      <div className="p-4 bg-purple-50 border border-white/10 rounded-lg">
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input
+            {...register('dateLocation.publishToServices')}
+            type="checkbox"
+            className="mt-1 w-5 h-5 text-paradigm-purple-light border-white/10 rounded focus:ring-purple-500"
+          />
+          <div>
+            <span className="block text-sm font-medium text-white">
+              Publish this event to cloudpeers services
+            </span>
+            <span className="block text-sm text-paradigm-muted mt-1">
+              Read-only: title, date and times, venue name, the Plus Code coordinate, the event link and the gallery link — so guests can compose scenes at the venue and keep the story going in the gallery after the event. The address, password and guest list are never published.
+            </span>
+          </div>
+        </label>
+      </div>
+
       {/* Hide Location Option */}
       <div className="p-4 bg-purple-50 border border-white/10 rounded-lg">
         <label className="flex items-start gap-3 cursor-pointer">

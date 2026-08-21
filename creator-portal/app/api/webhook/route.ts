@@ -79,6 +79,20 @@ export async function POST(req: NextRequest) {
   const parameters = (payload.parameters || payload.payload || {}) as Record<string, unknown>;
 
   switch (capability) {
+    case 'get_event': {
+      // Read-only: the published projection of an event (creator opt-in; never address/password/guests).
+      const p: any = payload;
+      const slug = (p.input?.slug ?? p.input?.custom_domain ?? p.slug ?? p.custom_domain) as string | undefined;
+      if (!slug) {
+        return NextResponse.json({ error: { code: 'INVALID_INPUT', message: 'get_event requires slug or custom_domain' } }, { status: 400 });
+      }
+      const { publishedEventBySlug } = await import('@/lib/publishedEvent');
+      const ev = await publishedEventBySlug(slug);
+      if (!ev) {
+        return NextResponse.json({ error: { code: 'NOT_FOUND', message: 'Event not found or not published to services' } }, { status: 404 });
+      }
+      return NextResponse.json({ service: SERVICE_ID, version: SERVICE_VERSION, capability: 'get_event', result: ev });
+    }
     case 'create_event': {
       // Reuse the existing create endpoint server-side so both paths share one impl.
       const target = new URL('/api/events/create', req.nextUrl.origin).toString();
@@ -108,5 +122,5 @@ export async function POST(req: NextRequest) {
 
 // Lightweight liveness check (GET is unsigned — returns no data, just confirms the route exists).
 export async function GET() {
-  return NextResponse.json({ service: SERVICE_ID, version: SERVICE_VERSION, capabilities: ['create_event'] });
+  return NextResponse.json({ service: SERVICE_ID, version: SERVICE_VERSION, capabilities: ['create_event', 'get_event'] });
 }

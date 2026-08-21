@@ -55,6 +55,15 @@ export const eventFormSchema = z.object({
     description: z.string().optional(),
     nearestStation: z.string().optional(),
     hideLocationUntilRsvp: z.boolean().default(false),
+    // Venue coordinate as a Plus Code (creator-entered; decoded offline — never a geocoding API).
+    plusCode: z
+      .string()
+      .regex(/^[23456789CFGHJMPQRVWX]{8}\+[23456789CFGHJMPQRVWX]{2,7}$/i, 'Enter a full Plus Code, e.g. 8Q98HXCR+2X (Google Maps → share → Plus code)')
+      .optional()
+      .or(z.literal('')),
+    // Publish the venue to cloudpeers services (read-only: title · date · times · venue name ·
+    // coordinate · event URL · gallery URL). Address, password and guests never publish.
+    publishToServices: z.boolean().default(false),
   }),
 
   // Section 3: Guest Settings
@@ -219,4 +228,26 @@ export function getEventUrl(
     return `https://${subdomain.subdomain}.${subdomain.provider}`;
   }
   return `https://events.cloudpeers.com/e/${slug}`;
+}
+
+/**
+ * What a PUBLISHED event exposes to cloudpeers services and agents (GET /api/events/public/[slug],
+ * webhook capability `get_event`). The creator opts in per event (dateLocation.publishToServices);
+ * the address, password, and guest data are never part of this projection. The event's story
+ * continues after the date in its gallery — galleryUrl is part of what's published.
+ */
+export interface PublishedEvent {
+  slug: string;
+  title: string;
+  date: string;
+  startTime?: string;
+  endTime?: string;
+  timezone?: string;
+  venueName: string;
+  plusCode?: string;
+  coordinates?: { lat: number; lng: number };
+  customDomain?: string;
+  eventUrl: string;
+  galleryUrl?: string;
+  published: true;
 }
