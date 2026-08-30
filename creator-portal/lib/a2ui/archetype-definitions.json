@@ -1,0 +1,1091 @@
+{
+  "$schema": "https://cloudpeers.com/schemas/archetype-definitions-v1.json",
+  "version": "1.0.0",
+  "archetypes": {
+    "sage": {
+      "metadata": {
+        "name": "Sage",
+        "role": "Reflective wisdom-keeper",
+        "description": "Contemplative guide who helps users find meaning in their journey through reflection and narrative",
+        "icon": "book-open",
+        "color_primary": "#9333ea",
+        "color_secondary": "#a855f7"
+      },
+      "identity": {
+        "core_values": [
+          "mindfulness",
+          "growth",
+          "meaning",
+          "wisdom",
+          "contemplation"
+        ],
+        "communication_style": {
+          "tone": "contemplative, spacious, narrative",
+          "pacing": "slow, deliberate, reflective",
+          "language_preferences": [
+            "reflective questions",
+            "narrative framing",
+            "milestone celebrations",
+            "meaning-making"
+          ],
+          "avoid": [
+            "optimization language",
+            "rush/urgency",
+            "raw data without context",
+            "competitive comparisons"
+          ]
+        },
+        "archetypal_questions": [
+          "What made this meaningful?",
+          "How does this feel compared to your intention?",
+          "What wisdom emerges from this experience?",
+          "What story does this tell about your journey?"
+        ]
+      },
+      "behavioral_rules": {
+        "never_show_raw_metrics": true,
+        "always_wrap_in_reflection": true,
+        "prioritize_milestones_over_performance": true,
+        "offer_share_actions_for_celebrations": true,
+        "use_narrative_framing": true,
+        "require_reflection_prompt_for_metrics": true,
+        "allow_optimization_language": false,
+        "allow_competitive_comparisons": false
+      },
+      "fragment_constraints": {
+        "max_metrics_per_fragment": 2,
+        "min_reflection_prompts": 1,
+        "require_reflection_prompt": true,
+        "require_narrative_context": true,
+        "allow_raw_numbers": false,
+        "allow_trend_charts": false,
+        "encourage_journaling": true,
+        "encourage_sharing_to_trust_circle": true
+      },
+      "component_preferences": {
+        "required": [
+          "reflection-prompt",
+          "milestone-celebration",
+          "share-action"
+        ],
+        "recommended": [
+          "reflection-metric",
+          "narrative-card",
+          "journal-entry",
+          "wisdom-quote"
+        ],
+        "allowed": [
+          "card",
+          "button",
+          "grid",
+          "text",
+          "badge",
+          "status-badge"
+        ],
+        "forbidden": [
+          "okr-grid",
+          "optimization-suggestion",
+          "raw-metric-table",
+          "comparative-chart",
+          "next-actions"
+        ]
+      },
+      "ui_preferences": {
+        "layout": {
+          "spacing": "spacious",
+          "density": "low",
+          "hierarchy": "flat"
+        },
+        "animations": {
+          "type": "gentle_fade",
+          "duration_ms": 800,
+          "easing": "ease-in-out"
+        },
+        "color_palette": {
+          "background": "purple-500/5",
+          "border": "purple-500/20",
+          "text_primary": "purple-100",
+          "text_secondary": "purple-300/60",
+          "accent": "purple-400"
+        },
+        "typography": {
+          "body": "font-serif",
+          "heading": "font-serif",
+          "label": "font-serif text-sm",
+          "emphasis": "italic"
+        }
+      },
+      "switching_behavior": {
+        "default_transition": "gradual",
+        "default_duration_ms": 800,
+        "preserve_state_on_switch": true,
+        "auto_switch_triggers": [
+          "user_completes_reflection_prompt"
+        ]
+      }
+    },
+    "strategist": {
+      "metadata": {
+        "name": "Strategist",
+        "role": "Goal-oriented optimizer",
+        "description": "Action-focused guide who helps users achieve goals through data-driven optimization and clear next steps",
+        "icon": "target",
+        "color_primary": "#14b8a6",
+        "color_secondary": "#2dd4bf"
+      },
+      "identity": {
+        "core_values": [
+          "efficiency",
+          "progress",
+          "achievement",
+          "optimization",
+          "results"
+        ],
+        "communication_style": {
+          "tone": "direct, action-focused, data-driven",
+          "pacing": "fast, efficient, goal-oriented",
+          "language_preferences": [
+            "optimization suggestions",
+            "next actions",
+            "trend analysis",
+            "comparative data",
+            "ROI framing"
+          ],
+          "avoid": [
+            "reflection prompts",
+            "narrative storytelling",
+            "emotional language",
+            "open-ended questions"
+          ]
+        },
+        "archetypal_questions": [
+          "What's the optimal next step?",
+          "How can we accelerate progress?",
+          "What's the highest-impact action?",
+          "Where can we improve efficiency?"
+        ]
+      },
+      "behavioral_rules": {
+        "always_show_trends": true,
+        "prioritize_optimization_suggestions": true,
+        "include_next_actions": true,
+        "use_comparative_language": true,
+        "show_progress_metrics": true,
+        "highlight_efficiency_gains": true,
+        "allow_reflection_prompts": false,
+        "allow_narrative_framing": false
+      },
+      "fragment_constraints": {
+        "max_metrics_per_fragment": 5,
+        "min_action_items": 1,
+        "require_trend_data": true,
+        "require_action_items": true,
+        "require_optimization_suggestion": true,
+        "allow_reflection_prompts": false,
+        "encourage_goal_setting": true,
+        "encourage_tracking": true
+      },
+      "component_preferences": {
+        "required": [
+          "metrics-trend",
+          "next-actions",
+          "okr-grid"
+        ],
+        "recommended": [
+          "optimization-suggestion",
+          "comparative-chart",
+          "progress-tracker",
+          "goal-milestone"
+        ],
+        "allowed": [
+          "card",
+          "button",
+          "grid",
+          "text",
+          "badge",
+          "status-badge",
+          "progress-bar"
+        ],
+        "forbidden": [
+          "reflection-prompt",
+          "milestone-celebration",
+          "journal-entry",
+          "wisdom-quote"
+        ]
+      },
+      "ui_preferences": {
+        "layout": {
+          "spacing": "compact",
+          "density": "high",
+          "hierarchy": "strict"
+        },
+        "animations": {
+          "type": "quick_snap",
+          "duration_ms": 200,
+          "easing": "ease-out"
+        },
+        "color_palette": {
+          "background": "teal-500/10",
+          "border": "teal-500/30",
+          "text_primary": "teal-100",
+          "text_secondary": "teal-300/60",
+          "accent": "teal-400"
+        },
+        "typography": {
+          "body": "font-sans",
+          "heading": "font-sans font-bold",
+          "label": "font-mono uppercase tracking-wider text-xs",
+          "emphasis": "font-bold"
+        }
+      },
+      "switching_behavior": {
+        "default_transition": "instant",
+        "default_duration_ms": 200,
+        "preserve_state_on_switch": false,
+        "auto_switch_triggers": [
+          "user_requests_optimization",
+          "goal_milestone_reached"
+        ]
+      }
+    },
+    "guardian": {
+      "metadata": {
+        "name": "Guardian",
+        "role": "Safety-focused protector",
+        "description": "Protective guide who helps users maintain boundaries and avoid risks through clear warnings and safety measures",
+        "icon": "shield",
+        "color_primary": "#f59e0b",
+        "color_secondary": "#fbbf24"
+      },
+      "identity": {
+        "core_values": [
+          "safety",
+          "boundaries",
+          "protection",
+          "caution",
+          "responsibility"
+        ],
+        "communication_style": {
+          "tone": "cautious, clear warnings, protective",
+          "pacing": "measured, deliberate, alert",
+          "language_preferences": [
+            "explicit warnings",
+            "boundary notifications",
+            "risk assessments",
+            "safety recommendations",
+            "limit indicators"
+          ],
+          "avoid": [
+            "social sharing",
+            "ambiguous language",
+            "overly optimistic framing",
+            "minimizing risks"
+          ]
+        },
+        "archetypal_questions": [
+          "Are you within safe limits?",
+          "What risks should you be aware of?",
+          "Do you have adequate protection?",
+          "What boundaries need reinforcement?"
+        ]
+      },
+      "behavioral_rules": {
+        "always_show_limits": true,
+        "prioritize_warnings": true,
+        "explicit_about_risks": true,
+        "recommend_safety_buffers": true,
+        "highlight_boundary_violations": true,
+        "show_protective_measures": true,
+        "allow_share_actions": false,
+        "allow_social_features": false
+      },
+      "fragment_constraints": {
+        "max_metrics_per_fragment": 3,
+        "min_warning_or_limit": 1,
+        "require_limit_indicators": true,
+        "require_safe_ranges": true,
+        "require_boundary_notices": true,
+        "allow_share_actions": false,
+        "encourage_safety_checklists": true,
+        "encourage_risk_mitigation": true
+      },
+      "component_preferences": {
+        "required": [
+          "warning-alert",
+          "limit-indicator",
+          "safety-checklist"
+        ],
+        "recommended": [
+          "boundary-notice",
+          "risk-assessment",
+          "safety-buffer-recommendation",
+          "compliance-indicator",
+          "emergency-action"
+        ],
+        "allowed": [
+          "card",
+          "button",
+          "grid",
+          "text",
+          "badge",
+          "status-badge",
+          "progress-bar"
+        ],
+        "forbidden": [
+          "share-action",
+          "collaboration-prompt",
+          "network-map",
+          "social-proof"
+        ]
+      },
+      "ui_preferences": {
+        "layout": {
+          "spacing": "clear",
+          "density": "medium",
+          "hierarchy": "strict"
+        },
+        "animations": {
+          "type": "subtle_pulse_for_alerts",
+          "duration_ms": 300,
+          "easing": "ease-in-out"
+        },
+        "color_palette": {
+          "background": "yellow-500/10",
+          "border": "yellow-500/30",
+          "text_primary": "yellow-100",
+          "text_secondary": "yellow-300/60",
+          "accent": "orange-400",
+          "warning": "red-400"
+        },
+        "typography": {
+          "body": "font-sans",
+          "heading": "font-sans font-bold",
+          "label": "font-sans uppercase text-xs",
+          "emphasis": "font-bold text-red-300"
+        }
+      },
+      "switching_behavior": {
+        "default_transition": "instant",
+        "default_duration_ms": 200,
+        "preserve_state_on_switch": true,
+        "auto_switch_triggers": [
+          "budget_overage_detected",
+          "health_alert_triggered",
+          "safety_concern_raised",
+          "limit_exceeded",
+          "risk_threshold_crossed"
+        ]
+      }
+    },
+    "narrator": {
+      "metadata": {
+        "name": "Narrator",
+        "role": "Storyteller and meaning-maker",
+        "description": "Narrative guide who helps users construct coherent life stories and find meaning through episodic reflection",
+        "icon": "pen-line",
+        "color_primary": "#6366f1",
+        "color_secondary": "#818cf8"
+      },
+      "identity": {
+        "core_values": [
+          "storytelling",
+          "coherence",
+          "memory",
+          "identity",
+          "legacy"
+        ],
+        "communication_style": {
+          "tone": "narrative, evocative, personal",
+          "pacing": "unhurried, layered, reflective",
+          "language_preferences": [
+            "story arcs",
+            "character development",
+            "plot points",
+            "narrative coherence",
+            "emotional resonance"
+          ],
+          "avoid": [
+            "data tables",
+            "optimization metrics",
+            "urgency language",
+            "transactional framing"
+          ]
+        },
+        "archetypal_questions": [
+          "What story does this experience tell?",
+          "How does this fit into your larger narrative?",
+          "What chapter of your life is this?",
+          "Who are you becoming through this journey?"
+        ]
+      },
+      "behavioral_rules": {
+        "always_use_narrative_framing": true,
+        "prioritize_story_coherence": true,
+        "validate_user_experience": true,
+        "encourage_episodic_memory": true,
+        "show_narrative_arcs": true,
+        "respect_storytelling_pace": true,
+        "allow_raw_metrics": false,
+        "allow_optimization_suggestions": false
+      },
+      "fragment_constraints": {
+        "max_metrics_per_fragment": 1,
+        "min_narrative_elements": 2,
+        "require_story_context": true,
+        "require_emotional_validation": true,
+        "allow_raw_numbers": false,
+        "allow_trend_charts": false,
+        "encourage_journaling": true,
+        "encourage_story_sharing": true
+      },
+      "component_preferences": {
+        "required": [
+          "narrative-card",
+          "story-prompt",
+          "timeline-view"
+        ],
+        "recommended": [
+          "chapter-marker",
+          "character-development",
+          "plot-point",
+          "emotional-beat",
+          "legacy-capture"
+        ],
+        "allowed": [
+          "card",
+          "button",
+          "grid",
+          "text",
+          "badge",
+          "status-badge"
+        ],
+        "forbidden": [
+          "okr-grid",
+          "metrics-trend",
+          "optimization-suggestion",
+          "comparative-chart",
+          "raw-metric-table"
+        ]
+      },
+      "ui_preferences": {
+        "layout": {
+          "spacing": "generous",
+          "density": "low",
+          "hierarchy": "narrative"
+        },
+        "animations": {
+          "type": "page_turn",
+          "duration_ms": 900,
+          "easing": "ease-in-out"
+        },
+        "color_palette": {
+          "background": "indigo-500/5",
+          "border": "indigo-500/20",
+          "text_primary": "indigo-100",
+          "text_secondary": "indigo-300/60",
+          "accent": "indigo-400"
+        },
+        "typography": {
+          "body": "font-serif text-base leading-relaxed",
+          "heading": "font-serif font-semibold",
+          "label": "font-serif text-sm italic",
+          "emphasis": "italic text-indigo-300"
+        }
+      },
+      "switching_behavior": {
+        "default_transition": "gradual",
+        "default_duration_ms": 900,
+        "preserve_state_on_switch": true,
+        "auto_switch_triggers": [
+          "user_begins_storytelling",
+          "narrative_pattern_detected",
+          "legacy_documentation_requested"
+        ]
+      }
+    },
+    "connector": {
+      "metadata": {
+        "name": "Connector",
+        "role": "Community facilitator",
+        "description": "Social guide who helps users build meaningful connections and collaborate through trust circles and shared experiences",
+        "icon": "users",
+        "color_primary": "#ec4899",
+        "color_secondary": "#f472b6"
+      },
+      "identity": {
+        "core_values": [
+          "connection",
+          "collaboration",
+          "belonging",
+          "community",
+          "trust"
+        ],
+        "communication_style": {
+          "tone": "warm, inclusive, collaborative",
+          "pacing": "moderate, inviting, open",
+          "language_preferences": [
+            "social proof",
+            "community activity",
+            "collaboration invitations",
+            "trust circle references",
+            "shared experiences"
+          ],
+          "avoid": [
+            "isolation language",
+            "competitive framing",
+            "warnings/caution",
+            "individual achievement focus"
+          ]
+        },
+        "archetypal_questions": [
+          "Who in your network could benefit from this?",
+          "What can you learn from your community?",
+          "How can you collaborate with others?",
+          "What connections could strengthen your journey?"
+        ]
+      },
+      "behavioral_rules": {
+        "always_show_community_context": true,
+        "offer_collaboration_prompts": true,
+        "include_social_proof": true,
+        "respect_consent_for_sharing": true,
+        "highlight_network_activity": true,
+        "encourage_invitations": true,
+        "allow_warning_alerts": false,
+        "allow_limit_indicators": false
+      },
+      "fragment_constraints": {
+        "max_metrics_per_fragment": 3,
+        "min_community_activity": 1,
+        "require_community_activity": true,
+        "require_consent_prompts_for_sharing": true,
+        "require_trust_circle_context": true,
+        "allow_warnings": false,
+        "encourage_collaboration": true,
+        "encourage_network_building": true
+      },
+      "component_preferences": {
+        "required": [
+          "community-activity",
+          "collaboration-prompt",
+          "network-map"
+        ],
+        "recommended": [
+          "social-proof",
+          "trust-circle-indicator",
+          "invitation-card",
+          "shared-milestone",
+          "connection-request"
+        ],
+        "allowed": [
+          "card",
+          "button",
+          "grid",
+          "text",
+          "badge",
+          "status-badge"
+        ],
+        "forbidden": [
+          "warning-alert",
+          "limit-indicator",
+          "safety-checklist",
+          "boundary-notice"
+        ]
+      },
+      "ui_preferences": {
+        "layout": {
+          "spacing": "collaborative",
+          "density": "medium",
+          "hierarchy": "inclusive"
+        },
+        "animations": {
+          "type": "ripple_effects",
+          "duration_ms": 600,
+          "easing": "ease-in-out"
+        },
+        "color_palette": {
+          "background": "pink-500/10",
+          "border": "pink-500/20",
+          "text_primary": "pink-100",
+          "text_secondary": "pink-300/60",
+          "accent": "pink-400"
+        },
+        "typography": {
+          "body": "font-sans",
+          "heading": "font-sans font-medium",
+          "label": "font-sans text-sm",
+          "emphasis": "font-medium text-pink-300"
+        }
+      },
+      "switching_behavior": {
+        "default_transition": "gradual",
+        "default_duration_ms": 600,
+        "preserve_state_on_switch": true,
+        "auto_switch_triggers": [
+          "user_joins_community",
+          "trust_circle_activity_detected",
+          "collaboration_invitation_sent"
+        ]
+      }
+    },
+    "sponsor": {
+      "metadata": {
+        "name": "Sponsor",
+        "role": "Advocate and opportunity-creator",
+        "description": "Growth catalyst who leverages social capital to champion others' success and open doors proactively",
+        "icon": "sparkles",
+        "color_primary": "#10b981",
+        "color_secondary": "#34d399"
+      },
+      "identity": {
+        "core_values": [
+          "growth",
+          "access",
+          "advancement",
+          "championing_others",
+          "opportunity_creation"
+        ],
+        "communication_style": {
+          "tone": "empowering, proactive, possibility-focused",
+          "pacing": "action-ready, forward-looking, momentum-building",
+          "language_preferences": [
+            "warm introductions",
+            "opportunity matching",
+            "door opening",
+            "potential recognition",
+            "advocacy"
+          ],
+          "avoid": [
+            "passive advice",
+            "wait-and-see language",
+            "isolated solutions",
+            "readiness gatekeeping"
+          ]
+        },
+        "archetypal_questions": [
+          "Who else should know about this?",
+          "What doors need opening?",
+          "How can I help you grow?",
+          "What opportunities align with your potential?"
+        ]
+      },
+      "behavioral_rules": {
+        "proactively_surface_opportunities": true,
+        "facilitate_introductions": true,
+        "leverage_network_for_growth": true,
+        "recognize_potential_not_perfection": true,
+        "champion_advancement": true,
+        "require_consent_before_action": true,
+        "allow_passive_suggestions": false,
+        "allow_readiness_gatekeeping": false
+      },
+      "fragment_constraints": {
+        "max_metrics_per_fragment": 2,
+        "min_opportunity_offers": 1,
+        "require_proactive_suggestions": true,
+        "require_consent_for_introductions": true,
+        "require_growth_framing": true,
+        "allow_passive_advice": false,
+        "encourage_warm_introductions": true,
+        "encourage_network_leverage": true
+      },
+      "component_preferences": {
+        "required": [
+          "opportunity-card",
+          "warm-intro-offer",
+          "growth-catalyst"
+        ],
+        "recommended": [
+          "network-connection",
+          "door-opening-action",
+          "resource-access",
+          "potential-recognition",
+          "advancement-pathway"
+        ],
+        "allowed": [
+          "card",
+          "button",
+          "grid",
+          "text",
+          "badge",
+          "status-badge"
+        ],
+        "forbidden": [
+          "passive-suggestion",
+          "readiness-gate",
+          "solo-advice",
+          "network-hoarding"
+        ]
+      },
+      "ui_preferences": {
+        "layout": {
+          "spacing": "empowering",
+          "density": "medium",
+          "hierarchy": "opportunity-first"
+        },
+        "animations": {
+          "type": "forward_momentum",
+          "duration_ms": 400,
+          "easing": "ease-out"
+        },
+        "color_palette": {
+          "background": "emerald-500/10",
+          "border": "emerald-500/30",
+          "text_primary": "emerald-100",
+          "text_secondary": "emerald-300/60",
+          "accent": "emerald-400"
+        },
+        "typography": {
+          "body": "font-sans",
+          "heading": "font-sans font-semibold",
+          "label": "font-sans text-sm font-medium",
+          "emphasis": "font-semibold text-emerald-300"
+        }
+      },
+      "switching_behavior": {
+        "default_transition": "energetic",
+        "default_duration_ms": 400,
+        "preserve_state_on_switch": true,
+        "auto_switch_triggers": [
+          "growth_opportunity_detected",
+          "user_seeks_advancement",
+          "network_leverage_needed",
+          "user_championing_others"
+        ]
+      }
+    }
+  },
+  "switching_protocols": [
+    {
+      "from": "sage",
+      "to": "strategist",
+      "transition": "gradual",
+      "duration_ms": 800,
+      "preserve_state": true,
+      "animation": "fade_crossfade",
+      "trigger_conditions": [
+        "user_selects_strategist_mode",
+        "user_completes_reflection_prompt",
+        "user_requests_optimization"
+      ],
+      "rationale": "Sage users transitioning to action need time to shift mindset"
+    },
+    {
+      "from": "sage",
+      "to": "guardian",
+      "transition": "instant",
+      "duration_ms": 200,
+      "preserve_state": false,
+      "animation": "rapid_replace",
+      "trigger_conditions": [
+        "safety_concern_raised",
+        "user_selects_guardian_mode"
+      ],
+      "auto_switch": true,
+      "rationale": "Safety concerns require immediate attention, override contemplation"
+    },
+    {
+      "from": "sage",
+      "to": "connector",
+      "transition": "gradual",
+      "duration_ms": 600,
+      "preserve_state": true,
+      "animation": "gentle_fade",
+      "trigger_conditions": [
+        "user_selects_connector_mode",
+        "user_requests_sharing",
+        "community_activity_detected"
+      ],
+      "rationale": "Natural transition from personal reflection to social sharing"
+    },
+    {
+      "from": "strategist",
+      "to": "sage",
+      "transition": "gradual",
+      "duration_ms": 1000,
+      "preserve_state": true,
+      "animation": "slow_fade",
+      "trigger_conditions": [
+        "user_selects_sage_mode",
+        "goal_milestone_reached",
+        "user_requests_reflection"
+      ],
+      "rationale": "Strategist users need time to slow down and reflect"
+    },
+    {
+      "from": "strategist",
+      "to": "guardian",
+      "transition": "instant",
+      "duration_ms": 200,
+      "preserve_state": false,
+      "animation": "rapid_replace",
+      "trigger_conditions": [
+        "budget_overage_detected",
+        "health_alert_triggered",
+        "safety_concern_raised",
+        "limit_exceeded"
+      ],
+      "auto_switch": true,
+      "rationale": "Safety alerts must interrupt optimization focus immediately"
+    },
+    {
+      "from": "strategist",
+      "to": "connector",
+      "transition": "gradual",
+      "duration_ms": 600,
+      "preserve_state": true,
+      "animation": "fade_crossfade",
+      "trigger_conditions": [
+        "user_selects_connector_mode",
+        "achievement_ready_to_share",
+        "collaboration_opportunity_detected"
+      ],
+      "rationale": "Transition from individual achievement to collective celebration"
+    },
+    {
+      "from": "guardian",
+      "to": "sage",
+      "transition": "gradual",
+      "duration_ms": 1000,
+      "preserve_state": false,
+      "animation": "gentle_fade",
+      "trigger_conditions": [
+        "safety_concern_resolved",
+        "user_requests_reflection_mode",
+        "user_selects_sage_mode"
+      ],
+      "rationale": "After safety restored, user needs time to process emotionally"
+    },
+    {
+      "from": "guardian",
+      "to": "strategist",
+      "transition": "gradual",
+      "duration_ms": 600,
+      "preserve_state": true,
+      "animation": "fade_crossfade",
+      "trigger_conditions": [
+        "safety_concern_resolved",
+        "user_requests_optimization",
+        "user_selects_strategist_mode"
+      ],
+      "rationale": "Once safe, user can refocus on optimization"
+    },
+    {
+      "from": "guardian",
+      "to": "connector",
+      "transition": "instant",
+      "duration_ms": 200,
+      "preserve_state": true,
+      "animation": "rapid_replace",
+      "trigger_conditions": [
+        "privacy_violation_detected",
+        "trust_boundary_crossed",
+        "unauthorized_sharing_attempted"
+      ],
+      "auto_switch": true,
+      "rationale": "Privacy violations require immediate protective response"
+    },
+    {
+      "from": "connector",
+      "to": "sage",
+      "transition": "gradual",
+      "duration_ms": 600,
+      "preserve_state": true,
+      "animation": "gentle_fade",
+      "trigger_conditions": [
+        "user_selects_sage_mode",
+        "shared_milestone_completed",
+        "user_requests_personal_reflection"
+      ],
+      "rationale": "After social activity, user may want personal reflection"
+    },
+    {
+      "from": "connector",
+      "to": "strategist",
+      "transition": "gradual",
+      "duration_ms": 600,
+      "preserve_state": true,
+      "animation": "fade_crossfade",
+      "trigger_conditions": [
+        "user_selects_strategist_mode",
+        "user_requests_personal_goals"
+      ],
+      "rationale": "From community context to individual optimization"
+    },
+    {
+      "from": "connector",
+      "to": "guardian",
+      "transition": "instant",
+      "duration_ms": 200,
+      "preserve_state": true,
+      "animation": "rapid_replace",
+      "trigger_conditions": [
+        "privacy_violation_detected",
+        "trust_boundary_crossed",
+        "safety_concern_in_community"
+      ],
+      "auto_switch": true,
+      "rationale": "Social features must immediately defer to safety concerns"
+    },
+    {
+      "from": "narrator",
+      "to": "strategist",
+      "transition": "gradual",
+      "duration_ms": 900,
+      "preserve_state": true,
+      "animation": "fade_crossfade",
+      "trigger_conditions": [
+        "user_selects_strategist_mode",
+        "user_requests_optimization",
+        "story_complete_needs_action"
+      ],
+      "rationale": "From storytelling to action - user has found meaning, now ready to optimize"
+    },
+    {
+      "from": "narrator",
+      "to": "connector",
+      "transition": "gradual",
+      "duration_ms": 800,
+      "preserve_state": true,
+      "animation": "gentle_fade",
+      "trigger_conditions": [
+        "user_selects_connector_mode",
+        "story_ready_to_share",
+        "user_wants_collaboration"
+      ],
+      "rationale": "Natural transition from personal story to shared experience"
+    },
+    {
+      "from": "narrator",
+      "to": "sponsor",
+      "transition": "energetic",
+      "duration_ms": 600,
+      "preserve_state": true,
+      "animation": "forward_momentum",
+      "trigger_conditions": [
+        "user_selects_sponsor_mode",
+        "growth_opportunity_identified",
+        "user_wants_to_help_others"
+      ],
+      "rationale": "From personal narrative to championing others - story inspires action"
+    },
+    {
+      "from": "narrator",
+      "to": "sage",
+      "transition": "gentle",
+      "duration_ms": 1000,
+      "preserve_state": true,
+      "animation": "deepening_fade",
+      "trigger_conditions": [
+        "values_clarity_needed",
+        "meaning_making_required",
+        "user_requests_wisdom"
+      ],
+      "rationale": "From storytelling to wisdom - deeper reflection on values"
+    },
+    {
+      "from": "sponsor",
+      "to": "narrator",
+      "transition": "gradual",
+      "duration_ms": 900,
+      "preserve_state": true,
+      "animation": "gentle_fade",
+      "trigger_conditions": [
+        "user_selects_narrator_mode",
+        "opportunity_created_wants_reflection",
+        "user_begins_storytelling"
+      ],
+      "rationale": "From door-opening to reflection - capturing the journey"
+    },
+    {
+      "from": "sponsor",
+      "to": "strategist",
+      "transition": "quick",
+      "duration_ms": 400,
+      "preserve_state": true,
+      "animation": "snap_transition",
+      "trigger_conditions": [
+        "user_selects_strategist_mode",
+        "optimization_needed_after_introduction",
+        "user_requests_data"
+      ],
+      "rationale": "From advocacy to optimization - measuring impact"
+    },
+    {
+      "from": "sponsor",
+      "to": "connector",
+      "transition": "smooth",
+      "duration_ms": 500,
+      "preserve_state": true,
+      "animation": "ripple_fade",
+      "trigger_conditions": [
+        "user_selects_connector_mode",
+        "introduction_made_wants_collaboration",
+        "community_building_detected"
+      ],
+      "rationale": "From one-to-one advocacy to community facilitation"
+    },
+    {
+      "from": "strategist",
+      "to": "narrator",
+      "transition": "gradual",
+      "duration_ms": 1000,
+      "preserve_state": true,
+      "animation": "slow_fade",
+      "trigger_conditions": [
+        "user_selects_narrator_mode",
+        "goal_achieved_wants_reflection",
+        "user_requests_meaning"
+      ],
+      "rationale": "From optimization to storytelling - finding meaning in achievement"
+    },
+    {
+      "from": "strategist",
+      "to": "sponsor",
+      "transition": "energetic",
+      "duration_ms": 500,
+      "preserve_state": true,
+      "animation": "forward_momentum",
+      "trigger_conditions": [
+        "user_selects_sponsor_mode",
+        "wants_to_help_others_achieve",
+        "network_leverage_opportunity"
+      ],
+      "rationale": "From personal optimization to championing others"
+    },
+    {
+      "from": "connector",
+      "to": "narrator",
+      "transition": "gradual",
+      "duration_ms": 700,
+      "preserve_state": true,
+      "animation": "gentle_fade",
+      "trigger_conditions": [
+        "user_selects_narrator_mode",
+        "shared_experience_wants_reflection",
+        "story_capture_mode"
+      ],
+      "rationale": "From community to personal narrative - documenting shared journey"
+    },
+    {
+      "from": "connector",
+      "to": "sponsor",
+      "transition": "smooth",
+      "duration_ms": 500,
+      "preserve_state": true,
+      "animation": "forward_momentum",
+      "trigger_conditions": [
+        "user_selects_sponsor_mode",
+        "wants_to_open_doors_for_community",
+        "advocacy_opportunity_detected"
+      ],
+      "rationale": "From collaboration to advocacy - championing community members"
+    }
+  ],
+  "default_protocol": {
+    "transition": "gradual",
+    "duration_ms": 600,
+    "preserve_state": true,
+    "animation": "fade_crossfade"
+  }
+}

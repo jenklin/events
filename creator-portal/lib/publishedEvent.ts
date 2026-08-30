@@ -8,6 +8,7 @@
 import { getSupabaseAdmin } from '@/lib/supabase';
 import { decodePlusCode, isFullPlusCode } from '@/lib/plusCode';
 import { getPublicEventUrl, type PublishedEvent } from '@/lib/eventSchema';
+import { eventFragmentFor } from '@/lib/eventFragment';
 
 export async function publishedEventBySlug(slug: string): Promise<PublishedEvent | null> {
   const supabase = getSupabaseAdmin();
@@ -39,7 +40,7 @@ export async function publishedEventBySlug(slug: string): Promise<PublishedEvent
   } catch { /* gallery is optional */ }
 
   const customDomain: string | undefined = ev.custom_domain ?? ev.config?.customDomain ?? undefined;
-  return {
+  const projection: PublishedEvent = {
     slug: ev.event_id,
     title: ev.title ?? ev.config?.eventBasics?.title ?? ev.event_id,
     date: ev.event_date ?? dl.date,
@@ -52,6 +53,11 @@ export async function publishedEventBySlug(slug: string): Promise<PublishedEvent
     customDomain,
     eventUrl: getPublicEventUrl({ event_id: ev.event_id, custom_subdomain: ev.custom_subdomain, subdomain_provider: ev.subdomain_provider, config: { ...ev.config, customDomain } }),
     galleryUrl,
+    locationHidden,
     published: true,
   };
+  // A2UI (moment 7, 2026-08-29): the invitation as a validated Connector fragment carrying the host's
+  // rules; hide-location is enforced by the builder (a leak is refused, never served). Absent = refused.
+  const fr = eventFragmentFor({ ...projection, hostLabel: 'the host' });
+  return fr.fragment ? { ...projection, fragment: fr.fragment } : projection;
 }

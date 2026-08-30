@@ -249,5 +249,9 @@ export interface PublishedEvent {
   customDomain?: string;
   eventUrl: string;
   galleryUrl?: string;
+  /** The host hid the location until RSVP — the projection carries no venue, coordinate or Plus Code, and the fragment is refused if any leaks. */
+  locationHidden: boolean;
+  /** A2UI (moment 7): the invitation as a Connector fragment carrying the host's rules — validated here; the lab validates again. */
+  fragment?: unknown;
   published: true;
 }
