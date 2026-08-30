@@ -47,7 +47,7 @@ export default function EventsPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Link href="/" className="flex items-center hover:scale-105 transition-transform">
-                <img src="/logo-purple.svg" alt="cloudpeers" className="h-10 w-auto" />
+                <img src="/logo-multi-color.svg" alt="cloudpeers logo" className="w-10 h-10 sm:w-12 sm:h-12" />
               </Link>
               <div>
                 <h1 className="text-xl font-bold text-white">My Events</h1>

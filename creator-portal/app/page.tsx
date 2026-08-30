@@ -10,7 +10,7 @@ export default function Home() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <img src="/logo-multi-color.svg" alt="cloudpeers" className="h-9 w-auto" />
+              <img src="/logo-multi-color.svg" alt="cloudpeers logo" className="w-10 h-10 sm:w-12 sm:h-12" />
               <div>
                 <h1 className="text-xl font-semibold text-white">cloudpeers Event Creator</h1>
                 <p className="text-sm text-paradigm-muted">Multi-Tenant Events Platform</p>

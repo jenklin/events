@@ -461,7 +461,7 @@ export default function CanonicalCreatorPage() {
             className="flex items-center gap-3 group"
             aria-label="cloudpeers home"
           >
-            <img src="/logo-purple.svg" alt="cloudpeers" className="h-9 w-auto" />
+            <img src="/logo-multi-color.svg" alt="cloudpeers logo" className="w-10 h-10 sm:w-12 sm:h-12" />
             <div className="text-left">
               <h1 className="text-lg font-semibold text-white leading-tight">Event Creator</h1>
               <p className="text-xs text-paradigm-muted">cloudpeers Events</p>
