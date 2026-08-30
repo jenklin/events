@@ -93,6 +93,50 @@ export async function POST(req: NextRequest) {
       }
       return NextResponse.json({ service: SERVICE_ID, version: SERVICE_VERSION, capability: 'get_event', result: ev });
     }
+    case 'provide_location_layer': {
+      // Tesseract layer partner (event-story spec §5d-bis, Phase 1b, 2026-08-30): the event's gallery
+      // at this coordinate as ONE Layer Contract object. Only the requester's own uploads (the host's
+      // own when the host exports) compose; every other guest's item is returned in `withheld[]` as
+      // `not_owned` (decision 2026-08-23, reaffirmed 2026-08-30). Bytes stay with the provider.
+      const coord = parameters.coordinate as { lat?: unknown; lng?: unknown } | undefined;
+      const lat = Number(coord?.lat), lng = Number(coord?.lng);
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+        return NextResponse.json({ error: { code: 'INVALID_INPUT', message: 'provide_location_layer requires coordinate {lat,lng}' } }, { status: 400 });
+      }
+      const radiusM = Number.isFinite(Number(parameters.radius_m)) && Number(parameters.radius_m) > 0 ? Number(parameters.radius_m) : 150;
+      const ownerRef = typeof parameters.owner_ref === 'string' && parameters.owner_ref ? parameters.owner_ref : null;
+      const { publishedEventsWithRow } = await import('@/lib/publishedEvent');
+      const { selectGalleryLayer, haversineM } = await import('@/lib/galleryLayer');
+      const { getSupabaseAdmin } = await import('@/lib/supabase');
+      const supabase = getSupabaseAdmin();
+
+      // Nearest published event with a coordinate inside the compose radius (hidden-location events have none).
+      const near = (await publishedEventsWithRow())
+        .filter((e) => e.projection.coordinates)
+        .map((e) => ({ ...e, d: haversineM(lat, lng, e.projection.coordinates!.lat, e.projection.coordinates!.lng) }))
+        .filter((e) => e.d <= radiusM)
+        .sort((a, b) => a.d - b.d)[0];
+      if (!near) return NextResponse.json({ has_layer: false, reason: 'no_published_event_in_radius' });
+
+      const { data: album } = await supabase.from('albums').select('id, event_id, title, is_private').eq('event_id', near.rowId).limit(1).maybeSingle();
+      if (!album) return NextResponse.json({ has_layer: false, reason: 'no_album' });
+      const { data: assets } = await supabase.from('assets')
+        .select('id, album_id, type, provider, provider_id, captured_at, created_at, original_filename, uploader_email, uploader_name, metadata')
+        .eq('album_id', album.id).order('captured_at', { ascending: true }).limit(200);
+
+      // owner_ref → email, server-side only; the email never leaves this handler.
+      let requesterEmail: string | null = null;
+      if (ownerRef) {
+        try { const { data } = await supabase.auth.admin.getUserById(ownerRef); requesterEmail = data?.user?.email ?? null; } catch { requesterEmail = null; }
+      }
+      const layer = selectGalleryLayer({
+        event: { rowId: near.rowId, title: near.projection.title, date: near.projection.date, venueName: near.projection.venueName, coordinates: near.projection.coordinates!, hostEmail: near.hostEmail },
+        album, assets: (assets ?? []) as any, requesterEmail,
+        cfImagesHash: process.env.NEXT_PUBLIC_CF_IMAGES_HASH || process.env.CF_IMAGES_HASH || null,
+        distanceM: near.d,
+      });
+      return NextResponse.json(layer);
+    }
     case 'create_event': {
       // Reuse the existing create endpoint server-side so both paths share one impl.
       const target = new URL('/api/events/create', req.nextUrl.origin).toString();
@@ -122,5 +166,5 @@ export async function POST(req: NextRequest) {
 
 // Lightweight liveness check (GET is unsigned — returns no data, just confirms the route exists).
 export async function GET() {
-  return NextResponse.json({ service: SERVICE_ID, version: SERVICE_VERSION, capabilities: ['create_event', 'get_event'] });
+  return NextResponse.json({ service: SERVICE_ID, version: SERVICE_VERSION, capabilities: ['create_event', 'get_event', 'provide_location_layer'] });
 }

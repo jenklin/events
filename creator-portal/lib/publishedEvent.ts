@@ -40,6 +40,21 @@ export async function publishedEvents(limit = 50): Promise<PublishedEvent[]> {
   return out;
 }
 
+/** Published events WITH the row id and host email the gallery adapter needs (never exposed on the wire). */
+export async function publishedEventsWithRow(limit = 200): Promise<Array<{ rowId: string; hostEmail: string | null; projection: PublishedEvent }>> {
+  const supabase = getSupabaseAdmin();
+  const { data: rows, error } = await supabase
+    .from('events')
+    .select('id, event_id, title, event_date, config, custom_subdomain, subdomain_provider, custom_domain, deleted_at, host_email')
+    .is('deleted_at', null)
+    .eq('config->dateLocation->>publishToServices', 'true')
+    .limit(limit);
+  if (error || !rows) return [];
+  const out: Array<{ rowId: string; hostEmail: string | null; projection: PublishedEvent }> = [];
+  for (const row of rows) { const p = await projectPublishedRow(supabase, row); if (p) out.push({ rowId: (row as any).id, hostEmail: (row as any).host_email ?? null, projection: p }); }
+  return out;
+}
+
 async function projectPublishedRow(supabase: ReturnType<typeof getSupabaseAdmin>, row: any): Promise<PublishedEvent | null> {
   const ev: any = row;
   const dl = ev.config?.dateLocation ?? {};
