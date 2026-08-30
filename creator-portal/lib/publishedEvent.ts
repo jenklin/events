@@ -21,7 +21,27 @@ export async function publishedEventBySlug(slug: string): Promise<PublishedEvent
     .is('deleted_at', null)
     .limit(1);
   if (error || !rows || rows.length === 0) return null;
-  const ev: any = rows[0];
+  return projectPublishedRow(supabase, rows[0]);
+}
+
+/** All events whose host published them to services — the public projection only (never address/password/guests). */
+export async function publishedEvents(limit = 50): Promise<PublishedEvent[]> {
+  const supabase = getSupabaseAdmin();
+  const { data: rows, error } = await supabase
+    .from('events')
+    .select('id, event_id, title, event_date, config, custom_subdomain, subdomain_provider, custom_domain, deleted_at')
+    .is('deleted_at', null)
+    .eq('config->dateLocation->>publishToServices', 'true')
+    .order('event_date', { ascending: true })
+    .limit(limit);
+  if (error || !rows) return [];
+  const out: PublishedEvent[] = [];
+  for (const row of rows) { const p = await projectPublishedRow(supabase, row); if (p) out.push(p); }
+  return out;
+}
+
+async function projectPublishedRow(supabase: ReturnType<typeof getSupabaseAdmin>, row: any): Promise<PublishedEvent | null> {
+  const ev: any = row;
   const dl = ev.config?.dateLocation ?? {};
   if (dl.publishToServices !== true) return null;
 

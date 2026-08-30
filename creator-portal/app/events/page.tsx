@@ -23,9 +23,14 @@ export default function EventsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // TODO: Fetch events from API when backend is ready
-    // For now, show a placeholder
-    setLoading(false);
+    // Published events only (the public projection). Private events are reachable by their link; the portal
+    // has no host sign-in yet, so this list is what any visitor may see — nothing more.
+    let alive = true;
+    fetch('/api/events/public', { headers: { Accept: 'application/json' } })
+      .then((r) => (r.ok ? r.json() : { events: [] }))
+      .then((j) => { if (!alive) return; setEvents((j.events ?? []).map((e: any) => ({ id: e.slug, title: e.title, date: e.date, location: e.venueName || (e.locationHidden ? 'Location shared after RSVP' : ''), guests: 0, status: 'published' }))); setLoading(false); })
+      .catch(() => { if (alive) setLoading(false); });
+    return () => { alive = false; };
   }, []);
 
   if (loading) {
@@ -51,7 +56,7 @@ export default function EventsPage() {
               </Link>
               <div>
                 <h1 className="text-xl font-bold text-white">My Events</h1>
-                <p className="text-sm text-paradigm-muted">Manage and monitor your events</p>
+                <p className="text-sm text-paradigm-muted">Events published to cloudpeers services — private events stay reachable by their link only</p>
               </div>
             </div>
             <Link
