@@ -56,6 +56,11 @@ interface EventFormData {
     city: string;
     state: string;
     zipCode: string;
+    /** Venue coordinate as a Plus Code (creator-entered; decoded offline — never a geocoding API). */
+    plusCode: string;
+    /** Publish the venue projection to cloudpeers services (title · date · times · venue name · coordinate · URLs; never address/password/guests). */
+    publishToServices: boolean;
+    hideLocationUntilRsvp: boolean;
   };
   description: string;
   capacity: number | null;
@@ -112,6 +117,9 @@ export default function CanonicalCreatorPage() {
       city: '',
       state: '',
       zipCode: '',
+      plusCode: '',
+      publishToServices: false,
+      hideLocationUntilRsvp: false,
     },
     description: '',
     capacity: null,
@@ -129,7 +137,7 @@ export default function CanonicalCreatorPage() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const updateLocation = (field: string, value: string) => {
+  const updateLocation = (field: string, value: string | boolean) => {
     setFormData((prev) => ({
       ...prev,
       location: { ...prev.location, [field]: value },
@@ -201,7 +209,12 @@ export default function CanonicalCreatorPage() {
         venueName: formData.location.venueName,
         address: `${formData.location.address}, ${formData.location.city}, ${formData.location.state} ${formData.location.zipCode}`,
         description: '',
-        hideLocationUntilRsvp: false,
+        hideLocationUntilRsvp: formData.location.hideLocationUntilRsvp,
+        // Publish-to-services (creator opt-in) + Plus Code — the fields the published projection and
+        // the Events Connector invitation (A2UI moment 7) are built from. Previously only reachable in the
+        // retired wizard; restored on the canonical creator 2026-08-29.
+        plusCode: formData.location.plusCode.trim() || undefined,
+        publishToServices: formData.location.publishToServices,
       },
       host: {
         name: formData.hostName,
@@ -333,7 +346,7 @@ export default function CanonicalCreatorPage() {
       date: '',
       startTime: '',
       endTime: '',
-      location: { venueName: '', address: '', city: '', state: '', zipCode: '' },
+      location: { venueName: '', address: '', city: '', state: '', zipCode: '', plusCode: '', publishToServices: false, hideLocationUntilRsvp: false },
       description: '',
       capacity: null,
       hostName: '',
@@ -669,6 +682,45 @@ export default function CanonicalCreatorPage() {
                     />
                   </div>
                 </div>
+
+                {/* Venue coordinate + publish-to-services (creator opt-in). Address, password and guests never publish. */}
+                <div className="pt-2">
+                  <label className="block text-sm font-semibold text-paradigm-text mb-2">Venue Plus Code (optional)</label>
+                  <input
+                    type="text"
+                    value={formData.location.plusCode}
+                    onChange={(e) => updateLocation('plusCode', e.target.value.toUpperCase())}
+                    className={inputClass}
+                    placeholder="8Q98HXCR+2X  (Google Maps → share → Plus code)"
+                    pattern="[23456789CFGHJMPQRVWX]{8}\+[23456789CFGHJMPQRVWX]{2,7}"
+                    title="A full Plus Code, e.g. 8Q98HXCR+2X"
+                  />
+                  <p className="mt-1 text-xs text-paradigm-muted">Lets cloudpeers labs anchor scenes at your venue. Decoded on our side — no geocoding service is called.</p>
+                </div>
+                <label className="flex items-start gap-3 cursor-pointer pt-3">
+                  <input
+                    type="checkbox"
+                    checked={formData.location.publishToServices}
+                    onChange={(e) => updateLocation('publishToServices', e.target.checked)}
+                    className="mt-1 h-4 w-4"
+                  />
+                  <span className="text-sm text-paradigm-text">
+                    <span className="font-semibold">Publish this event to cloudpeers services</span>
+                    <span className="block text-xs text-paradigm-muted mt-0.5">Read-only: title · date &amp; times · venue name · coordinate · event link · gallery link. Your address, password and guest list never leave this portal. Labs can then offer &ldquo;Compose at {formData.title || 'your event'}&rdquo;.</span>
+                  </span>
+                </label>
+                <label className="flex items-start gap-3 cursor-pointer pt-2">
+                  <input
+                    type="checkbox"
+                    checked={formData.location.hideLocationUntilRsvp}
+                    onChange={(e) => updateLocation('hideLocationUntilRsvp', e.target.checked)}
+                    className="mt-1 h-4 w-4"
+                  />
+                  <span className="text-sm text-paradigm-text">
+                    <span className="font-semibold">Hide location until guests RSVP</span>
+                    <span className="block text-xs text-paradigm-muted mt-0.5">Also hides the venue and coordinate from cloudpeers services — only title, date and links publish.</span>
+                  </span>
+                </label>
               </div>
             </section>
 

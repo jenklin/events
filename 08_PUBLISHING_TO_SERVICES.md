@@ -42,3 +42,6 @@ Not a post, not a feed, not ranking, not "discoverable by default," not "we now 
 
 ---
 *Deployed 2026-08-21 (`cloudpeers-events-staging`, serving events.cloudpeers.com and custom event domains; registry seed `get_event` on mcp-staging). Changes to the projection's field list require updating this doc, the form copy, and the registry seed together.*
+
+
+*2026-08-29 — the Plus Code field and the "Publish this event to cloudpeers services" / "Hide location until guests RSVP" controls were only in the retired `EventCreatorWizard`; `/create` redirects to `/creator`, which lacked them, so no host could opt in from the live UI. Restored on the canonical `/creator` (Date & Location section). There is still no edit path for an existing event — publishing is decided at creation.*
