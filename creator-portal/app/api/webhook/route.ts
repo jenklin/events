@@ -121,7 +121,7 @@ export async function POST(req: NextRequest) {
       const { data: album } = await supabase.from('albums').select('id, event_id, title, is_private').eq('event_id', near.rowId).limit(1).maybeSingle();
       if (!album) return NextResponse.json({ has_layer: false, reason: 'no_album' });
       const { data: assets } = await supabase.from('assets')
-        .select('id, album_id, type, provider, provider_id, captured_at, created_at, original_filename, uploader_email, uploader_name, metadata')
+        .select('id, album_id, type, provider_id, captured_at, created_at, original_filename, metadata') // live schema: no provider/uploader_* columns (2026-08-30); provider defaults cloudflare-images in galleryLayer
         .eq('album_id', album.id).order('captured_at', { ascending: true }).limit(200);
 
       // owner_ref → email, server-side only; the email never leaves this handler.

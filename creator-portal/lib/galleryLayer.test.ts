@@ -9,8 +9,8 @@ const album = { id: 'alb-1', event_id: 'ev-1', is_private: true };
 const assets: GalleryAssetRow[] = [
   { id: 'a1', album_id: 'alb-1', type: 'image', provider_id: 'cf-1', metadata: { uploaded_by_email: 'guest@example.com', uploaded_by_name: 'A guest' } },
   { id: 'a2', album_id: 'alb-1', type: 'video', provider: 'cloudflare-stream', provider_id: 'st-1' },            // host upload (no uploader)
-  { id: 'a3', album_id: 'alb-1', type: 'image', provider_id: 'cf-3', uploader_email: 'me@example.com', uploader_name: 'Me' },
-  { id: 'a4', album_id: 'alb-1', type: 'image', provider: 'gcs', provider_id: 'path/x.jpg', uploader_email: 'me@example.com' },
+  { id: 'a3', album_id: 'alb-1', type: 'image', provider_id: 'cf-3', metadata: { uploaded_by_email: 'me@example.com', uploaded_by_name: 'Me' } },
+  { id: 'a4', album_id: 'alb-1', type: 'image', provider: 'gcs', provider_id: 'path/x.jpg', metadata: { uploaded_by_email: 'me@example.com' } },
 ];
 
 // ownership

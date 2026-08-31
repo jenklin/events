@@ -22,8 +22,8 @@ export interface GalleryAssetRow {
   captured_at?: string | null;
   created_at?: string | null;
   original_filename?: string | null;
-  uploader_email?: string | null;    // guest upload (column form)
-  uploader_name?: string | null;
+  /** Live schema 2026-08-30: uploader identity lives ONLY in metadata (no uploader_* columns);
+   *  `provider` is absent until gallery/migrations/add-provider-column.sql is applied — absent ⇒ cloudflare-images. */
   metadata?: { uploaded_by_email?: string; uploaded_by_name?: string; upload_source?: string } | null;
 }
 export interface GalleryEventContext {
@@ -68,9 +68,9 @@ export interface GalleryLayerResponse {
 const norm = (e: unknown) => (typeof e === 'string' ? e.trim().toLowerCase() : '');
 
 export function uploaderOf(a: GalleryAssetRow): { email: string; name?: string } | null {
-  const email = norm(a.uploader_email) || norm(a.metadata?.uploaded_by_email);
+  const email = norm(a.metadata?.uploaded_by_email);
   if (!email) return null;
-  return { email, name: a.uploader_name ?? a.metadata?.uploaded_by_name ?? undefined };
+  return { email, name: a.metadata?.uploaded_by_name ?? undefined };
 }
 
 /** Is this asset the requester's own? Guest uploads carry an uploader; host uploads carry none and belong to the host. */
