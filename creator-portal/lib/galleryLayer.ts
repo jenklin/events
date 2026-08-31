@@ -17,13 +17,11 @@ export interface GalleryAssetRow {
   id: string;
   album_id: string;
   type?: string | null;              // image | video
-  provider?: string | null;          // cloudflare-images (default) | cloudflare-stream | gcs
+  provider?: string | null;          // cloudflare-images (default) | cloudflare-stream | gcs — column live since add-provider-column.sql (2026-08-30)
   provider_id: string;
   captured_at?: string | null;
   created_at?: string | null;
   original_filename?: string | null;
-  /** Storage/delivery backend (add-provider-column.sql, applied 2026-08-30): cloudflare-images (default) | cloudflare-stream | gcs. */
-  provider?: string | null;
   /** Uploader identity lives ONLY in metadata (no uploader_* columns). */
   metadata?: { uploaded_by_email?: string; uploaded_by_name?: string; upload_source?: string } | null;
 }
