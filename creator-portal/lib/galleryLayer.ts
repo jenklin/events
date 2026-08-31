@@ -22,8 +22,9 @@ export interface GalleryAssetRow {
   captured_at?: string | null;
   created_at?: string | null;
   original_filename?: string | null;
-  /** Live schema 2026-08-30: uploader identity lives ONLY in metadata (no uploader_* columns);
-   *  `provider` is absent until gallery/migrations/add-provider-column.sql is applied — absent ⇒ cloudflare-images. */
+  /** Storage/delivery backend (add-provider-column.sql, applied 2026-08-30): cloudflare-images (default) | cloudflare-stream | gcs. */
+  provider?: string | null;
+  /** Uploader identity lives ONLY in metadata (no uploader_* columns). */
   metadata?: { uploaded_by_email?: string; uploaded_by_name?: string; upload_source?: string } | null;
 }
 export interface GalleryEventContext {
