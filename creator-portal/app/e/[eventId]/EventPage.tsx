@@ -293,7 +293,7 @@ export default function EventPage({ event }: EventPageProps) {
                 <span className="whitespace-nowrap">{formatTime(event.startTime)}{event.endTime && ` – ${formatTime(event.endTime)}`}</span>
               </span>
             )}
-            {(event.location.name || event.location.address) && showLocationDetails && (
+            {(event.location.name || event.location.address) && showLocationDetails && !event.location.hideInHero && (
               <span className="inline-flex items-start gap-2 text-left max-w-full">
                 <svg className="w-5 h-5 shrink-0 mt-0.5 text-paradigm-purple-light" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 21s-7-5.5-7-11a7 7 0 1114 0c0 5.5-7 11-7 11z" /><circle cx="12" cy="10" r="2.5" /></svg>
                 {event.location.name || event.location.address}
@@ -605,9 +605,12 @@ export default function EventPage({ event }: EventPageProps) {
               {/* Plus Ones */}
               {event.rsvp.allowPlusOnes && selectedStatus === 'going' && (
                 <div>
-                  <label className="block text-sm font-medium text-paradigm-text mb-2">
-                    Plus Ones (max {event.rsvp.maxPlusOnes})
+                  <label className="block text-sm font-medium text-paradigm-text mb-1">
+                    Additional guests
                   </label>
+                  <p className="text-xs text-paradigm-muted mb-2">
+                    How many people are coming with you? Add one row per person, including children.
+                  </p>
                   <input
                     type="number"
                     value={plusOnes}
@@ -636,7 +639,7 @@ export default function EventPage({ event }: EventPageProps) {
                           onChange={(e) =>
                             setPlusOneContacts((prev) => prev.map((c, j) => (j === i ? { ...c, name: e.target.value } : c)))
                           }
-                          placeholder="Name"
+                          placeholder="Name (adult or child)"
                           className="w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors"
                         />
                         <input

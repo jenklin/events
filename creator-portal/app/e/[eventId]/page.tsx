@@ -174,6 +174,9 @@ export default async function PublicEventPage({ params }: PageProps) {
       googleMapsLink: event.google_maps_link,
       hideUntilRsvp: event.hide_location_until_rsvp,
       showOnlyApproved: event.show_location_only_approved,
+      // Data-driven: config.hideHeroLocation drops the venue line from the hero
+      // (e.g. when the named venue is only a pickup point, not the main event).
+      hideInHero: config?.hideHeroLocation === true,
     },
 
     // Capacity
