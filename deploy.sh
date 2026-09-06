@@ -149,6 +149,19 @@ gcloud builds submit \
 echo -e "${GREEN}Step 2: Deploying to Cloud Run${NC}"
 
 # Deploy to Cloud Run (using Secret Manager secrets)
+# Optional music-search secrets (Karaoke Playlist): attached only when they
+# exist in Secret Manager, so a missing key never blocks a deploy.
+#   YOUTUBE_API_KEY        — YouTube Data API v3 key (in-page song search)
+#   SPOTIFY_CLIENT_ID/SECRET — Spotify Web API app (client-credentials search)
+# Pasted YouTube/Spotify links work without any of these (public oEmbed).
+MUSIC_SECRETS=""
+for s in YOUTUBE_API_KEY SPOTIFY_CLIENT_ID SPOTIFY_CLIENT_SECRET; do
+  if gcloud secrets describe "$s" --project="${PROJECT_ID}" >/dev/null 2>&1; then
+    MUSIC_SECRETS="${MUSIC_SECRETS},${s}=${s}:latest"
+  fi
+done
+[ -n "$MUSIC_SECRETS" ] && echo -e "${GREEN}Music search secrets attached:${MUSIC_SECRETS#,}${NC}"
+
 gcloud run deploy "${SERVICE_NAME}" \
   --image="${IMAGE_URI}" \
   --platform=managed \
@@ -163,7 +176,7 @@ gcloud run deploy "${SERVICE_NAME}" \
   --port=8080 \
   --allow-unauthenticated \
   --set-env-vars="NODE_ENV=production,NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL},NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY},GALLERY_ORIGIN=${GALLERY_ORIGIN},CF_IMAGES_HASH=FhizCHnEg5H49vwsYLeUJw" \
-  --update-secrets="SUPABASE_SERVICE_ROLE_KEY=SUPABASE_SERVICE_ROLE_KEY:latest,CLOUDPEERS_WEBHOOK_SECRET=EVENTS_CLOUDPEERS_WEBHOOK_SECRET:latest" \
+  --update-secrets="SUPABASE_SERVICE_ROLE_KEY=SUPABASE_SERVICE_ROLE_KEY:latest,CLOUDPEERS_WEBHOOK_SECRET=EVENTS_CLOUDPEERS_WEBHOOK_SECRET:latest${MUSIC_SECRETS}" \
   --timeout=540 \
   --no-cpu-throttling \
   --cpu-boost \

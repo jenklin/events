@@ -143,7 +143,9 @@ export async function POST(
           plus_one_names: validatedData.plusOneNames || [],
           bringing_food: validatedData.bringingFood,
           food_items: validatedData.foodItems || [],
-          music_contribution: validatedData.musicContribution || {},
+          // Song requests live here too (Karaoke Playlist API) — keep them when
+          // the RSVP form doesn't send musicContribution.
+          music_contribution: validatedData.musicContribution ?? existingRsvp.music_contribution ?? {},
           custom_responses: validatedData.customResponses || {},
           notes: validatedData.notes,
           updated_at: new Date().toISOString(),

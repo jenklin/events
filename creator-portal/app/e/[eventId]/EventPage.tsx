@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import KaraokePlaylist from './KaraokePlaylist';
 
 interface EventPageProps {
   event: any; // Event data from server component
@@ -38,7 +39,6 @@ export default function EventPage({ event }: EventPageProps) {
   const [plusOneContacts, setPlusOneContacts] = useState<PlusOneContact[]>([]);
   const [bringingFood, setBringingFood] = useState(false);
   const [foodItems, setFoodItems] = useState<any[]>([]);
-  const [songRequests, setSongRequests] = useState<any[]>([]);
   const [notes, setNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -66,7 +66,6 @@ export default function EventPage({ event }: EventPageProps) {
         );
         setBringingFood(data.rsvp.bringingFood || false);
         setFoodItems(data.rsvp.foodItems || []);
-        setSongRequests(data.rsvp.musicContribution?.songRequests || []);
 
         if (data.rsvp.status === 'going' || data.rsvp.approvalStatus === 'approved') {
           setShowLocationDetails(true);
@@ -105,10 +104,8 @@ export default function EventPage({ event }: EventPageProps) {
           },
           bringingFood,
           foodItems,
-          musicContribution: {
-            type: 'song_request',
-            songRequests,
-          },
+          // Song requests are managed in the Karaoke Playlist section (own API);
+          // omitting musicContribution keeps them intact on RSVP updates.
           notes,
         }),
       });
@@ -235,6 +232,9 @@ export default function EventPage({ event }: EventPageProps) {
             {event.rsvp.enabled && (
               <a href="#rsvp" onClick={scrollTo('rsvp')} className="hover:text-paradigm-purple-light transition-colors">RSVP</a>
             )}
+            {event.music?.enabled && (
+              <a href="#songs" onClick={scrollTo('songs')} className="hover:text-paradigm-purple-light transition-colors">Songs</a>
+            )}
             <a href="#qr" onClick={scrollTo('qr')} className="hover:text-paradigm-purple-light transition-colors">QR</a>
             {event.galleryAlbumId && (
               <a href={`/gallery/a/${event.galleryAlbumId}`} className="hover:text-paradigm-purple-light transition-colors">Gallery</a>
@@ -250,6 +250,7 @@ export default function EventPage({ event }: EventPageProps) {
               ['venue', 'Venue'],
               ...(event.mapPoints?.length > 0 ? [['map', 'Map']] : []),
               ...(event.rsvp.enabled ? [['rsvp', 'RSVP']] : []),
+              ...(event.music?.enabled ? [['songs', 'Songs']] : []),
               ['qr', 'QR'],
               ...(event.galleryAlbumId ? [['gallery', 'Gallery']] : []),
             ] as Array<[string, string]>
@@ -703,6 +704,16 @@ export default function EventPage({ event }: EventPageProps) {
               )}
             </form>
           </Card>
+        )}
+
+        {/* Karaoke Playlist — guest song requests (data-driven: enable_music_contributions) */}
+        {event.music?.enabled && (
+          <KaraokePlaylist
+            eventId={event.id}
+            verifiedEmail={event.verifiedEmail || null}
+            instructions={event.music.instructions || null}
+            maxPerGuest={event.music.maxSongsPerGuest || 1}
+          />
         )}
 
         {/* QR Code + share link */}
