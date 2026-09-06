@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase';
+import { APPROVED_OR_FILTER } from '@/lib/rsvpApproval';
 import { z } from 'zod';
 
 const approvalSchema = z.object({
@@ -70,10 +71,10 @@ export async function POST(
     const { error: updateError } = await supabase
       .from('rsvp_responses')
       .update({
-        approval_status: newStatus,
         approved_by: validatedData.hostEmail,
         approved_at: new Date().toISOString(),
-        rejection_reason: validatedData.rejectionReason,
+        // No approval_status column: approved = approved_at set + no decline_reason
+        decline_reason: newStatus === 'rejected' ? validatedData.rejectionReason || 'Declined by host' : null,
       })
       .eq('id', validatedData.rsvpId);
 
@@ -88,7 +89,7 @@ export async function POST(
         .select('plus_ones')
         .eq('event_id', event.id)
         .eq('status', 'going')
-        .eq('approval_status', 'approved');
+        .or(APPROVED_OR_FILTER);
 
       const totalGuests = goingGuests?.reduce(
         (sum, g) => sum + 1 + (g.plus_ones || 0),
@@ -107,7 +108,7 @@ export async function POST(
       rsvp_id: rsvp.id,
       guest_email: rsvp.guest_email,
       activity_type: `rsvp_${newStatus}`,
-      activity_details: {
+      activity_data: {
         approvedBy: validatedData.hostEmail,
         rejectionReason: validatedData.rejectionReason,
       },
@@ -117,14 +118,14 @@ export async function POST(
     if (event.send_confirmation_email) {
       await supabase.from('reminder_queue').insert({
         event_id: event.id,
-        rsvp_id: rsvp.id,
         reminder_type: validatedData.action === 'approve'
           ? 'rsvp_approved'
           : 'rsvp_rejected',
         recipient_email: rsvp.guest_email,
-        send_at: new Date().toISOString(),
+        recipient_name: rsvp.guest_name,
+        scheduled_for: new Date().toISOString(),
         status: 'pending',
-        email_body: validatedData.rejectionReason
+        message_body: validatedData.rejectionReason
           ? `Reason: ${validatedData.rejectionReason}`
           : null,
       });
@@ -201,7 +202,8 @@ export async function GET(
       .from('rsvp_responses')
       .select('*')
       .eq('event_id', event.id)
-      .eq('approval_status', 'pending')
+      .eq('requires_approval', true)
+      .is('approved_at', null)
       .order('created_at', { ascending: false });
 
     if (error) {

@@ -13,6 +13,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase';
+import { APPROVED_OR_FILTER, approvalStatusOf } from '@/lib/rsvpApproval';
 import { accessCookieName, isEmailAllowed, signAccessToken } from '@/lib/eventAccess';
 import { z } from 'zod';
 
@@ -167,7 +168,7 @@ export async function POST(
         rsvp_id: existingRsvp.id,
         guest_email: validatedData.guestEmail,
         activity_type: 'rsvp_updated',
-        activity_details: { newStatus: validatedData.status },
+        activity_data: { newStatus: validatedData.status },
       });
     } else {
       // Create new RSVP
@@ -184,8 +185,7 @@ export async function POST(
         music_contribution: validatedData.musicContribution || {},
         custom_responses: validatedData.customResponses || {},
         notes: validatedData.notes,
-        requires_approval: event.require_approval,
-        approval_status: event.require_approval ? 'pending' : 'approved',
+        requires_approval: !!event.require_approval,
         rsvp_source: 'web',
       };
 
@@ -207,7 +207,7 @@ export async function POST(
         rsvp_id: newRsvp.id,
         guest_email: validatedData.guestEmail,
         activity_type: 'rsvp_submitted',
-        activity_details: { status: validatedData.status },
+        activity_data: { status: validatedData.status },
       });
     }
 
@@ -218,7 +218,7 @@ export async function POST(
         .select('plus_ones')
         .eq('event_id', event.id)
         .eq('status', 'going')
-        .eq('approval_status', 'approved');
+        .or(APPROVED_OR_FILTER);
 
       const totalGuests = goingGuests?.reduce(
         (sum, g) => sum + 1 + (g.plus_ones || 0),
@@ -242,7 +242,7 @@ export async function POST(
     };
 
     // Add approval info if needed
-    if (event.require_approval && rsvp.approval_status === 'pending') {
+    if (event.require_approval && approvalStatusOf(rsvp) === 'pending') {
       response.requiresApproval = true;
       response.approvalMessage =
         'Your RSVP requires host approval. You will receive an email when approved.';
@@ -262,10 +262,10 @@ export async function POST(
     if (event.send_confirmation_email) {
       await supabase.from('reminder_queue').insert({
         event_id: event.id,
-        rsvp_id: rsvp.id,
         reminder_type: 'rsvp_confirmation',
         recipient_email: validatedData.guestEmail,
-        send_at: new Date().toISOString(),
+        recipient_name: validatedData.guestName,
+        scheduled_for: new Date().toISOString(),
         status: 'pending',
       });
     }
@@ -382,7 +382,7 @@ export async function GET(
         musicContribution: rsvp.music_contribution,
         customResponses: rsvp.custom_responses,
         requiresApproval: rsvp.requires_approval,
-        approvalStatus: rsvp.approval_status,
+        approvalStatus: approvalStatusOf(rsvp),
         checkedIn: rsvp.checked_in,
         rsvpDate: rsvp.created_at,
         updatedAt: rsvp.updated_at,

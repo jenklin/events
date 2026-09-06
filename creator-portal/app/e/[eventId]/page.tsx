@@ -15,6 +15,7 @@
 import { notFound } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { getSupabaseAdmin } from '@/lib/supabase';
+import { APPROVED_OR_FILTER } from '@/lib/rsvpApproval';
 import { getPublicEventUrl } from '@/lib/eventSchema';
 import { accessCookieName, verifyAccessToken } from '@/lib/eventAccess';
 import EventPage from './EventPage';
@@ -68,9 +69,9 @@ export default async function PublicEventPage({ params }: PageProps) {
   // Fetch RSVP summary
   const { data: rsvps } = await supabase
     .from('rsvp_responses')
-    .select('status, plus_ones, approval_status')
+    .select('status, plus_ones')
     .eq('event_id', event.id)
-    .eq('approval_status', 'approved');
+    .or(APPROVED_OR_FILTER);
 
   const rsvpStats = {
     going: rsvps?.filter((r) => r.status === 'going').length || 0,
