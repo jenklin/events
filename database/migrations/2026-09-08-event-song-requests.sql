@@ -14,7 +14,7 @@
 -- guest cookie itself. Do not add anon/authenticated policies.
 --
 -- Apply manually via the Supabase SQL Editor (do not use `supabase db push`).
--- STATUS: pending — the Songs section shows "opening soon" until applied.
+-- STATUS: applied by JKL via SQL Editor on 2026-09-08; verified live the same day.
 
 CREATE TABLE IF NOT EXISTS public.event_song_requests (
   id            bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
