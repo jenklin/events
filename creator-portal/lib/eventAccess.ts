@@ -63,3 +63,34 @@ export function isEmailAllowed(
     : [];
   return allowed.some((a) => typeof a === 'string' && a.trim().toLowerCase() === normalized);
 }
+
+/**
+ * Guest identity for per-guest features (song requests etc.).
+ *
+ * Reads the event's access cookie and returns the verified email it carries,
+ * or null when there is no cookie / it's invalid / it's the shared-password
+ * marker. Callers must never trust an email from the request body for
+ * ownership checks — only this.
+ */
+export function readVerifiedGuestEmail(
+  cookieValue: string | undefined,
+  eventId: string
+): string | null {
+  if (!cookieValue) return null;
+  const email = verifyAccessToken(cookieValue, eventId);
+  return email && email.includes('@') ? email : null;
+}
+
+/** True when the cookie is a valid shared-password entry (no email identity yet). */
+export function isPasswordGuest(cookieValue: string | undefined, eventId: string): boolean {
+  if (!cookieValue) return false;
+  return verifyAccessToken(cookieValue, eventId) === PASSWORD_GUEST;
+}
+
+export const ACCESS_COOKIE_OPTIONS = {
+  httpOnly: true,
+  secure: true,
+  sameSite: 'lax' as const,
+  path: '/',
+  maxAge: 60 * 60 * 24 * 180,
+};

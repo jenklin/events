@@ -5,8 +5,11 @@
  * search when a provider key is configured, or plain title + artist) and
  * everyone sees the shared playlist for the night.
  *
- * Data: GET/POST/DELETE /api/events/[eventId]/songs. A guest is identified by
- * the email on their RSVP; the access gate prefills it when it knows one.
+ * Data: GET/POST/DELETE /api/events/[eventId]/songs (table event_song_requests).
+ * Identity is the server-signed access cookie: guests who signed in with an
+ * invited email / Google are already known; shared-password guests (and open
+ * events) give name + email once, and the server sets the cookie. Removal is
+ * only possible for the guest's own songs, enforced server-side.
  */
 
 import { useEffect, useState } from 'react';
@@ -33,11 +36,13 @@ interface Result {
 }
 
 interface Playlist {
+  ready: boolean;
   total: number;
   maxPerGuest: number;
   instructions: string | null;
   searchProviders: string[];
   youtubePlayAllUrl: string | null;
+  guest: { email: string; name: string | null } | null;
   songs: Song[];
 }
 
@@ -72,7 +77,9 @@ function ProviderBadge({ provider, url }: { provider: Song['provider']; url: str
 
 export default function KaraokePlaylist({ eventId, verifiedEmail, instructions, maxPerGuest }: Props) {
   const [playlist, setPlaylist] = useState<Playlist | null>(null);
-  const [email, setEmail] = useState(verifiedEmail || '');
+  const [identified, setIdentified] = useState(!!verifiedEmail);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<Result[]>([]);
   const [searched, setSearched] = useState(false);
@@ -82,27 +89,33 @@ export default function KaraokePlaylist({ eventId, verifiedEmail, instructions, 
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-  const load = async (forEmail?: string) => {
+  const applyPlaylist = (data: Playlist) => {
+    setPlaylist(data);
+    if (data.guest) {
+      setIdentified(true);
+      if (data.guest.name && !name) setName(data.guest.name);
+    }
+  };
+
+  const load = async () => {
     try {
-      const e = (forEmail ?? email).trim();
-      const res = await fetch(`/api/events/${eventId}/songs${e ? `?email=${encodeURIComponent(e)}` : ''}`, {
-        cache: 'no-store',
-      });
-      if (res.ok) setPlaylist(await res.json());
+      const res = await fetch(`/api/events/${eventId}/songs`, { cache: 'no-store', credentials: 'same-origin' });
+      if (res.ok) applyPlaylist(await res.json());
     } catch (err) {
       console.error('Playlist load failed', err);
     }
   };
 
   useEffect(() => {
-    load(verifiedEmail || '');
+    load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventId]);
 
   const canSearch = (playlist?.searchProviders?.length || 0) > 0;
   const mine = playlist?.songs.filter((s) => s.mine) || [];
   const limit = playlist?.maxPerGuest || maxPerGuest || 1;
-  const atLimit = !!email && mine.length >= limit;
+  const atLimit = identified && mine.length >= limit;
+  const needsName = !name.trim();
 
   const runSearch = async (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -128,8 +141,8 @@ export default function KaraokePlaylist({ eventId, verifiedEmail, instructions, 
   };
 
   const add = async (payload: { url?: string; title?: string; artist?: string }) => {
-    if (!email.trim()) {
-      setMessage({ type: 'error', text: 'Enter the email you used to RSVP so we know whose song this is.' });
+    if (needsName || (!identified && !email.includes('@'))) {
+      setMessage({ type: 'error', text: identified ? 'Please add your name.' : 'Add your name and email so we know whose song this is.' });
       return;
     }
     setBusy(true);
@@ -138,14 +151,15 @@ export default function KaraokePlaylist({ eventId, verifiedEmail, instructions, 
       const res = await fetch(`/api/events/${eventId}/songs`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ guestEmail: email.trim(), ...payload }),
+        credentials: 'same-origin',
+        body: JSON.stringify({ name: name.trim(), ...(identified ? {} : { email: email.trim() }), ...payload }),
       });
       const data = await res.json();
       if (!res.ok) {
         setMessage({ type: 'error', text: data.message || 'Could not add that song.' });
         return;
       }
-      setPlaylist(data);
+      applyPlaylist(data);
       setResults([]);
       setSearched(false);
       setQuery('');
@@ -166,10 +180,11 @@ export default function KaraokePlaylist({ eventId, verifiedEmail, instructions, 
       const res = await fetch(`/api/events/${eventId}/songs`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ guestEmail: email.trim(), songId }),
+        credentials: 'same-origin',
+        body: JSON.stringify({ songId }),
       });
       const data = await res.json();
-      if (res.ok) setPlaylist(data);
+      if (res.ok) applyPlaylist(data);
       else setMessage({ type: 'error', text: data.message || 'Could not remove that song.' });
     } finally {
       setBusy(false);
@@ -204,6 +219,8 @@ export default function KaraokePlaylist({ eventId, verifiedEmail, instructions, 
         </div>
         {!playlist ? (
           <p className="text-sm text-paradigm-muted">Loading…</p>
+        ) : !playlist.ready ? (
+          <p className="text-sm text-paradigm-muted">Song requests are opening soon — check back here!</p>
         ) : playlist.songs.length === 0 ? (
           <p className="text-sm text-paradigm-muted">No songs yet — be the first to add one!</p>
         ) : (
@@ -242,6 +259,7 @@ export default function KaraokePlaylist({ eventId, verifiedEmail, instructions, 
       </div>
 
       {/* Request a song */}
+      {playlist?.ready !== false && (
       <div className="border-t border-white/10 pt-6">
         <h3 className="font-semibold text-white mb-1">Request a song</h3>
         <p className="text-xs text-paradigm-muted mb-4">
@@ -250,18 +268,34 @@ export default function KaraokePlaylist({ eventId, verifiedEmail, instructions, 
         </p>
 
         <div className="space-y-3">
-          <div>
-            <label className="block text-sm font-medium text-paradigm-text mb-1">Your RSVP email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              onBlur={() => email.includes('@') && load()}
-              placeholder="you@example.com"
-              autoComplete="email"
-              className={inputCls}
-            />
-          </div>
+          {(needsName || !identified) && !atLimit && (
+            <div className={`grid gap-3 ${identified ? '' : 'sm:grid-cols-2'}`}>
+              <div>
+                <label className="block text-sm font-medium text-paradigm-text mb-1">Your name</label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="So the host knows who's singing"
+                  autoComplete="name"
+                  className={inputCls}
+                />
+              </div>
+              {!identified && (
+                <div>
+                  <label className="block text-sm font-medium text-paradigm-text mb-1">Your email</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    autoComplete="email"
+                    className={inputCls}
+                  />
+                </div>
+              )}
+            </div>
+          )}
 
           {atLimit ? (
             <p className="text-sm text-paradigm-muted">
@@ -364,6 +398,7 @@ export default function KaraokePlaylist({ eventId, verifiedEmail, instructions, 
           )}
         </div>
       </div>
+      )}
     </Card>
   );
 }

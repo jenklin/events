@@ -1,20 +1,32 @@
 /**
- * Guest song requests → one shared playlist for the event.
+ * Guest song requests → one shared playlist per event (Karaoke Playlist).
  *
- *   GET    /api/events/[eventId]/songs?email=   playlist (mine flagged when email given)
- *   POST   /api/events/[eventId]/songs          { guestEmail, url? | title, artist? }
- *   DELETE /api/events/[eventId]/songs          { guestEmail, songId }
+ *   GET    /api/events/[eventId]/songs            playlist; `mine` flagged for the signed-in guest
+ *   POST   /api/events/[eventId]/songs            { url? | title, artist?, name?, email? }
+ *   DELETE /api/events/[eventId]/songs            { songId }  — own requests only
  *
- * Storage: rsvp_responses.music_contribution.songRequests[] — the guest must
- * have an RSVP on file (looked up by email), which is also the identity check.
+ * Storage: public.event_song_requests (database/migrations/2026-09-08-event-song-requests.sql).
+ *
+ * Identity: the event's access cookie (HMAC-signed by the server, see
+ * lib/eventAccess.ts). Ownership checks use ONLY the cookie's email — never an
+ * email from the request body. A guest without an identity yet (shared-password
+ * entry on a private event, or an open event) supplies name + email once; the
+ * server registers them (allowlist on private events) and sets the signed
+ * cookie, exactly as RSVP self-registration does.
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { randomUUID } from 'crypto';
 import { z } from 'zod';
 import { getSupabaseAdmin } from '@/lib/supabase';
 import {
-  SongRequest,
+  ACCESS_COOKIE_OPTIONS,
+  accessCookieName,
+  isEmailAllowed,
+  isPasswordGuest,
+  readVerifiedGuestEmail,
+  signAccessToken,
+} from '@/lib/eventAccess';
+import {
   configuredSearchProviders,
   parseMusicUrl,
   resolveOEmbed,
@@ -23,68 +35,30 @@ import {
 
 export const dynamic = 'force-dynamic';
 
+const TABLE = 'event_song_requests';
+
 const addSchema = z.object({
-  guestEmail: z.string().email(),
   url: z.string().max(500).optional(),
   title: z.string().max(200).optional(),
   artist: z.string().max(200).optional(),
+  name: z.string().max(120).optional(),
+  email: z.string().email().max(254).optional(),
 });
 
 const removeSchema = z.object({
-  guestEmail: z.string().email(),
-  songId: z.string().min(1),
+  songId: z.union([z.string().min(1), z.number().int()]),
 });
 
+const isMissingTable = (err: any) =>
+  err && (err.code === 'PGRST205' || err.code === '42P01' || /event_song_requests/.test(err.message || ''));
+
 async function loadEvent(supabase: any, eventId: string) {
-  const { data: event } = await supabase
+  const { data } = await supabase
     .from('events')
-    .select('id, event_id, title, enable_music_contributions, max_song_requests, music_instructions')
+    .select('id, event_id, title, host_email, config, enable_music_contributions, max_song_requests, music_instructions')
     .eq('event_id', eventId)
     .single();
-  return event;
-}
-
-async function buildPlaylist(supabase: any, event: any, email?: string | null) {
-  const { data: rows, error } = await supabase
-    .from('rsvp_responses')
-    .select('guest_name, guest_email, music_contribution')
-    .eq('event_id', event.id);
-  if (error) throw error;
-
-  const me = (email || '').trim().toLowerCase();
-  const songs = (rows || [])
-    .flatMap((r: any) => {
-      const list: SongRequest[] = Array.isArray(r.music_contribution?.songRequests)
-        ? r.music_contribution.songRequests
-        : [];
-      return list
-        .filter((s) => s && s.title)
-        .map((s) => ({
-          id: s.id,
-          title: s.title,
-          artist: s.artist || null,
-          provider: s.provider || 'manual',
-          url: s.url || null,
-          externalId: s.externalId || null,
-          thumbnail: s.thumbnail || null,
-          requestedBy: (r.guest_name || '').split(' ')[0] || 'A guest',
-          requestedAt: s.requestedAt || null,
-          mine: !!me && (r.guest_email || '').toLowerCase() === me,
-        }));
-    })
-    .sort((a: any, b: any) => (a.requestedAt || '').localeCompare(b.requestedAt || ''));
-
-  const ytIds = songs.filter((s: any) => s.provider === 'youtube' && s.externalId).map((s: any) => s.externalId);
-
-  return {
-    eventId: event.event_id,
-    total: songs.length,
-    maxPerGuest: event.max_song_requests || 1,
-    instructions: event.music_instructions || null,
-    searchProviders: configuredSearchProviders(),
-    youtubePlayAllUrl: youtubePlayAllUrl(ytIds),
-    songs,
-  };
+  return data;
 }
 
 function guard(event: any) {
@@ -95,29 +69,93 @@ function guard(event: any) {
   return null;
 }
 
+/** Best-known display name for an identified guest (last request, else their RSVP). */
+async function knownGuestName(supabase: any, event: any, email: string): Promise<string | null> {
+  const { data: last } = await supabase
+    .from(TABLE)
+    .select('guest_name')
+    .eq('event_id', event.id)
+    .eq('guest_email', email)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (last?.guest_name) return last.guest_name;
+  const { data: rsvp } = await supabase
+    .from('rsvp_responses')
+    .select('guest_name')
+    .eq('event_id', event.id)
+    .ilike('guest_email', email)
+    .limit(1)
+    .maybeSingle();
+  return rsvp?.guest_name || null;
+}
+
+async function buildPlaylist(supabase: any, event: any, me: string | null) {
+  const { data: rows, error } = await supabase
+    .from(TABLE)
+    .select('id, guest_email, guest_name, title, artist, provider, url, external_id, thumbnail_url, status, created_at')
+    .eq('event_id', event.id)
+    .neq('status', 'skipped')
+    .order('created_at', { ascending: true });
+  if (error) throw error;
+
+  const songs = (rows || []).map((r: any) => ({
+    id: String(r.id),
+    title: r.title,
+    artist: r.artist,
+    provider: r.provider,
+    url: r.url,
+    thumbnail: r.thumbnail_url,
+    status: r.status,
+    requestedBy: (r.guest_name || '').trim().split(/\s+/)[0] || 'A guest',
+    requestedAt: r.created_at,
+    mine: !!me && r.guest_email === me,
+  }));
+  const ytIds = (rows || []).filter((r: any) => r.provider === 'youtube' && r.external_id).map((r: any) => r.external_id);
+
+  return {
+    ready: true,
+    eventId: event.event_id,
+    total: songs.length,
+    maxPerGuest: event.max_song_requests || 1,
+    instructions: event.music_instructions || null,
+    searchProviders: configuredSearchProviders(),
+    youtubePlayAllUrl: youtubePlayAllUrl(ytIds),
+    guest: me ? { email: me, name: await knownGuestName(supabase, event, me) } : null,
+    songs,
+  };
+}
+
+const notReady = (event: any) =>
+  NextResponse.json({
+    ready: false,
+    eventId: event.event_id,
+    total: 0,
+    maxPerGuest: event.max_song_requests || 1,
+    instructions: event.music_instructions || null,
+    searchProviders: [],
+    youtubePlayAllUrl: null,
+    guest: null,
+    songs: [],
+  });
+
 export async function GET(req: NextRequest, { params }: { params: { eventId: string } }) {
   try {
     const supabase = getSupabaseAdmin();
     const event = await loadEvent(supabase, params.eventId);
     const blocked = guard(event);
     if (blocked) return blocked;
-    const email = req.nextUrl.searchParams.get('email');
-    return NextResponse.json(await buildPlaylist(supabase, event, email));
+    const me = readVerifiedGuestEmail(req.cookies.get(accessCookieName(event.event_id))?.value, event.event_id);
+    try {
+      return NextResponse.json(await buildPlaylist(supabase, event, me));
+    } catch (err: any) {
+      if (isMissingTable(err)) return notReady(event);
+      throw err;
+    }
   } catch (error: any) {
     console.error('Error loading playlist:', error);
-    return NextResponse.json({ error: 'Internal server error', details: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
-}
-
-async function findRsvp(supabase: any, event: any, email: string) {
-  const { data } = await supabase
-    .from('rsvp_responses')
-    .select('id, guest_name, guest_email, music_contribution')
-    .eq('event_id', event.id)
-    .ilike('guest_email', email.trim())
-    .limit(1)
-    .maybeSingle();
-  return data;
 }
 
 export async function POST(req: NextRequest, { params }: { params: { eventId: string } }) {
@@ -128,27 +166,66 @@ export async function POST(req: NextRequest, { params }: { params: { eventId: st
     if (blocked) return blocked;
 
     const body = addSchema.parse(await req.json());
-    const rsvp = await findRsvp(supabase, event, body.guestEmail);
-    if (!rsvp) {
-      return NextResponse.json(
-        { error: 'rsvp_required', message: 'Please RSVP first with this email, then add your song.' },
-        { status: 404 }
-      );
+    const cookieValue = req.cookies.get(accessCookieName(event.event_id))?.value;
+    const gated = event.config?.access?.required === true;
+
+    // ---- Identity -------------------------------------------------------
+    let email = readVerifiedGuestEmail(cookieValue, event.event_id);
+    let name = (body.name || '').trim();
+    let issueCookie = false;
+    let registerOnAllowlist = false;
+
+    if (!email) {
+      // Not identified yet. On a private event the guest must at least have
+      // passed the password gate; then name + email register them (same
+      // contract as RSVP self-registration). Open events: name + email once.
+      if (gated && !isPasswordGuest(cookieValue, event.event_id)) {
+        return NextResponse.json(
+          { error: 'sign_in_required', message: 'Please sign in to this event first.' },
+          { status: 401 }
+        );
+      }
+      if (!body.email || !name) {
+        return NextResponse.json(
+          { error: 'identity_required', message: 'Add your name and email so we know whose song this is.' },
+          { status: 400 }
+        );
+      }
+      email = body.email.trim().toLowerCase();
+      issueCookie = true;
+      registerOnAllowlist = gated && !isEmailAllowed(email, event);
     }
 
-    const existing: SongRequest[] = Array.isArray(rsvp.music_contribution?.songRequests)
-      ? rsvp.music_contribution.songRequests.filter((s: any) => s && s.title)
-      : [];
+    if (!name) name = (await knownGuestName(supabase, event, email)) || '';
+    if (!name) {
+      return NextResponse.json({ error: 'name_required', message: 'Please add your name.' }, { status: 400 });
+    }
+
+    // ---- Per-guest cap ----------------------------------------------------
     const max = event.max_song_requests || 1;
-    if (existing.length >= max) {
+    const { count, error: countError } = await supabase
+      .from(TABLE)
+      .select('id', { count: 'exact', head: true })
+      .eq('event_id', event.id)
+      .eq('guest_email', email)
+      .neq('status', 'skipped');
+    if (countError) {
+      if (isMissingTable(countError)) {
+        return NextResponse.json(
+          { error: 'not_ready', message: 'Song requests are opening soon — please check back.' },
+          { status: 503 }
+        );
+      }
+      throw countError;
+    }
+    if ((count || 0) >= max) {
       return NextResponse.json(
         { error: 'limit_reached', message: `You can request up to ${max} song${max === 1 ? '' : 's'}. Remove one to add another.` },
         { status: 400 }
       );
     }
 
-    // Build the song: pasted link → provider + oEmbed metadata; otherwise manual.
-    let song: SongRequest | null = null;
+    // ---- Resolve the song -------------------------------------------------
     const parsed = body.url ? parseMusicUrl(body.url) : null;
     if (body.url && !parsed) {
       return NextResponse.json(
@@ -156,63 +233,67 @@ export async function POST(req: NextRequest, { params }: { params: { eventId: st
         { status: 400 }
       );
     }
+    let row: Record<string, any>;
     if (parsed) {
       const meta = await resolveOEmbed(parsed.url, parsed.provider);
       const title = (body.title || meta?.title || '').trim();
       if (!title) {
         return NextResponse.json({ error: 'title_required', message: 'Please add the song title.' }, { status: 400 });
       }
-      song = {
-        id: randomUUID(),
+      row = {
         title,
-        artist: (body.artist || meta?.artist || '').trim() || undefined,
+        artist: (body.artist || meta?.artist || '').trim() || null,
         provider: parsed.provider,
         url: parsed.url,
-        externalId: parsed.externalId,
-        thumbnail: meta?.thumbnail,
-        requestedAt: new Date().toISOString(),
+        external_id: parsed.externalId,
+        thumbnail_url: meta?.thumbnail || null,
+        source: 'link',
       };
     } else {
       const title = (body.title || '').trim();
       if (!title) {
         return NextResponse.json({ error: 'title_required', message: 'Please add the song title.' }, { status: 400 });
       }
-      song = {
-        id: randomUUID(),
-        title,
-        artist: (body.artist || '').trim() || undefined,
-        provider: 'manual',
-        requestedAt: new Date().toISOString(),
-      };
+      row = { title, artist: (body.artist || '').trim() || null, provider: 'manual', source: 'manual' };
     }
 
-    const duplicate = existing.find(
-      (s) => (song!.externalId && s.externalId === song!.externalId) || s.title.toLowerCase() === song!.title.toLowerCase()
-    );
-    if (duplicate) {
-      return NextResponse.json({ error: 'duplicate', message: 'You already requested that song.' }, { status: 400 });
+    const { data: inserted, error: insertError } = await supabase
+      .from(TABLE)
+      .insert({ event_id: event.id, guest_email: email, guest_name: name, ...row })
+      .select('id, title')
+      .single();
+    if (insertError) {
+      if (insertError.code === '23505') {
+        return NextResponse.json({ error: 'duplicate', message: 'You already requested that song.' }, { status: 400 });
+      }
+      throw insertError;
     }
 
-    const { error: updateError } = await supabase
-      .from('rsvp_responses')
-      .update({
-        music_contribution: {
-          ...(rsvp.music_contribution || {}),
-          type: 'song_request',
-          songRequests: [...existing, song],
-        },
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', rsvp.id);
-    if (updateError) throw updateError;
+    // ---- Register identity (first request from an unidentified guest) ----
+    if (registerOnAllowlist) {
+      const access = event.config?.access || {};
+      const allowedEmails = Array.isArray(access.allowedEmails) ? access.allowedEmails : [];
+      await supabase
+        .from('events')
+        .update({ config: { ...event.config, access: { ...access, allowedEmails: [...allowedEmails, email] } } })
+        .eq('id', event.id);
+    }
 
-    return NextResponse.json({ ok: true, song, ...(await buildPlaylist(supabase, event, body.guestEmail)) });
+    const response = NextResponse.json({
+      ok: true,
+      song: { id: String(inserted.id), title: inserted.title },
+      ...(await buildPlaylist(supabase, event, email)),
+    });
+    if (issueCookie) {
+      response.cookies.set(accessCookieName(event.event_id), signAccessToken(email, event.event_id), ACCESS_COOKIE_OPTIONS);
+    }
+    return response;
   } catch (error: any) {
     if (error?.name === 'ZodError') {
-      return NextResponse.json({ error: 'invalid', message: 'Please enter a valid email address.' }, { status: 400 });
+      return NextResponse.json({ error: 'invalid', message: 'Please check your name, email and song.' }, { status: 400 });
     }
     console.error('Error adding song request:', error);
-    return NextResponse.json({ error: 'Internal server error', details: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -223,33 +304,31 @@ export async function DELETE(req: NextRequest, { params }: { params: { eventId: 
     const blocked = guard(event);
     if (blocked) return blocked;
 
+    const me = readVerifiedGuestEmail(req.cookies.get(accessCookieName(event.event_id))?.value, event.event_id);
+    if (!me) {
+      return NextResponse.json({ error: 'sign_in_required', message: 'Please sign in to manage your songs.' }, { status: 401 });
+    }
     const body = removeSchema.parse(await req.json());
-    const rsvp = await findRsvp(supabase, event, body.guestEmail);
-    if (!rsvp) return NextResponse.json({ error: 'rsvp_required' }, { status: 404 });
 
-    const existing: SongRequest[] = Array.isArray(rsvp.music_contribution?.songRequests)
-      ? rsvp.music_contribution.songRequests
-      : [];
-    const next = existing.filter((s) => s.id !== body.songId);
-    if (next.length === existing.length) {
+    // Ownership is enforced by the WHERE clause on the cookie's email.
+    const { data: deleted, error } = await supabase
+      .from(TABLE)
+      .delete()
+      .eq('event_id', event.id)
+      .eq('id', Number(body.songId))
+      .eq('guest_email', me)
+      .select('id');
+    if (error) throw error;
+    if (!deleted?.length) {
       return NextResponse.json({ error: 'not_found', message: 'That song is not on your list.' }, { status: 404 });
     }
 
-    const { error: updateError } = await supabase
-      .from('rsvp_responses')
-      .update({
-        music_contribution: { ...(rsvp.music_contribution || {}), songRequests: next },
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', rsvp.id);
-    if (updateError) throw updateError;
-
-    return NextResponse.json({ ok: true, ...(await buildPlaylist(supabase, event, body.guestEmail)) });
+    return NextResponse.json({ ok: true, ...(await buildPlaylist(supabase, event, me)) });
   } catch (error: any) {
     if (error?.name === 'ZodError') {
       return NextResponse.json({ error: 'invalid', message: 'Invalid request.' }, { status: 400 });
     }
     console.error('Error removing song request:', error);
-    return NextResponse.json({ error: 'Internal server error', details: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
