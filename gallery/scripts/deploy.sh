@@ -21,10 +21,12 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 REPO_ROOT=$(cd "$SCRIPT_DIR/../.." && pwd)
 cd "$REPO_ROOT"
 
-# --- Config (same project/SA/secrets as the events service) ---
+# --- Config (same project and secrets as the events service; its own runtime identity) ---
 PROJECT_ID="heli-ent"
 REGION="us-central1"
-RUNTIME_SA="cloudpeers-deployer@heli-ent.iam.gserviceaccount.com"
+# Dedicated runtime identity (least privilege: SUPABASE_SERVICE_ROLE_KEY only). The deployer
+# account deploys; it never runs a service. cloudpeers-github docs/architecture/IAM_LEAST_PRIVILEGE_PLAN.md
+RUNTIME_SA="gallery-runtime@heli-ent.iam.gserviceaccount.com"
 CF_IMAGES_HASH="FhizCHnEg5H49vwsYLeUJw"   # shared Cloudflare Images delivery hash
 
 # --- Surface selection (default: events) ---
