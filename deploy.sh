@@ -37,7 +37,9 @@ echo ""
 PROJECT_ID="heli-ent"
 REGION="us-central1"
 IMAGE_NAME="cloudpeers-events"
-RUNTIME_SA="cloudpeers-deployer@heli-ent.iam.gserviceaccount.com"
+# Dedicated runtime identity (least privilege: its own secrets only). The deployer account
+# deploys; it never runs a service. cloudpeers-github docs/architecture/IAM_LEAST_PRIVILEGE_PLAN.md
+RUNTIME_SA="events-runtime@heli-ent.iam.gserviceaccount.com"
 
 # Verify active account
 ACTIVE_ACCOUNT=$(gcloud config get-value account 2>/dev/null)
