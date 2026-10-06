@@ -144,6 +144,7 @@ echo -e "${GREEN}✓ Runtime SA can read all mounted secrets${NC}"
 # Submit build to Cloud Build (using Secret Manager)
 gcloud builds submit \
   --config=cloudbuild.yaml \
+  --service-account="projects/${PROJECT_ID}/serviceAccounts/image-builder@${PROJECT_ID}.iam.gserviceaccount.com" \
   --substitutions="_IMAGE_URI=${IMAGE_URI},_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL},_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY},_SUPABASE_SERVICE_KEY=,_GALLERY_ORIGIN=${GALLERY_ORIGIN}" \
   --project="${PROJECT_ID}" \
   --timeout=20m
