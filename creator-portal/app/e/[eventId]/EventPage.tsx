@@ -23,12 +23,18 @@ interface CustomQuestion {
   options?: string[];
   placeholder?: string;
   help?: string;
+  // Also ask this question on each additional-guest row (select/text only).
+  // Answers are stored per guest in plusOneContacts[i].answers[name].
+  perGuest?: boolean;
+  // Label shown on each additional-guest row when perGuest is set (falls back to label).
+  guestLabel?: string;
 }
 
 interface PlusOneContact {
   name: string;
   phone: string;
   kakao: string;
+  answers?: Record<string, string>;
 }
 
 // Map links for a location query. In Korea, Kakao/Naver are the maps guests
@@ -53,6 +59,34 @@ export default function EventPage({ event }: EventPageProps) {
   // Answers to data-driven custom questions (event.rsvp.customQuestions), keyed by question name.
   const customQuestions: CustomQuestion[] = event.rsvp?.customQuestions || [];
   const [customAnswers, setCustomAnswers] = useState<Record<string, string>>({});
+  const renderCustomQuestion = (q: CustomQuestion) => {
+    const id = `cq-${q.name}`;
+    const value = customAnswers[q.name] || '';
+    const set = (v: string) => setCustomAnswers((prev) => ({ ...prev, [q.name]: v }));
+    const cls =
+      'w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors';
+    return (
+      <div key={q.name}>
+        <label htmlFor={id} className="block text-sm font-medium text-paradigm-text mb-1">
+          {q.label}
+          {!q.required && ' (optional)'}
+        </label>
+        {q.help && <p className="text-xs text-paradigm-muted mb-2">{q.help}</p>}
+        {q.type === 'textarea' ? (
+          <textarea id={id} value={value} onChange={(e) => set(e.target.value)} required={q.required} rows={2} placeholder={q.placeholder} className={cls} />
+        ) : q.type === 'select' ? (
+          <select id={id} value={value} onChange={(e) => set(e.target.value)} required={q.required} className={cls}>
+            <option value="">Select…</option>
+            {(q.options || []).map((o) => (
+              <option key={o} value={o}>{o}</option>
+            ))}
+          </select>
+        ) : (
+          <input id={id} type={q.type || 'text'} value={value} onChange={(e) => set(e.target.value)} required={q.required} placeholder={q.placeholder} className={cls} />
+        )}
+      </div>
+    );
+  };
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [hasRsvp, setHasRsvp] = useState(false);
@@ -628,6 +662,10 @@ export default function EventPage({ event }: EventPageProps) {
                 </div>
               </div>
 
+              {/* Per-guest custom questions: the respondent's own answer comes before
+                  the additional-guest rows, which repeat the question per guest. */}
+              {customQuestions.filter((q) => q.perGuest).map(renderCustomQuestion)}
+
               {/* Plus Ones */}
               {event.rsvp.allowPlusOnes && selectedStatus === 'going' && (
                 <div>
@@ -687,40 +725,43 @@ export default function EventPage({ event }: EventPageProps) {
                           className="w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors"
                         />
                       </div>
+                      {/* Per-guest custom questions (customQuestions with perGuest: true) */}
+                      {customQuestions
+                        .filter((q) => q.perGuest)
+                        .map((q) => {
+                          const value = contact.answers?.[q.name] || '';
+                          const set = (v: string) =>
+                            setPlusOneContacts((prev) =>
+                              prev.map((c, j) => (j === i ? { ...c, answers: { ...(c.answers || {}), [q.name]: v } } : c))
+                            );
+                          const cls =
+                            'w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors';
+                          const label = q.guestLabel || q.label;
+                          return (
+                            <div key={q.name} className="mt-3">
+                              <label htmlFor={`cq-${q.name}-${i}`} className="block text-xs font-medium text-paradigm-muted mb-1">
+                                {label}
+                              </label>
+                              {q.type === 'select' ? (
+                                <select id={`cq-${q.name}-${i}`} value={value} onChange={(e) => set(e.target.value)} className={cls}>
+                                  <option value="">Select…</option>
+                                  {(q.options || []).map((o) => (
+                                    <option key={o} value={o}>{o}</option>
+                                  ))}
+                                </select>
+                              ) : (
+                                <input id={`cq-${q.name}-${i}`} type="text" value={value} onChange={(e) => set(e.target.value)} placeholder={q.placeholder} className={cls} />
+                              )}
+                            </div>
+                          );
+                        })}
                     </div>
                   ))}
                 </div>
               )}
 
-              {/* Custom questions (data-driven via config.rsvpOptions.customQuestions) */}
-              {customQuestions.map((q) => {
-                const id = `cq-${q.name}`;
-                const value = customAnswers[q.name] || '';
-                const set = (v: string) => setCustomAnswers((prev) => ({ ...prev, [q.name]: v }));
-                const cls =
-                  'w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors';
-                return (
-                  <div key={q.name}>
-                    <label htmlFor={id} className="block text-sm font-medium text-paradigm-text mb-1">
-                      {q.label}
-                      {!q.required && ' (optional)'}
-                    </label>
-                    {q.help && <p className="text-xs text-paradigm-muted mb-2">{q.help}</p>}
-                    {q.type === 'textarea' ? (
-                      <textarea id={id} value={value} onChange={(e) => set(e.target.value)} required={q.required} rows={2} placeholder={q.placeholder} className={cls} />
-                    ) : q.type === 'select' ? (
-                      <select id={id} value={value} onChange={(e) => set(e.target.value)} required={q.required} className={cls}>
-                        <option value="">Select…</option>
-                        {(q.options || []).map((o) => (
-                          <option key={o} value={o}>{o}</option>
-                        ))}
-                      </select>
-                    ) : (
-                      <input id={id} type={q.type || 'text'} value={value} onChange={(e) => set(e.target.value)} required={q.required} placeholder={q.placeholder} className={cls} />
-                    )}
-                  </div>
-                );
-              })}
+              {/* Group-level custom questions (data-driven via config.rsvpOptions.customQuestions) */}
+              {customQuestions.filter((q) => !q.perGuest).map(renderCustomQuestion)}
 
               {/* Notes */}
               <div>
