@@ -61,6 +61,8 @@ export default async function PublicEventPage({ params }: PageProps) {
           eventId={event.event_id}
           title={event.title}
           branding={event.branding || {}}
+          // No invite list but a password → lead with the password option.
+          passwordFirst={!!event.password_hash && !(event.config?.access?.allowedEmails?.length > 0)}
         />
       );
     }
@@ -268,6 +270,9 @@ export default async function PublicEventPage({ params }: PageProps) {
 
   return <EventPage event={eventData} />;
 }
+
+// Browser/in-app chrome colour matches the page background.
+export const viewport = { themeColor: '#050505' };
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: PageProps) {

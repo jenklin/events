@@ -95,6 +95,8 @@ export default function EventPage({ event }: EventPageProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [hasRsvp, setHasRsvp] = useState(false);
+  // Bumped after a successful RSVP so the karaoke section re-reads the upgraded access cookie.
+  const [rsvpVersion, setRsvpVersion] = useState(0);
   const [showLocationDetails, setShowLocationDetails] = useState(!event.location.hideUntilRsvp);
 
   // Check for existing RSVP
@@ -177,6 +179,7 @@ export default function EventPage({ event }: EventPageProps) {
       const data = await response.json();
 
       if (response.ok) {
+        setRsvpVersion((v) => v + 1);
         setSubmitMessage({
           type: 'success',
           text: data.message || 'RSVP submitted successfully!',
@@ -383,7 +386,11 @@ export default function EventPage({ event }: EventPageProps) {
                 {formatDate(event.date)}
                 {formatTime(event.startTime)}
                 {event.endTime && ` – ${formatTime(event.endTime)}`}
-                <span className="text-sm text-paradigm-muted ml-2">({event.timezone})</span>
+                {event.timezone && (
+                  <span className="block text-sm text-paradigm-muted">
+                    {event.timezone.split('/').pop()!.replace(/_/g, ' ')} time
+                  </span>
+                )}
               </p>
             </div>
 
@@ -824,6 +831,7 @@ export default function EventPage({ event }: EventPageProps) {
         {/* Karaoke Playlist — guest song requests (data-driven: enable_music_contributions) */}
         {event.music?.enabled && (
           <KaraokePlaylist
+            key={rsvpVersion}
             eventId={event.id}
             verifiedEmail={event.verifiedEmail || null}
             instructions={event.music.instructions || null}

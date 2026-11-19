@@ -19,6 +19,7 @@ interface AccessGateProps {
     organizationName?: string;
     colors?: { primary?: string; secondary?: string };
   };
+  passwordFirst?: boolean;
 }
 
 function getSupabaseBrowser() {
@@ -28,7 +29,7 @@ function getSupabaseBrowser() {
   return createClient(url, anonKey);
 }
 
-export default function AccessGate({ eventId, title, branding }: AccessGateProps) {
+export default function AccessGate({ eventId, title, branding, passwordFirst = false }: AccessGateProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -92,6 +93,57 @@ export default function AccessGate({ eventId, title, branding }: AccessGateProps
       } as React.CSSProperties)
     : undefined;
 
+  const emailForm = (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (email) grantAccess({ email });
+      }}
+      className="space-y-3"
+    >
+      <input
+        aria-label="Email address"
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+        autoComplete="email"
+        inputMode="email"
+        placeholder="you@example.com"
+        className="w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors text-center"
+      />
+      <Button
+        type="submit"
+        disabled={isSubmitting || !email}
+        className="w-full h-12 bg-paradigm-purple hover:opacity-90 text-white"
+      >
+        {isSubmitting ? 'Checking…' : 'Continue'}
+      </Button>
+    </form>
+  );
+
+  const passwordForm = (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (password) grantAccess({ password });
+      }}
+      className="space-y-3"
+    >
+      <input
+        aria-label="Event password"
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="Event password"
+        className="w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors text-center"
+      />
+      <Button type="submit" variant="outline" disabled={isSubmitting || !password} className="w-full h-12">
+        {isSubmitting ? 'Checking…' : 'Enter with password'}
+      </Button>
+    </form>
+  );
+
   return (
     <div
       style={brandVars}
@@ -110,32 +162,7 @@ export default function AccessGate({ eventId, title, branding }: AccessGateProps
           to register.
         </p>
 
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (email) grantAccess({ email });
-          }}
-          className="space-y-3"
-        >
-          <input
-            aria-label="Email address"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            autoComplete="email"
-            inputMode="email"
-            placeholder="you@example.com"
-            className="w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors text-center"
-          />
-          <Button
-            type="submit"
-            disabled={isSubmitting || !email}
-            className="w-full h-12 bg-paradigm-purple hover:opacity-90 text-white"
-          >
-            {isSubmitting ? 'Checking…' : 'Continue'}
-          </Button>
-        </form>
+        {passwordFirst ? passwordForm : emailForm}
 
         <div className="flex items-center gap-3 my-5">
           <div className="flex-1 border-t border-white/10" />
@@ -143,25 +170,7 @@ export default function AccessGate({ eventId, title, branding }: AccessGateProps
           <div className="flex-1 border-t border-white/10" />
         </div>
 
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (password) grantAccess({ password });
-          }}
-          className="space-y-3"
-        >
-          <input
-            aria-label="Event password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Event password"
-            className="w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors text-center"
-          />
-          <Button type="submit" variant="outline" disabled={isSubmitting || !password} className="w-full h-12">
-            {isSubmitting ? 'Checking…' : 'Enter with password'}
-          </Button>
-        </form>
+        {passwordFirst ? emailForm : passwordForm}
 
         <div className="flex items-center gap-3 my-5">
           <div className="flex-1 border-t border-white/10" />
