@@ -246,7 +246,7 @@ export default function KaraokePlaylist({ eventId, verifiedEmail, instructions, 
                     type="button"
                     onClick={() => remove(s.id)}
                     disabled={busy}
-                    className="text-xs text-paradigm-muted hover:text-paradigm-coral-light px-2 py-1"
+                    className="text-xs text-paradigm-muted hover:text-paradigm-coral-light px-3 min-h-[44px]"
                     aria-label={`Remove ${s.title}`}
                   >
                     Remove
@@ -303,15 +303,16 @@ export default function KaraokePlaylist({ eventId, verifiedEmail, instructions, 
             </p>
           ) : (
             <>
-              <form onSubmit={runSearch} className="flex gap-2">
+              <form onSubmit={runSearch} className="flex flex-col sm:flex-row gap-2">
                 <input
                   type="text"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder={canSearch ? 'Song title, artist, or paste a link' : 'Paste a YouTube / Spotify link, or type the song name'}
+                  aria-label="Search for a song"
                   className={inputCls}
                 />
-                <Button type="submit" disabled={searching || !query.trim()} className="h-auto shrink-0 bg-paradigm-purple hover:opacity-90 text-white">
+                <Button type="submit" disabled={searching || !query.trim()} className="h-11 sm:h-auto shrink-0 bg-paradigm-purple hover:opacity-90 text-white">
                   {searching ? '…' : looksLikeUrl ? 'Check link' : canSearch ? 'Search' : 'Next'}
                 </Button>
               </form>

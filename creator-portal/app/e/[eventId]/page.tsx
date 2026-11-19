@@ -61,6 +61,8 @@ export default async function PublicEventPage({ params }: PageProps) {
           eventId={event.event_id}
           title={event.title}
           branding={event.branding || {}}
+          // No invite list but a password → lead with the password option.
+          passwordFirst={!!event.password_hash && !(event.config?.access?.allowedEmails?.length > 0)}
         />
       );
     }
@@ -204,6 +206,12 @@ export default async function PublicEventPage({ params }: PageProps) {
       requireApproval: event.require_approval,
       allowPlusOnes: event.allow_plus_ones,
       maxPlusOnes: event.max_plus_ones,
+      // Data-driven extra questions: config.rsvpOptions.customQuestions
+      // [{ name, label, type: text|email|tel|select|textarea, required, options?, placeholder?, help? }].
+      // Answers are stored in rsvps.custom_responses[name]. `kakaoId` has its own
+      // built-in field, so it is skipped here.
+      customQuestions: (Array.isArray(config?.rsvpOptions?.customQuestions) ? config.rsvpOptions.customQuestions : [])
+        .filter((q: any) => q && typeof q.name === 'string' && q.name && q.name !== 'kakaoId' && typeof q.label === 'string'),
     },
 
     // Potluck
@@ -263,6 +271,9 @@ export default async function PublicEventPage({ params }: PageProps) {
   return <EventPage event={eventData} />;
 }
 
+// Browser/in-app chrome colour matches the page background.
+export const viewport = { themeColor: '#050505' };
+
 // Generate metadata for SEO
 export async function generateMetadata({ params }: PageProps) {
   const { eventId } = params;
@@ -270,7 +281,7 @@ export async function generateMetadata({ params }: PageProps) {
 
   const { data: event } = await supabase
     .from('events')
-    .select('title, description, cover_image_url, event_date')
+    .select('title, description, cover_image_url, event_date, branding')
     .eq('event_id', eventId)
     .single();
 
@@ -280,11 +291,16 @@ export async function generateMetadata({ params }: PageProps) {
     };
   }
 
+  // White-label events (branding.hidePlatformBranding) drop the platform suffix
+  // so link previews (KakaoTalk, iMessage) show only the event's own title.
+  const title = String(event.title).replace(/\s*\n\s*/g, ' ');
+  const whiteLabel = event.branding?.hidePlatformBranding === true;
+
   return {
-    title: `${event.title} - cloudpeers Events`,
-    description: event.description || `Join us for ${event.title}`,
+    title: whiteLabel ? title : `${title} - cloudpeers Events`,
+    description: event.description || `Join us for ${title}`,
     openGraph: {
-      title: event.title,
+      title,
       description: event.description,
       images: event.cover_image_url ? [event.cover_image_url] : [],
     },
