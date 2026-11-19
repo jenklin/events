@@ -204,6 +204,12 @@ export default async function PublicEventPage({ params }: PageProps) {
       requireApproval: event.require_approval,
       allowPlusOnes: event.allow_plus_ones,
       maxPlusOnes: event.max_plus_ones,
+      // Data-driven extra questions: config.rsvpOptions.customQuestions
+      // [{ name, label, type: text|email|tel|select|textarea, required, options?, placeholder?, help? }].
+      // Answers are stored in rsvps.custom_responses[name]. `kakaoId` has its own
+      // built-in field, so it is skipped here.
+      customQuestions: (Array.isArray(config?.rsvpOptions?.customQuestions) ? config.rsvpOptions.customQuestions : [])
+        .filter((q: any) => q && typeof q.name === 'string' && q.name && q.name !== 'kakaoId' && typeof q.label === 'string'),
     },
 
     // Potluck

@@ -15,6 +15,16 @@ interface EventPageProps {
   event: any; // Event data from server component
 }
 
+interface CustomQuestion {
+  name: string;
+  label: string;
+  type?: 'text' | 'email' | 'tel' | 'select' | 'textarea';
+  required?: boolean;
+  options?: string[];
+  placeholder?: string;
+  help?: string;
+}
+
 interface PlusOneContact {
   name: string;
   phone: string;
@@ -40,6 +50,9 @@ export default function EventPage({ event }: EventPageProps) {
   const [bringingFood, setBringingFood] = useState(false);
   const [foodItems, setFoodItems] = useState<any[]>([]);
   const [notes, setNotes] = useState('');
+  // Answers to data-driven custom questions (event.rsvp.customQuestions), keyed by question name.
+  const customQuestions: CustomQuestion[] = event.rsvp?.customQuestions || [];
+  const [customAnswers, setCustomAnswers] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [hasRsvp, setHasRsvp] = useState(false);
@@ -57,6 +70,13 @@ export default function EventPage({ event }: EventPageProps) {
         setGuestName(data.rsvp.guestName);
         setGuestPhone(data.rsvp.guestPhone || '');
         setGuestKakao(data.rsvp.customResponses?.kakaoId || '');
+        setCustomAnswers(
+          Object.fromEntries(
+            customQuestions
+              .map((q) => [q.name, data.rsvp.customResponses?.[q.name]])
+              .filter(([, v]) => typeof v === 'string')
+          )
+        );
         const count = data.rsvp.plusOnes || 0;
         setPlusOnes(count);
         const savedContacts: PlusOneContact[] = data.rsvp.customResponses?.plusOneContacts
@@ -101,6 +121,11 @@ export default function EventPage({ event }: EventPageProps) {
           customResponses: {
             ...(guestKakao ? { kakaoId: guestKakao } : {}),
             ...(plusOnes > 0 ? { plusOneContacts } : {}),
+            ...Object.fromEntries(
+              customQuestions
+                .map((q) => [q.name, (customAnswers[q.name] || '').trim()])
+                .filter(([, v]) => v)
+            ),
           },
           bringingFood,
           foodItems,
@@ -666,6 +691,36 @@ export default function EventPage({ event }: EventPageProps) {
                   ))}
                 </div>
               )}
+
+              {/* Custom questions (data-driven via config.rsvpOptions.customQuestions) */}
+              {customQuestions.map((q) => {
+                const id = `cq-${q.name}`;
+                const value = customAnswers[q.name] || '';
+                const set = (v: string) => setCustomAnswers((prev) => ({ ...prev, [q.name]: v }));
+                const cls =
+                  'w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors';
+                return (
+                  <div key={q.name}>
+                    <label htmlFor={id} className="block text-sm font-medium text-paradigm-text mb-1">
+                      {q.label}
+                      {!q.required && ' (optional)'}
+                    </label>
+                    {q.help && <p className="text-xs text-paradigm-muted mb-2">{q.help}</p>}
+                    {q.type === 'textarea' ? (
+                      <textarea id={id} value={value} onChange={(e) => set(e.target.value)} required={q.required} rows={2} placeholder={q.placeholder} className={cls} />
+                    ) : q.type === 'select' ? (
+                      <select id={id} value={value} onChange={(e) => set(e.target.value)} required={q.required} className={cls}>
+                        <option value="">Select…</option>
+                        {(q.options || []).map((o) => (
+                          <option key={o} value={o}>{o}</option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input id={id} type={q.type || 'text'} value={value} onChange={(e) => set(e.target.value)} required={q.required} placeholder={q.placeholder} className={cls} />
+                    )}
+                  </div>
+                );
+              })}
 
               {/* Notes */}
               <div>
