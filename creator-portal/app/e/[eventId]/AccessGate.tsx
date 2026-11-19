@@ -118,6 +118,7 @@ export default function AccessGate({ eventId, title, branding }: AccessGateProps
           className="space-y-3"
         >
           <input
+            aria-label="Email address"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -150,6 +151,7 @@ export default function AccessGate({ eventId, title, branding }: AccessGateProps
           className="space-y-3"
         >
           <input
+            aria-label="Event password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}

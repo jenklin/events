@@ -59,12 +59,17 @@ export default function EventPage({ event }: EventPageProps) {
   // Answers to data-driven custom questions (event.rsvp.customQuestions), keyed by question name.
   const customQuestions: CustomQuestion[] = event.rsvp?.customQuestions || [];
   const [customAnswers, setCustomAnswers] = useState<Record<string, string>>({});
+  const setGuestCount = (n: number) => {
+    const next = Math.max(0, Math.min(event.rsvp.maxPlusOnes, n));
+    setPlusOnes(next);
+    setPlusOneContacts((prev) => Array.from({ length: next }, (_, i) => prev[i] || { name: '', phone: '', kakao: '' }));
+  };
   const renderCustomQuestion = (q: CustomQuestion) => {
     const id = `cq-${q.name}`;
     const value = customAnswers[q.name] || '';
     const set = (v: string) => setCustomAnswers((prev) => ({ ...prev, [q.name]: v }));
     const cls =
-      'w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors';
+      'w-full min-h-[44px] px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors';
     return (
       <div key={q.name}>
         <label htmlFor={id} className="block text-sm font-medium text-paradigm-text mb-1">
@@ -301,7 +306,7 @@ export default function EventPage({ event }: EventPageProps) {
           </nav>
         </div>
         {/* Mobile anchor nav — horizontally scrollable pill bar */}
-        <nav className="md:hidden flex gap-2 overflow-x-auto px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <nav className="md:hidden flex gap-2 overflow-x-auto px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [mask-image:linear-gradient(to_right,black_85%,transparent)]">
           {(
             [
               ['details', 'Details'],
@@ -318,7 +323,7 @@ export default function EventPage({ event }: EventPageProps) {
               key={id}
               href={id === 'gallery' && event.galleryAlbumId ? `/gallery/a/${event.galleryAlbumId}` : `#${id}`}
               onClick={id === 'gallery' ? undefined : scrollTo(id)}
-              className="shrink-0 whitespace-nowrap px-3 py-2 min-h-[40px] inline-flex items-center rounded-full bg-white/5 border border-white/10 text-sm text-paradigm-text"
+              className="shrink-0 whitespace-nowrap px-3 py-2 min-h-[44px] inline-flex items-center rounded-full bg-white/5 border border-white/10 text-sm text-paradigm-text"
             >
               {label}
             </a>
@@ -393,7 +398,7 @@ export default function EventPage({ event }: EventPageProps) {
                   {event.location.nearestStation && (
                     <p className="text-sm text-paradigm-muted mt-1">
                       <span className="inline-flex items-center gap-1.5">
-                        <svg className="w-4 h-4 text-paradigm-teal" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="14" rx="2" /><path d="M9 21l-1.5-3M15 21l1.5-3M5 11h14" /></svg>
+                        <svg className="w-4 h-4 text-paradigm-teal-light" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="14" rx="2" /><path d="M9 21l-1.5-3M15 21l1.5-3M5 11h14" /></svg>
                         Transit &amp; parking: {event.location.nearestStation}
                       </span>
                     </p>
@@ -451,12 +456,12 @@ export default function EventPage({ event }: EventPageProps) {
             )}
 
             {/* RSVP Stats */}
-            {event.visibility.showGuestCount && (
+            {event.visibility.showGuestCount && event.stats.going + event.stats.maybe > 0 && (
               <div>
                 <h3 className="font-semibold text-white mb-2">RSVPs</h3>
                 <div className="flex gap-4">
-                  <Badge variant="default">{event.stats.going} Going</Badge>
-                  <Badge variant="secondary">{event.stats.maybe} Maybe</Badge>
+                  <Badge className="bg-paradigm-purple text-white hover:bg-paradigm-purple">{event.stats.going} Going</Badge>
+                  <Badge className="bg-paradigm-teal text-white hover:bg-paradigm-teal">{event.stats.maybe} Maybe</Badge>
                 </div>
               </div>
             )}
@@ -474,7 +479,7 @@ export default function EventPage({ event }: EventPageProps) {
               <ul className="space-y-3">
                 {event.whatToExpect.items.map((item: string, i: number) => (
                   <li key={i} className="flex items-start gap-3 text-paradigm-text">
-                    <svg className="w-5 h-5 text-paradigm-teal mt-0.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="m8 12 3 3 5-6" /></svg>
+                    <svg className="w-5 h-5 text-paradigm-teal-light mt-0.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="m8 12 3 3 5-6" /></svg>
                     <span>{item}</span>
                   </li>
                 ))}
@@ -489,11 +494,11 @@ export default function EventPage({ event }: EventPageProps) {
             <h2 className="text-2xl font-bold text-white mb-6">Schedule</h2>
             <div className="space-y-0">
               {event.schedule.map((item: { time?: string; title?: string; description?: string }, i: number) => (
-                <div key={i} className="flex gap-4 pb-5 last:pb-0 border-b border-white/5 last:border-0 mb-5 last:mb-0">
-                  <div className="shrink-0 w-20 text-paradigm-purple-light font-bold text-sm pt-0.5">
+                <div key={i} className="flex flex-col sm:flex-row gap-1 sm:gap-4 pb-5 last:pb-0 border-b border-white/5 last:border-0 mb-5 last:mb-0">
+                  <div className="sm:shrink-0 sm:w-20 text-paradigm-purple-light font-bold text-sm pt-0.5">
                     {item.time ? formatTime(item.time) : ''}
                   </div>
-                  <div className="flex-1 relative pl-4 border-l-2 border-paradigm-purple/30">
+                  <div className="flex-1 relative sm:pl-4 sm:border-l-2 border-paradigm-purple/30">
                     {item.title && <div className="font-semibold text-white">{item.title}</div>}
                     {item.description && (
                       <div className="text-sm text-paradigm-muted mt-1 whitespace-pre-line">{item.description}</div>
@@ -546,7 +551,7 @@ export default function EventPage({ event }: EventPageProps) {
                               href={link.href}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1.5 px-4 py-2.5 min-h-[44px] rounded-lg bg-paradigm-teal/15 text-paradigm-teal-light hover:bg-paradigm-teal/25 transition-colors text-sm font-semibold"
+                              className="flex-1 min-w-[96px] inline-flex items-center justify-center gap-1.5 px-2 sm:px-4 py-2.5 min-h-[44px] rounded-lg bg-paradigm-teal/15 text-paradigm-teal-light hover:bg-paradigm-teal/25 transition-colors text-sm font-semibold"
                             >
                               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 21s-7-5.5-7-11a7 7 0 1114 0c0 5.5-7 11-7 11z" /><circle cx="12" cy="10" r="2.5" /></svg>
                               {link.label}
@@ -615,8 +620,9 @@ export default function EventPage({ event }: EventPageProps) {
               {/* Guest Info */}
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-paradigm-text mb-2">Name *</label>
+                  <label htmlFor="rsvp-name" className="block text-sm font-medium text-paradigm-text mb-2">Name *</label>
                   <input
+                    id="rsvp-name"
                     type="text"
                     value={guestName}
                     onChange={(e) => setGuestName(e.target.value)}
@@ -626,8 +632,9 @@ export default function EventPage({ event }: EventPageProps) {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-paradigm-text mb-2">Email *</label>
+                  <label htmlFor="rsvp-email" className="block text-sm font-medium text-paradigm-text mb-2">Email *</label>
                   <input
+                    id="rsvp-email"
                     type="email"
                     value={guestEmail}
                     onChange={(e) => setGuestEmail(e.target.value)}
@@ -639,8 +646,9 @@ export default function EventPage({ event }: EventPageProps) {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-paradigm-text mb-2">Phone *</label>
+                  <label htmlFor="rsvp-phone" className="block text-sm font-medium text-paradigm-text mb-2">Phone *</label>
                   <input
+                    id="rsvp-phone"
                     type="tel"
                     value={guestPhone}
                     onChange={(e) => setGuestPhone(e.target.value)}
@@ -652,8 +660,9 @@ export default function EventPage({ event }: EventPageProps) {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-paradigm-text mb-2">KakaoTalk ID (optional)</label>
+                  <label htmlFor="rsvp-kakao" className="block text-sm font-medium text-paradigm-text mb-2">KakaoTalk ID (optional)</label>
                   <input
+                    id="rsvp-kakao"
                     type="text"
                     value={guestKakao}
                     onChange={(e) => setGuestKakao(e.target.value)}
@@ -675,22 +684,29 @@ export default function EventPage({ event }: EventPageProps) {
                   <p className="text-xs text-paradigm-muted mb-2">
                     How many people are coming with you? Add one row per person, including children.
                   </p>
-                  <input
-                    type="number"
-                    value={plusOnes}
-                    onChange={(e) => {
-                      const next = Math.max(0, Math.min(event.rsvp.maxPlusOnes, parseInt(e.target.value) || 0));
-                      setPlusOnes(next);
-                      setPlusOneContacts((prev) =>
-                        Array.from({ length: next }, (_, i) => prev[i] || { name: '', phone: '', kakao: '' })
-                      );
-                    }}
-                    min="0"
-                    max={event.rsvp.maxPlusOnes}
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    className="w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors"
-                  />
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setGuestCount(plusOnes - 1)}
+                      disabled={plusOnes <= 0}
+                      aria-label="Remove a guest"
+                      className="h-12 w-12 shrink-0 rounded-lg border border-white/15 bg-paradigm-deep-black/40 text-2xl leading-none text-paradigm-text disabled:opacity-40 focus:outline-none focus:ring-2 focus:ring-paradigm-purple"
+                    >
+                      −
+                    </button>
+                    <output aria-live="polite" className="min-w-[2.5rem] text-center text-xl font-semibold text-white">
+                      {plusOnes}
+                    </output>
+                    <button
+                      type="button"
+                      onClick={() => setGuestCount(plusOnes + 1)}
+                      disabled={plusOnes >= event.rsvp.maxPlusOnes}
+                      aria-label="Add a guest"
+                      className="h-12 w-12 shrink-0 rounded-lg border border-white/15 bg-paradigm-deep-black/40 text-2xl leading-none text-paradigm-text disabled:opacity-40 focus:outline-none focus:ring-2 focus:ring-paradigm-purple"
+                    >
+                      +
+                    </button>
+                  </div>
 
                   {/* One row per plus-one: name, phone, kakao */}
                   {plusOneContacts.map((contact, i) => (
@@ -704,6 +720,7 @@ export default function EventPage({ event }: EventPageProps) {
                             setPlusOneContacts((prev) => prev.map((c, j) => (j === i ? { ...c, name: e.target.value } : c)))
                           }
                           placeholder="Name (adult or child)"
+                          aria-label={`Guest ${i + 2} name`}
                           className="w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors"
                         />
                         <input
@@ -713,6 +730,7 @@ export default function EventPage({ event }: EventPageProps) {
                             setPlusOneContacts((prev) => prev.map((c, j) => (j === i ? { ...c, phone: e.target.value } : c)))
                           }
                           placeholder="Phone (optional)"
+                          aria-label={`Guest ${i + 2} phone`}
                           className="w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors"
                         />
                         <input
@@ -722,6 +740,7 @@ export default function EventPage({ event }: EventPageProps) {
                             setPlusOneContacts((prev) => prev.map((c, j) => (j === i ? { ...c, kakao: e.target.value } : c)))
                           }
                           placeholder="KakaoTalk ID (optional)"
+                          aria-label={`Guest ${i + 2} KakaoTalk ID`}
                           className="w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors"
                         />
                       </div>
@@ -735,7 +754,7 @@ export default function EventPage({ event }: EventPageProps) {
                               prev.map((c, j) => (j === i ? { ...c, answers: { ...(c.answers || {}), [q.name]: v } } : c))
                             );
                           const cls =
-                            'w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors';
+                            'w-full min-h-[44px] px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors';
                           const label = q.guestLabel || q.label;
                           return (
                             <div key={q.name} className="mt-3">
@@ -771,7 +790,7 @@ export default function EventPage({ event }: EventPageProps) {
                   onChange={(e) => setNotes(e.target.value)}
                   rows={3}
                   className="w-full px-3 py-2 bg-paradigm-deep-black/40 text-paradigm-text placeholder:text-paradigm-muted border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-paradigm-purple focus:border-paradigm-purple transition-colors"
-                  placeholder="Any questions or dietary restrictions?"
+                  placeholder="Anything else the host should know?"
                 />
               </div>
 

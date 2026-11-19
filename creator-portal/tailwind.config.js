@@ -27,12 +27,14 @@ module.exports = {
           panel: '#151518',
           // Brand-color slots overridable per event via CSS vars (white-label
           // branding from the events template engine); defaults = cloudpeers.
-          purple: 'var(--brand-primary, #8b5cf6)',
-          'purple-light': 'var(--brand-primary-light, #a78bfa)',
+          // color-mix + <alpha-value> so opacity modifiers (bg-paradigm-teal/15)
+          // generate CSS — a bare var() string silently drops them.
+          purple: 'color-mix(in srgb, var(--brand-primary, #8b5cf6) calc(<alpha-value> * 100%), transparent)',
+          'purple-light': 'color-mix(in srgb, var(--brand-primary-light, #a78bfa) calc(<alpha-value> * 100%), transparent)',
           accent: '#3b82f6',
           'accent-light': '#60a5fa',
-          teal: 'var(--brand-secondary, #14b8a6)',
-          'teal-light': 'var(--brand-secondary-light, #5eead4)',
+          teal: 'color-mix(in srgb, var(--brand-secondary, #14b8a6) calc(<alpha-value> * 100%), transparent)',
+          'teal-light': 'color-mix(in srgb, var(--brand-secondary-light, #5eead4) calc(<alpha-value> * 100%), transparent)',
           coral: '#e85d75',
           'coral-light': '#f08da0',
           olive: '#6b7556',
