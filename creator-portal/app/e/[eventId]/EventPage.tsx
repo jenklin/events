@@ -54,6 +54,13 @@ const mapLinksFor = (query: string, queryKo?: string) => [
 // Record<string, string> (same shape as every other answer, readable in exports).
 const CHECKBOX_SEP = '; ';
 
+// Minimal inline markup for event copy: **text** renders bold. React escapes
+// everything else, so content can't inject HTML.
+const withBold = (text: string) =>
+  text.split(/\*\*(.+?)\*\*/g).map((part, i) =>
+    i % 2 ? <strong key={i} className="font-semibold text-white">{part}</strong> : part
+  );
+
 const isShown = (q: { showIf?: { question: string; value: string } }, answers: Record<string, string> = {}) =>
   !q.showIf || (answers[q.showIf.question] || '').split(CHECKBOX_SEP).includes(q.showIf.value);
 
@@ -423,7 +430,7 @@ export default function EventPage({ event }: EventPageProps) {
         <div className="text-center mb-10">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 whitespace-pre-line [text-wrap:balance]">{event.title}</h1>
           {event.description && (
-            <p className="text-lg text-paradigm-muted max-w-2xl mx-auto whitespace-pre-line">{event.description}</p>
+            <p className="text-lg text-paradigm-muted max-w-2xl mx-auto whitespace-pre-line">{withBold(event.description)}</p>
           )}
 
           {/* Quick facts */}
@@ -589,7 +596,7 @@ export default function EventPage({ event }: EventPageProps) {
                   <div className="flex-1 relative sm:pl-4 sm:border-l-2 border-paradigm-purple/30">
                     {item.title && <div className="font-semibold text-white">{item.title}</div>}
                     {item.description && (
-                      <div className="text-sm text-paradigm-muted mt-1 whitespace-pre-line">{item.description}</div>
+                      <div className="text-sm text-paradigm-muted mt-1 whitespace-pre-line">{withBold(item.description)}</div>
                     )}
                   </div>
                 </div>
@@ -699,7 +706,7 @@ export default function EventPage({ event }: EventPageProps) {
                 {event.mapFooter.title && (
                   <div className="font-semibold text-white mb-2">{event.mapFooter.title}</div>
                 )}
-                <div className="text-sm text-paradigm-text whitespace-pre-line">{event.mapFooter.body}</div>
+                <div className="text-sm text-paradigm-text whitespace-pre-line">{withBold(event.mapFooter.body)}</div>
               </div>
             )}
           </Card>
