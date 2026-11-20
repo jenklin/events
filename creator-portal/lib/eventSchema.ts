@@ -93,9 +93,10 @@ export const eventFormSchema = z.object({
       z.object({
         name: z.string(),
         label: z.string(),
-        type: z.enum(['text', 'email', 'tel', 'select', 'textarea']),
+        type: z.enum(['text', 'email', 'tel', 'select', 'textarea', 'checkboxes']),
         required: z.boolean(),
         options: z.array(z.string()).optional(),
+        showIf: z.object({ question: z.string(), value: z.string() }).optional(),
       })
     ).default([]),
   }),
