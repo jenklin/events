@@ -19,14 +19,18 @@ interface EventPageProps {
 interface CustomQuestion {
   name: string;
   label: string;
-  type?: 'text' | 'email' | 'tel' | 'select' | 'textarea';
+  // 'checkboxes' = pick any number of options; stored as one string joined by CHECKBOX_SEP.
+  type?: 'text' | 'email' | 'tel' | 'select' | 'textarea' | 'checkboxes';
   required?: boolean;
   options?: string[];
   placeholder?: string;
   help?: string;
-  // Also ask this question on each additional-guest row (select/text only).
+  // Also ask this question on each additional-guest row (select/checkboxes/text only).
   // Answers are stored per guest in plusOneContacts[i].answers[name].
   perGuest?: boolean;
+  // Only show this question when another question's answer is/contains `value`
+  // (checked per person: main answers for the main form, each guest's own answers on guest rows).
+  showIf?: { question: string; value: string };
   // Label shown on each additional-guest row when perGuest is set (falls back to label).
   guestLabel?: string;
 }
@@ -45,6 +49,54 @@ const mapLinksFor = (query: string, queryKo?: string) => [
   { label: 'Naver Map', href: `https://map.naver.com/p/search/${encodeURIComponent(queryKo || query)}` },
   { label: 'Google Maps', href: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}` },
 ];
+
+// Multi-choice answers are stored as a single string so custom_responses stays
+// Record<string, string> (same shape as every other answer, readable in exports).
+const CHECKBOX_SEP = '; ';
+
+const isShown = (q: { showIf?: { question: string; value: string } }, answers: Record<string, string> = {}) =>
+  !q.showIf || (answers[q.showIf.question] || '').split(CHECKBOX_SEP).includes(q.showIf.value);
+
+function CheckboxGroup({
+  idBase,
+  options,
+  value,
+  onChange,
+  label,
+}: {
+  idBase: string;
+  options: string[];
+  value: string;
+  onChange: (v: string) => void;
+  label: string;
+}) {
+  const selected = value ? value.split(CHECKBOX_SEP) : [];
+  const toggle = (o: string) => {
+    const next = selected.includes(o) ? selected.filter((x) => x !== o) : [...selected, o];
+    // Keep the configured option order regardless of click order.
+    onChange(options.filter((x) => next.includes(x)).join(CHECKBOX_SEP));
+  };
+  return (
+    <div role="group" aria-label={label} className="space-y-2">
+      {options.map((o, k) => (
+        <label
+          key={o}
+          htmlFor={`${idBase}-${k}`}
+          className="flex items-center gap-3 min-h-[44px] px-3 py-2 rounded-md border border-white/10 bg-paradigm-deep-black/40 text-paradigm-text cursor-pointer has-[:checked]:border-paradigm-purple"
+        >
+          <input
+            id={`${idBase}-${k}`}
+            type="checkbox"
+            checked={selected.includes(o)}
+            onChange={() => toggle(o)}
+            className="w-5 h-5 shrink-0 accent-[var(--brand-primary,#8b5cf6)]"
+          />
+          <span className="text-sm">{o}</span>
+        </label>
+      ))}
+    </div>
+  );
+}
 
 export default function EventPage({ event }: EventPageProps) {
   const [selectedStatus, setSelectedStatus] = useState<'going' | 'maybe' | 'not_going' | null>(null);
@@ -66,6 +118,7 @@ export default function EventPage({ event }: EventPageProps) {
     setPlusOneContacts((prev) => Array.from({ length: next }, (_, i) => prev[i] || { name: '', phone: '', kakao: '' }));
   };
   const renderCustomQuestion = (q: CustomQuestion) => {
+    if (!isShown(q, customAnswers)) return null;
     const id = `cq-${q.name}`;
     const value = customAnswers[q.name] || '';
     const set = (v: string) => setCustomAnswers((prev) => ({ ...prev, [q.name]: v }));
@@ -80,6 +133,8 @@ export default function EventPage({ event }: EventPageProps) {
         {q.help && <p className="text-xs text-paradigm-muted mb-2">{q.help}</p>}
         {q.type === 'textarea' ? (
           <textarea id={id} value={value} onChange={(e) => set(e.target.value)} required={q.required} rows={2} placeholder={q.placeholder} className={cls} />
+        ) : q.type === 'checkboxes' ? (
+          <CheckboxGroup idBase={id} options={q.options || []} value={value} onChange={set} label={q.label} />
         ) : q.type === 'select' ? (
           <select id={id} value={value} onChange={(e) => set(e.target.value)} required={q.required} className={cls}>
             <option value="">Select…</option>
@@ -162,9 +217,28 @@ export default function EventPage({ event }: EventPageProps) {
           plusOneNames: plusOneContacts.map((c) => c.name).filter(Boolean),
           customResponses: {
             ...(guestKakao ? { kakaoId: guestKakao } : {}),
-            ...(plusOnes > 0 ? { plusOneContacts } : {}),
+            ...(plusOnes > 0
+              ? {
+                  // Drop answers to questions hidden for that guest (e.g. shuttle legs
+                  // after unticking "I'd like a seat").
+                  plusOneContacts: plusOneContacts.map((c) =>
+                    c.answers
+                      ? {
+                          ...c,
+                          answers: Object.fromEntries(
+                            Object.entries(c.answers).filter(([name]) => {
+                              const q = customQuestions.find((x) => x.name === name);
+                              return !q || isShown(q, c.answers);
+                            })
+                          ),
+                        }
+                      : c
+                  ),
+                }
+              : {}),
             ...Object.fromEntries(
               customQuestions
+                .filter((q) => isShown(q, customAnswers))
                 .map((q) => [q.name, (customAnswers[q.name] || '').trim()])
                 .filter(([, v]) => v)
             ),
@@ -799,7 +873,7 @@ export default function EventPage({ event }: EventPageProps) {
                       </div>
                       {/* Per-guest custom questions (customQuestions with perGuest: true) */}
                       {customQuestions
-                        .filter((q) => q.perGuest)
+                        .filter((q) => q.perGuest && isShown(q, contact.answers))
                         .map((q) => {
                           const value = contact.answers?.[q.name] || '';
                           const set = (v: string) =>
@@ -814,7 +888,15 @@ export default function EventPage({ event }: EventPageProps) {
                               <label htmlFor={`cq-${q.name}-${i}`} className="block text-xs font-medium text-paradigm-muted mb-1">
                                 {label}
                               </label>
-                              {q.type === 'select' ? (
+                              {q.type === 'checkboxes' ? (
+                                <CheckboxGroup
+                                  idBase={`cq-${q.name}-${i}`}
+                                  options={q.options || []}
+                                  value={value}
+                                  onChange={set}
+                                  label={`Guest ${i + 2} ${label}`}
+                                />
+                              ) : q.type === 'select' ? (
                                 <select id={`cq-${q.name}-${i}`} value={value} onChange={(e) => set(e.target.value)} className={cls}>
                                   <option value="">Select…</option>
                                   {(q.options || []).map((o) => (
