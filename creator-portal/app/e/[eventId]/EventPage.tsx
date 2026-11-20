@@ -619,6 +619,15 @@ export default function EventPage({ event }: EventPageProps) {
                 }
               )}
             </div>
+            {/* Data-driven footer note under the map (config.mapFooter: { title?, body }) */}
+            {event.mapFooter?.body && (
+              <div className="mt-8 rounded-xl border border-white/10 bg-white/5 p-4">
+                {event.mapFooter.title && (
+                  <div className="font-semibold text-white mb-2">{event.mapFooter.title}</div>
+                )}
+                <div className="text-sm text-paradigm-text whitespace-pre-line">{event.mapFooter.body}</div>
+              </div>
+            )}
           </Card>
         )}
 
