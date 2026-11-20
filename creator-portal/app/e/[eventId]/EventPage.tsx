@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import KaraokePlaylist from './KaraokePlaylist';
+import RouteMap, { legText, type RoutePoint } from './RouteMap';
 
 interface EventPageProps {
   event: any; // Event data from server component
@@ -288,11 +289,15 @@ export default function EventPage({ event }: EventPageProps) {
             </a>
           )}
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-paradigm-muted">
-            <a href="#details" onClick={scrollTo('details')} className="hover:text-paradigm-purple-light transition-colors">Details</a>
+            {!event.hideDetailsCard && (
+              <a href="#details" onClick={scrollTo('details')} className="hover:text-paradigm-purple-light transition-colors">Details</a>
+            )}
             {event.schedule?.length > 0 && (
               <a href="#schedule" onClick={scrollTo('schedule')} className="hover:text-paradigm-purple-light transition-colors">Schedule</a>
             )}
-            <a href="#venue" onClick={scrollTo('venue')} className="hover:text-paradigm-purple-light transition-colors">Venue</a>
+            {!event.hideDetailsCard && (
+              <a href="#venue" onClick={scrollTo('venue')} className="hover:text-paradigm-purple-light transition-colors">Venue</a>
+            )}
             {event.mapPoints?.length > 0 && (
               <a href="#map" onClick={scrollTo('map')} className="hover:text-paradigm-purple-light transition-colors">Map</a>
             )}
@@ -312,9 +317,9 @@ export default function EventPage({ event }: EventPageProps) {
         <nav className="md:hidden flex gap-2 overflow-x-auto px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [mask-image:linear-gradient(to_right,black_85%,transparent)]">
           {(
             [
-              ['details', 'Details'],
+              ...(event.hideDetailsCard ? [] : [['details', 'Details']]),
               ...(event.schedule?.length > 0 ? [['schedule', 'Schedule']] : []),
-              ['venue', 'Venue'],
+              ...(event.hideDetailsCard ? [] : [['venue', 'Venue']]),
               ...(event.mapPoints?.length > 0 ? [['map', 'Map']] : []),
               ...(event.rsvp.enabled ? [['rsvp', 'RSVP']] : []),
               ...(event.music?.enabled ? [['songs', 'Songs']] : []),
@@ -376,7 +381,8 @@ export default function EventPage({ event }: EventPageProps) {
           )}
         </div>
 
-        {/* Event Details Card */}
+        {/* Event Details Card — data-driven opt-out via config.hideDetailsCard */}
+        {!event.hideDetailsCard && (
         <Card id="details" className="p-6 mb-6 scroll-mt-24">
           <div className="space-y-4">
             {/* Date & Time */}
@@ -474,6 +480,7 @@ export default function EventPage({ event }: EventPageProps) {
             )}
           </div>
         </Card>
+        )}
 
         {/* What to Expect */}
         {event.whatToExpect && (
@@ -522,8 +529,15 @@ export default function EventPage({ event }: EventPageProps) {
           <Card id="map" className="p-6 mb-6 scroll-mt-24">
             <h2 className="text-2xl font-bold text-white mb-2">Getting Around</h2>
             <p className="text-sm text-paradigm-muted mb-6">
-              Tap a location to open it in your maps app.
+              {event.mapLayout === 'route'
+                ? 'The day’s stops in order. Tap a location to open it in your maps app.'
+                : 'Tap a location to open it in your maps app.'}
             </p>
+            {event.mapLayout === 'route' && (
+              <div className="mb-8">
+                <RouteMap points={event.mapPoints as RoutePoint[]} />
+              </div>
+            )}
             <div className="space-y-8">
               {event.mapPoints.map(
                 (
@@ -535,10 +549,30 @@ export default function EventPage({ event }: EventPageProps) {
                     query?: string;
                     queryKo?: string;
                     embed?: boolean;
+                    lat?: number;
+                    lng?: number;
                   },
                   i: number
-                ) => (
+                ) => {
+                  const isRoute = event.mapLayout === 'route';
+                  const leg = isRoute && i > 0 ? legText(event.mapPoints[i - 1], point) : null;
+                  return (
                   <div key={i}>
+                    {leg && (
+                      <div className="text-xs text-paradigm-muted mb-3 -mt-4 flex items-center gap-2">
+                        <span aria-hidden>↓</span> {leg} from stop {i}
+                      </div>
+                    )}
+                    <div className={isRoute ? 'flex gap-3' : ''}>
+                    {isRoute && (
+                      <div
+                        aria-hidden
+                        className="shrink-0 w-8 h-8 rounded-full bg-paradigm-purple text-white font-bold flex items-center justify-center"
+                      >
+                        {i + 1}
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
                     {point.label && (
                       <div className="text-sm text-paradigm-purple-light font-bold">{point.label}</div>
                     )}
@@ -565,7 +599,7 @@ export default function EventPage({ event }: EventPageProps) {
                             </a>
                           ))}
                         </div>
-                        {point.embed !== false && (
+                        {!isRoute && point.embed !== false && (
                           <div className="mt-3 rounded-xl overflow-hidden border border-white/10">
                             <iframe
                               src={`https://maps.google.com/maps?q=${encodeURIComponent(point.query)}&output=embed&hl=${event.mapLang || 'ko'}`}
@@ -578,10 +612,22 @@ export default function EventPage({ event }: EventPageProps) {
                         )}
                       </>
                     )}
+                    </div>
+                    </div>
                   </div>
-                )
+                  );
+                }
               )}
             </div>
+            {/* Data-driven footer note under the map (config.mapFooter: { title?, body }) */}
+            {event.mapFooter?.body && (
+              <div className="mt-8 rounded-xl border border-white/10 bg-white/5 p-4">
+                {event.mapFooter.title && (
+                  <div className="font-semibold text-white mb-2">{event.mapFooter.title}</div>
+                )}
+                <div className="text-sm text-paradigm-text whitespace-pre-line">{event.mapFooter.body}</div>
+              </div>
+            )}
           </Card>
         )}
 

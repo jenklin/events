@@ -256,6 +256,18 @@ export default async function PublicEventPage({ params }: PageProps) {
     // Key locations for the "Getting Around" map section — data-driven from
     // config.mapPoints: [{ name, label, address, note, query, queryKo, embed }]
     mapPoints: Array.isArray(config?.mapPoints) ? config.mapPoints : [],
+    // config.mapLayout = 'route': one map with numbered pins in itinerary order
+    // (needs lat/lng on the points) instead of one embed per point.
+    mapLayout: config?.mapLayout === 'route' ? 'route' : null,
+    // config.hideDetailsCard: drop the When/Where/Hosted-by card (e.g. when the
+    // schedule and map already cover it).
+    hideDetailsCard: config?.hideDetailsCard === true,
+    // config.mapFooter: { title?, body } — a note shown at the bottom of the
+    // map section (e.g. shuttle info between stops).
+    mapFooter:
+      config?.mapFooter && typeof config.mapFooter.body === 'string'
+        ? { title: typeof config.mapFooter.title === 'string' ? config.mapFooter.title : null, body: config.mapFooter.body }
+        : null,
 
     // Localization (data-driven): primary/secondary date locales for bilingual
     // audiences, and the Google-embed tile language.
