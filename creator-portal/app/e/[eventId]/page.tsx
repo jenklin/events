@@ -308,9 +308,22 @@ export async function generateMetadata({ params }: PageProps) {
   const title = String(event.title).replace(/\s*\n\s*/g, ' ');
   const whiteLabel = event.branding?.hidePlatformBranding === true;
 
+  // White-label events also replace the platform favicon / touch icon (which
+  // iMessage shows as the preview image when there is no cover image).
+  const icon = `/api/events/${encodeURIComponent(eventId)}/icon`;
+
   return {
     title: whiteLabel ? title : `${title} - cloudpeers Events`,
     description: event.description || `Join us for ${title}`,
+    ...(whiteLabel && {
+      icons: {
+        icon: [
+          { url: `${icon}?size=32`, sizes: '32x32', type: 'image/png' },
+          { url: `${icon}?size=512`, sizes: '512x512', type: 'image/png' },
+        ],
+        apple: `${icon}?size=180`,
+      },
+    }),
     openGraph: {
       title,
       description: event.description,
