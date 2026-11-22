@@ -56,9 +56,29 @@ export async function middleware(req: NextRequest) {
   }
 
   if (!eventId) return NextResponse.next();
+
+  // Browsers and link-preview bots probe root icon paths directly; on a
+  // custom domain serve the event's own icon, never the platform logo.
+  const path = req.nextUrl.pathname;
+  if (path !== '/') {
+    const size = path.startsWith('/apple-touch-icon') ? 180 : path === '/icon-512.png' ? 512 : 32;
+    return NextResponse.rewrite(
+      new URL(`/api/events/${encodeURIComponent(eventId)}/icon?size=${size}`, req.url)
+    );
+  }
   return NextResponse.rewrite(new URL(`/e/${eventId}`, req.url));
 }
 
-// Only the landing path needs domain resolution; assets, /api and /gallery
-// keep their normal host-independent routing.
-export const config = { matcher: ['/'] };
+// The landing path needs domain resolution, plus the root icon paths so a
+// custom domain never serves platform branding; other assets, /api and
+// /gallery keep their normal host-independent routing.
+export const config = {
+  matcher: [
+    '/',
+    '/favicon.ico',
+    '/favicon.svg',
+    '/icon-512.png',
+    '/apple-touch-icon.png',
+    '/apple-touch-icon-precomposed.png',
+  ],
+};
